@@ -1,5 +1,14 @@
 # JAiRouter - AI Model Service Routing Gateway
 
+<!-- 版本信息 -->
+> **文档版本**: 1.0.2  
+> **最后更新**: 2026-09-28  
+> **Git 提交**: 05931b92  
+> **作者**: XuanZe1998
+<!-- /版本信息 -->
+
+
+
 ## Project Overview
 
 JAiRouter is an AI model service routing and load balancing gateway built with **Spring Boot 3.5.5** (WebFlux). It provides centralized management and routing for various AI model services including Chat, Embedding, Rerank, TTS, and more.

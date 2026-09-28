@@ -1,5 +1,14 @@
 # JAiRouter
 
+<!-- 版本信息 -->
+> **文档版本**: 1.0.5  
+> **最后更新**: 2026-09-28  
+> **Git 提交**: 05931b92  
+> **作者**: XuanZe1998
+<!-- /版本信息 -->
+
+
+
 <p align="center">
   <img src="logo/JAiRouterLogo.png" alt="JAiRouter Logo" width="400">
 </p>

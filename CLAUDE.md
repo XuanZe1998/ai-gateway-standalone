@@ -1,5 +1,14 @@
 # CLAUDE.md — JAiRouter 项目文档
 
+<!-- 版本信息 -->
+> **文档版本**: 1.0.0  
+> **最后更新**: 2026-09-28  
+> **Git 提交**: 05931b92  
+> **作者**: XuanZe1998
+<!-- /版本信息 -->
+
+
+
 ## 项目概览
 
 JAiRouter（ModelRouter）：Spring Boot 3.5.5 + WebFlux + JDK17 的 **LLM API 聚合网关**，兼容 OpenAI API。
