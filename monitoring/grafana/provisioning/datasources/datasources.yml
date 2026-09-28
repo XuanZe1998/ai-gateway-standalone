@@ -1,0 +1,10 @@
+# 文件说明：datasources.yml：运行环境与组件参数配置。
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: false
+    editable: true

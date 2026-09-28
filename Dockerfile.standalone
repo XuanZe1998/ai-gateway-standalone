@@ -1,0 +1,26 @@
+# 文件说明：Dockerfile.standalone：容器镜像构建步骤与运行环境。
+FROM postgres:16-alpine
+LABEL org.opencontainers.image.title="AI Gateway Standalone"
+LABEL org.opencontainers.image.description="Standalone multi-model AI gateway extracted from the Nantong compute platform"
+
+USER root
+RUN apk add --no-cache openjdk17-jre-headless curl \
+    && addgroup -S -g 10010 gateway \
+    && adduser -S -D -u 10010 -G gateway -h /app gateway
+
+WORKDIR /app
+RUN mkdir -p /app/config /app/config-store /app/data /app/logs \
+    && chown -R gateway:gateway /app
+
+COPY target/ai-gateway-standalone-*.jar /app/app.jar
+RUN chown gateway:gateway /app/app.jar
+
+USER gateway
+EXPOSE 8080
+ENV SPRING_PROFILES_ACTIVE=standalone
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+
+HEALTHCHECK --interval=20s --timeout=5s --start-period=60s --retries=5 \
+  CMD curl --fail --silent http://localhost:8080/actuator/health || exit 1
+
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]

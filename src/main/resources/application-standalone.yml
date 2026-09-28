@@ -1,0 +1,126 @@
+# AI Gateway standalone profile
+# This profile intentionally disables all Nantong compute-platform synchronization.
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  # Local/Compose databases are managed by Hibernate for developer convenience.
+  # Production cluster deployments override this with FLYWAY_ENABLED=true.
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+  datasource:
+    url: ${PG_JDBC_URL:jdbc:postgresql://${PG_HOST:localhost}:${PG_PORT:5432}/${PG_DB:ai_gateway}?currentSchema=${PG_SCHEMA:public}&sslmode=${PG_SSLMODE:disable}&stringtype=unspecified}
+    username: ${PG_USER:ai_gateway}
+    password: ${PG_PASSWORD:ai_gateway}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${PG_POOL_MAX:10}
+      minimum-idle: ${PG_POOL_MIN:2}
+      connection-timeout: 30000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  sql:
+    init:
+      mode: never
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+  api-docs:
+    path: /v3/api-docs
+  packages-to-scan: org.unreal.modelrouter
+  show-actuator: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.unreal.modelrouter: INFO
+  file:
+    name: ${LOG_FILE:logs/ai-gateway.log}
+
+store:
+  type: jpa
+  path: ${CONFIG_STORE_PATH:./config-store}
+  migration:
+    enabled: false
+  security-migration:
+    enabled: false
+
+jairouter:
+  # Standalone boundary: do not read ai_model/ai_channel/ai_api_key from the Nantong platform.
+  platform:
+    enabled: false
+
+  security:
+    enabled: true
+    jwt:
+      enabled: true
+      secret: "${JWT_SECRET:standalone-jwt-secret-change-me-32-characters}"
+      issuer: "ai-gateway-standalone"
+      expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
+      refresh-expiration-days: ${JWT_REFRESH_EXPIRATION_DAYS:7}
+      persistence:
+        enabled: true
+        primary-storage: jpa
+        fallback-storage: memory
+        redis:
+          enabled: false
+      blacklist:
+        persistence:
+          enabled: true
+          primary-storage: jpa
+        redis:
+          enabled: false
+      accounts:
+        - username: "${INITIAL_ADMIN_USERNAME:admin}"
+          password: "{noop}${INITIAL_ADMIN_PASSWORD:admin123}"
+          roles: ["ADMIN", "USER", "READ", "WRITE"]
+          enabled: true
+
+    api-key:
+      enabled: true
+      header-name: "X-API-Key"
+      default-expiration-days: 3650
+      cache-enabled: true
+      cache-expiration-seconds: 3600
+      keys:
+        - key-id: "standalone-default"
+          key-value: "${GATEWAY_API_KEY:sk-local-development-key}"
+          key-prefix: "sk-"
+          description: "Standalone bootstrap API key"
+          permissions: ["ADMIN", "USER", "READ", "WRITE"]
+          enabled: true
+
+  persistence:
+    redis:
+      enabled: false
+    file:
+      enabled: true
+      path: ${STATE_STORE_PATH:./data/state}
+
+  billing:
+    notification:
+      enabled: false

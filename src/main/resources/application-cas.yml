@@ -1,0 +1,6 @@
+# Optional profile overlay for a CAS-enabled deployment.
+# Administrator accounts may be supplied externally; CAS users otherwise receive USER.
+spring:
+  config:
+    import:
+      - classpath:config/auth/campus-auth.yml

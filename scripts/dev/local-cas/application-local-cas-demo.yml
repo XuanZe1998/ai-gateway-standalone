@@ -1,0 +1,72 @@
+# Loaded explicitly by the demo launcher; never imported by production profiles.
+server:
+  address: 127.0.0.1
+  port: 39444
+  ssl:
+    enabled: true
+    key-store: ${DEMO_KEYSTORE}
+    key-store-type: PKCS12
+    key-store-password: ${DEMO_TLS_PASSWORD}
+  reactive:
+    session:
+      cookie:
+        name: JAIROUTER_SESSION
+        secure: true
+        http-only: true
+        same-site: lax
+        path: /
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:39445/cas_demo?stringtype=unspecified
+    username: cas_demo
+    password: ${DEMO_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: false
+  session:
+    store-type: none
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.session.SessionAutoConfiguration
+  data:
+    redis:
+      repositories:
+        enabled: false
+jairouter:
+  campus-auth:
+    enabled: true
+    cas-base-url: https://localhost:39443/cas/
+    public-base-url: https://localhost:39444
+    cookie-secure: true
+    admin-accounts: []
+    emergency-login:
+      enabled: false
+  teacher-access:
+    enabled: true
+    require-client-certificate: false
+    issuer: https://localhost:39444
+    public-base-url: https://localhost:39444
+    token-secret: ${DEMO_TEACHER_SECRET}
+  scheduling:
+    enabled: false
+  security:
+    jwt:
+      secret: ${DEMO_JWT_SECRET}
+      accounts:
+        - username: demo_emergency
+          password: "{noop}${DEMO_ADMIN_PASSWORD}"
+          roles: [ADMIN]
+          enabled: false
+    api-key:
+      keys: []
+logging:
+  file:
+    name: ${DEMO_LOG_FILE}
+  level:
+    root: WARN
+    org.unreal.modelrouter: INFO
+management:
+  health:
+    redis:
+      enabled: false

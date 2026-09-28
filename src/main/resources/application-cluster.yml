@@ -1,0 +1,87 @@
+# Shared settings for horizontally scaled gateway replicas.
+server:
+  shutdown: graceful
+  forward-headers-strategy: framework
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: ${SHUTDOWN_TIMEOUT:60s}
+  datasource:
+    hikari:
+      maximum-pool-size: ${PG_POOL_MAX:15}
+      minimum-idle: ${PG_POOL_MIN:3}
+  jpa:
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    locations: classpath:db/migration/postgresql
+    baseline-on-migrate: true
+    baseline-version: 8
+    baseline-description: pre-flyway-2.6.11
+    validate-on-migrate: true
+    clean-disabled: true
+    table: flyway_schema_history
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+      timeout: ${REDIS_TIMEOUT:2s}
+
+store:
+  # Cluster replicas must share the same source of truth; never use local file storage here.
+  type: jpa
+
+jairouter:
+  cluster:
+    enabled: true
+    instance-id: ${GATEWAY_INSTANCE_ID:${HOSTNAME:unknown}}
+    config-sync:
+      enabled: true
+      interval-ms: ${CONFIG_SYNC_INTERVAL_MS:3000}
+    rate-limit:
+      enabled: ${DISTRIBUTED_RATE_LIMIT_ENABLED:true}
+      fail-open: ${DISTRIBUTED_RATE_LIMIT_FAIL_OPEN:false}
+      timeout-ms: ${DISTRIBUTED_RATE_LIMIT_TIMEOUT_MS:250}
+      key-prefix: ${DISTRIBUTED_RATE_LIMIT_KEY_PREFIX:jairouter:rate-limit:}
+  scheduling:
+    # API replicas keep this false. Run exactly one dedicated worker with true.
+    enabled: ${SCHEDULING_ENABLED:false}
+  persistence:
+    redis:
+      enabled: true
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      password: ${REDIS_PASSWORD:}
+      timeout: 3000
+      ttl-days: 7
+    file:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
+      group:
+        readiness:
+          include: readinessState,db,redis
+        liveness:
+          include: livenessState,ping
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+    db:
+      enabled: true
+    redis:
+      enabled: true

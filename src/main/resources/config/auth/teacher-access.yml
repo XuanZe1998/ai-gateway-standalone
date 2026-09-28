@@ -1,0 +1,23 @@
+# CAS 教师门户、受管设备与短期专属访问令牌
+jairouter:
+  teacher-access:
+    enabled: ${TEACHER_ACCESS_ENABLED:false}
+    issuer: ${TEACHER_TOKEN_ISSUER:https://ai.ntit.edu.cn}
+    audience: ${TEACHER_TOKEN_AUDIENCE:ai-gateway}
+    public-base-url: ${TEACHER_PUBLIC_BASE_URL:https://ai.ntit.edu.cn}
+    token-secret: ${TEACHER_TOKEN_SECRET:}
+    access-token-ttl: ${TEACHER_ACCESS_TOKEN_TTL:5m}
+    require-client-certificate: ${TEACHER_REQUIRE_CLIENT_CERTIFICATE:true}
+    max-devices-per-teacher: ${TEACHER_MAX_DEVICES:2}
+    default-permissions:
+      - USER
+      - READ
+      - WRITE
+      - CHAT
+      - EMBEDDING
+      - RERANK
+      - TTS
+      - STT
+      - IMGGEN
+      - IMGEDIT
+      - VIDGEN

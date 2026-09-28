@@ -1,0 +1,100 @@
+# 文件说明：docker-compose.yml：容器编排配置，定义相应部署模式的服务与依赖。
+name: ai-gateway-standalone
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-gateway-postgres
+    environment:
+      POSTGRES_DB: ${PG_DB:-ai_gateway}
+      POSTGRES_USER: ${PG_USER:-ai_gateway}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-ai_gateway}
+    ports:
+      - "127.0.0.1:${PG_EXPOSE_PORT:-35433}:5432"
+    volumes:
+      - gateway-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    networks: [gateway-network]
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.standalone
+    image: ai-gateway-standalone:local
+    container_name: ai-gateway-standalone
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: standalone
+      SERVER_PORT: 8080
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_DB: ${PG_DB:-ai_gateway}
+      PG_SCHEMA: public
+      PG_USER: ${PG_USER:-ai_gateway}
+      PG_PASSWORD: ${PG_PASSWORD:-ai_gateway}
+      JWT_SECRET: ${JWT_SECRET:-standalone-jwt-secret-change-me-32-characters}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-60}
+      JWT_REFRESH_EXPIRATION_DAYS: ${JWT_REFRESH_EXPIRATION_DAYS:-7}
+      INITIAL_ADMIN_USERNAME: ${INITIAL_ADMIN_USERNAME:-admin}
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD:-admin123}
+      GATEWAY_API_KEY: ${GATEWAY_API_KEY:-sk-local-development-key}
+      CAMPUS_AUTH_ENABLED: ${CAMPUS_AUTH_ENABLED:-false}
+      CAMPUS_CAS_BASE_URL: ${CAMPUS_CAS_BASE_URL:-https://cas.ntit.edu.cn/cas/}
+      CAMPUS_PUBLIC_BASE_URL: ${CAMPUS_PUBLIC_BASE_URL:-}
+      CAMPUS_SESSION_TIMEOUT: ${CAMPUS_SESSION_TIMEOUT:-30m}
+      CAMPUS_SESSION_STORE_TYPE: ${CAMPUS_SESSION_STORE_TYPE:-none}
+      SPRING_AUTOCONFIGURE_EXCLUDE: ${SPRING_AUTOCONFIGURE_EXCLUDE:-}
+      CAMPUS_SESSION_NAMESPACE: ${CAMPUS_SESSION_NAMESPACE:-jairouter:session}
+      CAMPUS_SESSION_COOKIE_SECURE: ${CAMPUS_SESSION_COOKIE_SECURE:-true}
+      CAMPUS_ADMIN_ACCOUNTS: ${CAMPUS_ADMIN_ACCOUNTS:-}
+      CAMPUS_DEFAULT_ADMIN: ${CAMPUS_DEFAULT_ADMIN:-false}
+      CAMPUS_UNRESTRICTED_ACCESS: ${CAMPUS_UNRESTRICTED_ACCESS:-false}
+      EMERGENCY_LOGIN_ENABLED: ${EMERGENCY_LOGIN_ENABLED:-false}
+      EMERGENCY_LOGIN_ALLOWED_CIDRS: ${EMERGENCY_LOGIN_ALLOWED_CIDRS:-127.0.0.1/32,::1/128}
+      EMERGENCY_LOGIN_TRUSTED_PROXY_CIDRS: ${EMERGENCY_LOGIN_TRUSTED_PROXY_CIDRS:-}
+      TEACHER_ACCESS_ENABLED: ${TEACHER_ACCESS_ENABLED:-false}
+      TEACHER_REQUIRE_CLIENT_CERTIFICATE: ${TEACHER_REQUIRE_CLIENT_CERTIFICATE:-true}
+      TEACHER_TOKEN_SECRET: ${TEACHER_TOKEN_SECRET:-}
+      TEACHER_TOKEN_ISSUER: ${TEACHER_TOKEN_ISSUER:-https://ai.ntit.edu.cn}
+      TEACHER_TOKEN_AUDIENCE: ${TEACHER_TOKEN_AUDIENCE:-ai-gateway}
+      TEACHER_PUBLIC_BASE_URL: ${TEACHER_PUBLIC_BASE_URL:-https://ai.ntit.edu.cn}
+      TEACHER_ACCESS_TOKEN_TTL: ${TEACHER_ACCESS_TOKEN_TTL:-5m}
+      TEACHER_MAX_DEVICES: ${TEACHER_MAX_DEVICES:-2}
+      LOG_FILE: /app/logs/ai-gateway.log
+      CONFIG_STORE_PATH: /app/config-store
+      STATE_STORE_PATH: /app/data/state
+      TZ: ${TZ:-Asia/Shanghai}
+    ports:
+      - "${GATEWAY_BIND_IP:-127.0.0.1}:${GATEWAY_PORT:-38008}:8080"
+    volumes:
+      - ./config-external:/app/config:ro
+      - gateway-config-store:/app/config-store
+      - gateway-state-data:/app/data
+      - ./logs:/app/logs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+    networks: [gateway-network]
+
+volumes:
+  gateway-postgres-data:
+  gateway-config-store:
+  gateway-state-data:
+
+networks:
+  gateway-network:
+    driver: bridge
+

@@ -1,0 +1,17 @@
+# 免费额度配置
+jairouter:
+  billing:
+    free-quota:
+      enabled: true
+      default-total: 1000000
+      default-tier: STUDENT
+      role-totals:
+        STUDENT: ${STUDENT_MONTHLY_TOKEN_QUOTA:1000000}
+        STAFF: ${STAFF_MONTHLY_TOKEN_QUOTA:3000000}
+        TEACHER: ${TEACHER_MONTHLY_TOKEN_QUOTA:5000000}
+      reset-cron: ${QUOTA_RESET_CRON:0 5 0 1 * *}
+      time-zone: ${QUOTA_TIME_ZONE:Asia/Shanghai}
+      service-types:
+        - chat
+        - embedding
+        - rerank

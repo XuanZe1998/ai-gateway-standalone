@@ -1,0 +1,113 @@
+# ========================================
+# 测试环境配置（v2.8.x）
+# ========================================
+# 此文件包含测试环境所有差异化配置
+# 启动方式：java -jar app.jar --spring.profiles.active=test
+
+# ========================================
+# 服务器配置
+# ========================================
+server:
+  port: 38008
+
+# ========================================
+# Swagger API 文档（测试环境开启）
+# ========================================
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+  api-docs:
+    path: /v3/api-docs
+  packages-to-scan: org.unreal.modelrouter.controller
+  show-actuator: true
+  cache:
+    disabled: true
+
+# ========================================
+# 数据库配置（测试环境）
+# ========================================
+# 覆盖 postgresql.yml 中的默认值
+spring:
+  datasource:
+    url: jdbc:postgresql://{ip}:35432/postgres?currentSchema=sldd-dev&sslmode=disable&stringtype=unspecified
+    username: postgres
+    password: {pwd}
+
+# ========================================
+# 日志配置（测试环境：适度详细）
+# ========================================
+logging:
+  level:
+    root: INFO
+    org.unreal.modelrouter: DEBUG
+    org.springframework: WARN
+  file:
+    name: logs/jairouter-test.log
+
+# ========================================
+# 管理端点（测试环境适度开放）
+# ========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    jwt-tokens:
+      enabled: true
+    jwt-blacklist:
+      enabled: true
+    jwt-persistence-health:
+      enabled: true
+
+# ========================================
+# WebClient 配置（测试环境）
+# ========================================
+webclient:
+  connection-timeout: 5s
+  read-timeout: 15s
+  write-timeout: 15s
+
+# ========================================
+# 安全 + 余额预警通知（测试环境）
+# ========================================
+jairouter:
+  security:
+    enabled: true
+
+    jwt:
+      enabled: true
+      secret: "test-secret-key-for-testing-env-32-characters"
+
+      accounts:
+        - username: "admin"
+          password: "{noop}test123"
+          roles: ["ADMIN", "USER"]
+          enabled: true
+        - username: "user"
+          password: "{noop}test456"
+          roles: ["USER"]
+          enabled: true
+
+    api-key:
+      enabled: true
+
+    audit:
+      log-level: "INFO"
+      include-request-body: true
+      include-response-body: false
+
+    sanitization:
+      response:
+        enabled: false
+
+  billing:
+    notification:
+      enabled: true
+      compute-platform-base-url: http://{ip}:38002
+      alert-cooldown-hours: 1

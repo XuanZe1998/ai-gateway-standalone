@@ -1,0 +1,389 @@
+// 文件说明：NonStreamingRequestProcessor：负责模型路由与请求转发中的上游协议适配。
+package org.unreal.modelrouter.router.adapter.request;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.reactive.ClientHttpRequest;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
+
+import org.unreal.modelrouter.router.model.ModelRouterProperties.ModelInstance;
+import org.unreal.modelrouter.router.model.ModelServiceRegistry.ServiceType;
+import org.unreal.modelrouter.router.adapter.builder.RequestBuilder;
+import org.unreal.modelrouter.router.adapter.handler.MultipartRequestHandler;
+import org.unreal.modelrouter.router.adapter.metrics.AdapterMetricsRecorder;
+import org.unreal.modelrouter.common.controller.response.RouterResponse;
+import org.unreal.modelrouter.common.exception.DownstreamServiceException;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
+
+/**
+ * 非流式请求处理器 - v2.26.6
+ *
+ * 从 BaseAdapter 提取的非流式请求处理逻辑，支持：
+ * 1. 请求转换（transformRequest）
+ * 2. 响应转换（transformResponse）
+ * 3. RouterResponse 包装
+ * 4. 二进制响应处理
+ * 5. 指标记录
+ *
+ * @since v2.5.9
+ */
+import org.springframework.stereotype.Component;
+
+@Component
+public class NonStreamingRequestProcessor {
+
+    private static final Logger logger = LoggerFactory.getLogger(NonStreamingRequestProcessor.class);
+
+    private final ObjectMapper objectMapper;
+    private final RequestBuilder requestBuilder;
+    private final AdapterMetricsRecorder metricsRecorder;
+
+    public NonStreamingRequestProcessor(
+            final ObjectMapper objectMapper,
+            final RequestBuilder requestBuilder,
+            final AdapterMetricsRecorder metricsRecorder) {
+        this.objectMapper = objectMapper;
+        this.requestBuilder = requestBuilder;
+        this.metricsRecorder = metricsRecorder;
+    }
+
+    /**
+     * 处理非流式请求（统一入口）
+     *
+     * @param request            原始请求对象
+     * @param authorization      授权头
+     * @param client             WebClient 实例
+     * @param path               请求路径
+     * @param selectedInstance   选中的实例
+     * @param serviceType        服务类型
+     * @param responseType       响应类型（String.class 或 byte[].class）
+     * @param adapterType        适配器类型
+     * @param transformRequestFn 请求转换函数
+     * @param transformResponseFn 响应转换函数
+     * @param multipartHandler   Multipart 请求处理器
+     * @return 响应实体
+     */
+    public <T> Mono<? extends ResponseEntity<?>> processRequest(
+            final T request,
+            final String authorization,
+            final WebClient client,
+            final String path,
+            final ModelInstance selectedInstance,
+            final ServiceType serviceType,
+            final Class<?> responseType,
+            final String adapterType,
+            final Function<Object, Object> transformRequestFn,
+            final Function<Object, Object> transformResponseFn,
+            final MultipartRequestHandler multipartHandler) {
+
+        // 1. 请求转换
+        Object transformedRequest = transformRequestFn.apply(request);
+        String instanceName = selectedInstance.getName();
+        long requestStartTime = System.currentTimeMillis();
+
+        logger.debug("发送请求到下游服务: instance={}, path={}, auth={}",
+                instanceName, path, authorization != null ? "***" : "null");
+
+        // 2. 实例必须配置下游服务的 Authorization，不允许回退到用户认证
+        //    用户的 Authorization 是认证网关用的，下游服务需要自己的 API Key
+        String effectiveAuth = null;
+        Map<String, String> instanceHeaders = selectedInstance.getHeaders();
+        if (instanceHeaders != null && instanceHeaders.containsKey("Authorization")) {
+            effectiveAuth = instanceHeaders.get("Authorization");
+        }
+
+        if (effectiveAuth == null || effectiveAuth.isBlank()) {
+            logger.warn("实例 {} 未配置下游服务 Authorization，下游可能返回 401", instanceName);
+        }
+
+        // 3. 构建请求
+        WebClient.RequestBodySpec requestSpec = client.post().uri(path);
+        if (effectiveAuth != null && !effectiveAuth.isBlank()) {
+            requestSpec = requestSpec.header("Authorization", effectiveAuth);
+        }
+
+        // 4. 配置请求头（通过 MultipartRequestHandler，排除已处理的 Authorization）
+        requestSpec = multipartHandler.configureRequestHeadersWithoutAuth(requestSpec, request, selectedInstance);
+
+        // 4. 根据响应类型处理
+        if (responseType == byte[].class) {
+            return processBinaryResponse(requestSpec, transformedRequest, path,
+                    instanceName, adapterType, serviceType, requestStartTime, multipartHandler, selectedInstance);
+        } else {
+            return processJsonResponse(requestSpec, transformedRequest, instanceName,
+                    adapterType, serviceType, requestStartTime, path, transformResponseFn, selectedInstance);
+        }
+    }
+
+    /**
+     * 处理二进制响应（TTS/STT 等）
+     */
+    private Mono<? extends ResponseEntity<?>> processBinaryResponse(
+            final WebClient.RequestBodySpec requestSpec,
+            final Object transformedRequest,
+            final String path,
+            final String instanceName,
+            final String adapterType,
+            final ServiceType serviceType,
+            final long requestStartTime,
+            final MultipartRequestHandler multipartHandler,
+            final ModelInstance selectedInstance) {
+
+        BodyInserter<?, ? super ClientHttpRequest> requestBody = multipartHandler.createRequestBody(transformedRequest);
+
+        return requestSpec
+                .body(requestBody)
+                .exchangeToMono(clientResponse -> {
+                    // 处理 5xx 服务器错误
+                    if (clientResponse.statusCode().is5xxServerError()) {
+                        return Mono.error(new ResponseStatusException(clientResponse.statusCode()));
+                    }
+
+                    // 处理 4xx 客户端错误
+                    if (clientResponse.statusCode().is4xxClientError()) {
+                        handleClientError(clientResponse.statusCode(), instanceName, path);
+                        return Mono.error(new ResponseStatusException(clientResponse.statusCode()));
+                    }
+
+                    // 获取响应体和响应头
+                    return clientResponse.bodyToMono(byte[].class)
+                            .map(body -> buildBinaryResponseEntity(clientResponse, body))
+                            .switchIfEmpty(Mono.fromSupplier(() -> buildEmptyResponseEntity(clientResponse)));
+                })
+                .doOnSuccess(responseEntity -> {
+                    if (metricsRecorder != null && responseEntity != null) {
+                        long responseSize = responseEntity.getBody() != null
+                                ? ((byte[]) responseEntity.getBody()).length : 0;
+                        metricsRecorder.recordResponseTime(serviceType, "POST",
+                                System.currentTimeMillis() - requestStartTime, "200");
+                    }
+                })
+                .doOnError(throwable -> {
+                    if (metricsRecorder != null) {
+                        metricsRecorder.recordError(adapterType, instanceName,
+                                throwable.getClass().getSimpleName(), throwable,
+                                System.currentTimeMillis() - requestStartTime, serviceType);
+                    }
+                })
+                .timeout(getTimeoutDuration(selectedInstance))
+                .onErrorResume(TimeoutException.class, e -> {
+                    logger.error("请求超时: instance={}, timeout={}s", instanceName,
+                            selectedInstance != null ? selectedInstance.getTimeout() : "N/A");
+                    return Mono.error(new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT,
+                            "上游服务响应超时，请稍后重试"));
+                });
+    }
+
+    /**
+     * 处理 JSON 响应
+     */
+    private Mono<? extends ResponseEntity<?>> processJsonResponse(
+            final WebClient.RequestBodySpec requestSpec,
+            final Object transformedRequest,
+            final String instanceName,
+            final String adapterType,
+            final ServiceType serviceType,
+            final long requestStartTime,
+            final String path,
+            final Function<Object, Object> transformResponseFn,
+            final ModelInstance selectedInstance) {
+
+        return requestSpec
+                .bodyValue(transformedRequest)
+                .retrieve()
+                .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> {
+                    logger.error("下游服务5xx错误: instance={}, path={}, status={}",
+                            instanceName, path, clientResponse.statusCode());
+                    return Mono.error(new ResponseStatusException(clientResponse.statusCode()));
+                })
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
+                    return handle4xxError(clientResponse, instanceName, path);
+                })
+                .toEntity(String.class)
+                .flatMap(responseEntity -> {
+                    if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+                        String bodyStr = responseEntity.getBody() != null ? responseEntity.getBody() : "";
+                        return Mono.<ResponseEntity<?>>error(new ResponseStatusException(
+                                responseEntity.getStatusCode(), "下游服务异常: " + bodyStr));
+                    }
+
+                    try {
+                        String bodyStr = responseEntity.getBody();
+                        Object downstreamData;
+
+                        if (bodyStr == null || bodyStr.isEmpty()) {
+                            downstreamData = null;
+                        } else {
+                            downstreamData = objectMapper.readValue(bodyStr, Object.class);
+                        }
+
+                        // 响应转换
+                        Object transformedData = transformResponseFn.apply(downstreamData);
+
+                        // 包装 RouterResponse
+                        RouterResponse<Object> finalResponse = RouterResponse.success(transformedData, "请求成功");
+
+                        return Mono.just(
+                                ResponseEntity.status(responseEntity.getStatusCode())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .body(finalResponse));
+
+                    } catch (JsonProcessingException e) {
+                        logger.error("无法解析下游服务的响应体: {}", responseEntity.getBody(), e);
+                        return Mono.error(new ResponseStatusException(
+                                HttpStatus.INTERNAL_SERVER_ERROR, "无法解析下游服务响应"));
+                    }
+                })
+                .doOnSuccess(responseEntity -> {
+                    if (metricsRecorder != null && responseEntity != null) {
+                        String bodyStr = responseEntity.getBody() != null
+                                ? responseEntity.getBody().toString() : "";
+                        metricsRecorder.recordRequestSize(serviceType,
+                                transformedRequest.toString().getBytes().length, bodyStr.getBytes().length);
+                        metricsRecorder.recordResponseTime(serviceType, "POST",
+                                System.currentTimeMillis() - requestStartTime, responseEntity.getStatusCode().toString());
+                    }
+                })
+                .doOnError(throwable -> {
+                    if (metricsRecorder != null) {
+                        metricsRecorder.recordError(adapterType, instanceName,
+                                throwable.getClass().getSimpleName(), throwable,
+                                System.currentTimeMillis() - requestStartTime, serviceType);
+                    }
+                })
+                .timeout(getTimeoutDuration(selectedInstance))
+                .onErrorResume(TimeoutException.class, e -> {
+                    logger.error("请求超时: instance={}, timeout={}s", instanceName,
+                            selectedInstance != null ? selectedInstance.getTimeout() : "N/A");
+                    return Mono.error(new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT,
+                            "上游服务响应超时，请稍后重试"));
+                });
+    }
+
+    /**
+     * 处理 4xx 错误
+     */
+    private Mono<Throwable> handle4xxError(final ClientResponse clientResponse,
+                                            final String instanceName,
+                                            final String path) {
+        HttpStatusCode statusCode = clientResponse.statusCode();
+
+        if (statusCode.value() == 401) {
+            logger.error("下游服务认证失败 (401): instance={}, path={}", instanceName, path);
+            return Mono.error(new DownstreamServiceException(
+                    "下游服务认证失败，请检查下游服务的认证配置", HttpStatus.valueOf(401)));
+        } else if (statusCode.value() == 400) {
+            logger.error("下游服务请求错误 (400): instance={}, path={}", instanceName, path);
+            return Mono.error(new DownstreamServiceException(
+                    "下游服务请求参数错误，请检查请求内容", HttpStatus.valueOf(400)));
+        } else if (statusCode.value() == 503) {
+            logger.error("下游服务不可用 (503): instance={}, path={}", instanceName, path);
+            return Mono.error(new DownstreamServiceException(
+                    "下游服务暂时不可用，请稍后重试", HttpStatus.valueOf(503)));
+        }
+
+        logger.error("下游服务4xx错误: instance={}, path={}, status={}",
+                instanceName, path, statusCode);
+        return Mono.error(new ResponseStatusException(statusCode));
+    }
+
+    /**
+     * 处理客户端错误（记录日志）
+     */
+    private void handleClientError(final HttpStatusCode statusCode,
+                                    final String instanceName,
+                                    final String path) {
+        if (statusCode.value() == 401) {
+            logger.error("下游服务认证失败 (401): instance={}, path={}", instanceName, path);
+        } else if (statusCode.value() == 400) {
+            logger.error("下游服务请求错误 (400): instance={}, path={}", instanceName, path);
+        } else if (statusCode.value() == 503) {
+            logger.error("下游服务不可用 (503): instance={}, path={}", instanceName, path);
+        }
+    }
+
+    /**
+     * 构建二进制响应实体
+     */
+    private ResponseEntity<byte[]> buildBinaryResponseEntity(final ClientResponse clientResponse, final byte[] body) {
+        ResponseEntity.BodyBuilder responseBuilder = clientResponse.statusCode().is2xxSuccessful()
+                ? ResponseEntity.ok()
+                : ResponseEntity.status(clientResponse.statusCode());
+
+        HttpHeaders downstreamHeaders = clientResponse.headers().asHttpHeaders();
+
+        // 复制重要响应头
+        if (downstreamHeaders.getContentType() != null) {
+            responseBuilder.contentType(downstreamHeaders.getContentType());
+        }
+        if (downstreamHeaders.getContentLength() > 0) {
+            responseBuilder.contentLength(downstreamHeaders.getContentLength());
+        }
+
+        // 复制 Content-Disposition（文件下载）
+        String contentDisposition = downstreamHeaders.getFirst("Content-Disposition");
+        if (contentDisposition != null) {
+            responseBuilder.header("Content-Disposition", contentDisposition);
+        }
+
+        // 复制缓存相关头
+        String cacheControl = downstreamHeaders.getFirst("Cache-Control");
+        if (cacheControl != null) {
+            responseBuilder.header("Cache-Control", cacheControl);
+        }
+        String etag = downstreamHeaders.getFirst("ETag");
+        if (etag != null) {
+            responseBuilder.header("ETag", etag);
+        }
+        String lastModified = downstreamHeaders.getFirst("Last-Modified");
+        if (lastModified != null) {
+            responseBuilder.header("Last-Modified", lastModified);
+        }
+
+        return responseBuilder.body(body);
+    }
+
+    /**
+     * 构建空响应实体
+     */
+    private ResponseEntity<byte[]> buildEmptyResponseEntity(final ClientResponse clientResponse) {
+        ResponseEntity.BodyBuilder responseBuilder = clientResponse.statusCode().is2xxSuccessful()
+                ? ResponseEntity.ok()
+                : ResponseEntity.status(clientResponse.statusCode());
+
+        HttpHeaders downstreamHeaders = clientResponse.headers().asHttpHeaders();
+        if (downstreamHeaders.getContentType() != null) {
+            responseBuilder.contentType(downstreamHeaders.getContentType());
+        }
+
+        return responseBuilder.build();
+    }
+
+    /**
+     * 获取请求超时时间。
+     * 优先使用渠道配置的超时时间（秒），未配置则默认 120 秒。
+     */
+    private Duration getTimeoutDuration(ModelInstance instance) {
+        if (instance != null && instance.getTimeout() != null && instance.getTimeout() > 0) {
+            logger.debug("模型[{}] 使用渠道超时: {}s", instance.getName(), instance.getTimeout());
+            return Duration.ofSeconds(instance.getTimeout());
+        }
+        logger.debug("模型[{}] 使用默认超时: 120s", instance != null ? instance.getName() : "unknown");
+        return Duration.ofSeconds(120);
+    }
+}

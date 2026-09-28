@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true">
+
+    <!-- 注册自定义 traceId/spanId 转换器 -->
+    <conversionRule conversionWord="traceId" converterClass="org.unreal.modelrouter.monitor.tracing.logger.TraceIdConverter" />
+    <conversionRule conversionWord="spanId" converterClass="org.unreal.modelrouter.monitor.tracing.logger.SpanIdConverter" />
+
+    <!-- 日志路径 -->
+    <property name="LOG_PATH" value="logs"/>
+    <property name="APP_NAME" value="jairouter"/>
+
+    <!-- 日志格式 -->
+    <property name="CONSOLE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%traceId] %logger{36} - %msg%n"/>
+    <property name="FILE_PATTERN"    value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%traceId] %logger{50} - %msg%n"/>
+
+    <!-- 第三方日志降噪 -->
+    <logger name="javax.activation" level="WARN"/>
+    <logger name="ch.qos.logback" level="WARN"/>
+    <logger name="com.zaxxer" level="WARN"/>
+    <logger name="io.netty" level="INFO"/>
+    <logger name="reactor.netty" level="INFO"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.security" level="INFO"/>
+    <logger name="org.reflections" level="ERROR"/>
+
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 合并日志：info/error 统一输出到单个日志文件 -->
+    <appender name="ROLL_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/zip/${APP_NAME}-%d{yyyy-MM-dd}.zip</fileNamePattern>
+            <maxHistory>15</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 异步包装：防止文件写入阻塞 Netty 线程 -->
+    <appender name="ASYNC_ALL" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ROLL_ALL"/>
+        <queueSize>2048</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <!-- ==================== 环境配置 ==================== -->
+
+    <!-- dev 环境：控制台 + 文件，DEBUG 级别 -->
+    <springProfile name="dev,default">
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC_ALL"/>
+        </root>
+        <logger name="org.unreal.modelrouter" level="DEBUG"/>
+    </springProfile>
+
+    <!-- test 环境：控制台 + 文件，INFO 级别 -->
+    <springProfile name="test">
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC_ALL"/>
+        </root>
+        <logger name="org.unreal.modelrouter" level="INFO"/>
+    </springProfile>
+
+    <!-- 生产和独立/集群环境：控制台 + 文件，WARN 级别，业务日志保持 INFO -->
+    <springProfile name="prod,standalone,cluster,oidc,redis-sentinel">
+        <root level="WARN">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC_ALL"/>
+        </root>
+        <logger name="org.unreal.modelrouter" level="INFO"/>
+    </springProfile>
+
+</configuration>

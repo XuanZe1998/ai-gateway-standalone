@@ -1,0 +1,110 @@
+# ========================================
+# 生产环境配置（v2.8.x 精简版）
+# ========================================
+# 此文件包含生产环境所有差异化配置
+# 启动方式：java -jar app.jar --spring.profiles.active=prod
+# ⚠️ 带尖括号的占位符需替换为实际值后再部署
+
+# ========================================
+# 服务器配置
+# ========================================
+server:
+  port: 38008
+
+# ========================================
+# 数据库配置（生产环境）
+# ========================================
+# 覆盖 postgresql.yml 中的默认值
+spring:
+  datasource:
+    url: jdbc:postgresql://{ip}:35432/postgres?currentSchema=sldd-dev&sslmode=disable&stringtype=unspecified
+    username: postgres
+    password: {pwd}
+
+# ========================================
+# 日志配置（生产环境最小化）
+# ========================================
+logging:
+  level:
+    root: WARN
+    org.unreal.modelrouter: WARN
+    org.springframework: ERROR
+  file:
+    name: logs/jairouter-prod.log
+
+# 存储配置（生产环境关闭自动迁移）
+store:
+  migration:
+    enabled: false
+  security-migration:
+    enabled: false
+
+# ========================================
+# 管理端点（生产环境最小开放）
+# ========================================
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+# ========================================
+# 安全 + 余额预警通知（生产环境）
+# ========================================
+jairouter:
+  security:
+    enabled: true
+
+    jwt:
+      enabled: false
+      secret: "prod-secret-key-for-testing-env-32-characters"
+      issuer: "jairouter-prod"
+
+      persistence:
+        enabled: false
+        redis:
+          enabled: false
+
+    api-key:
+      enabled: true
+      default-expiration-days: 365
+
+    audit:
+      log-level: "WARN"
+      include-request-body: false
+      include-response-body: false
+      retention-days: 90
+      alert-enabled: true
+      alert-thresholds:
+        auth-failures-per-minute: 5
+        suspicious-requests-per-minute: 10
+
+    sanitization:
+      response:
+        enabled: true
+        log-sanitization: false
+
+    performance:
+      authentication:
+        thread-pool-size: 20
+        timeout-ms: 3000
+      sanitization:
+        thread-pool-size: 10
+        streaming-threshold: 2097152
+      cache:
+        local:
+          api-key:
+            max-size: 10000
+          jwt-blacklist:
+            max-size: 100000
+
+  billing:
+    notification:
+      enabled: true
+      compute-platform-base-url: http://{ip}:38002
+      alert-cooldown-hours: 1

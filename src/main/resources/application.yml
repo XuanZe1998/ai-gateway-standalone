@@ -1,0 +1,133 @@
+# ========================================
+# JAiRouter 主配置文件（v2.8.x 模块化重构版）
+# ========================================
+# 此文件为模块化重构后的主配置文件
+# 通过导入各服务模块配置实现配置分离
+# 支持外部配置文件（/app/config/）
+
+spring:
+  config:
+    import:
+      
+      # ====== common 模块配置 ======
+      - classpath:config/common/server.yml
+      - classpath:config/common/webclient.yml
+      - classpath:config/common/logging.yml
+      
+      # ====== config-service 模块配置 ======
+      - classpath:config/config-service/core.yml
+      
+      # ====== router 模块配置 ======
+      - classpath:config/router/adapter.yml
+      - classpath:config/router/loadbalancer.yml
+      - classpath:config/router/ratelimit.yml
+      - classpath:config/router/circuitbreaker.yml
+      - classpath:config/router/fallback.yml
+      - classpath:config/router/services.yml
+      
+      # ====== auth 模块配置 ======
+      - classpath:config/auth/jwt.yml
+      - classpath:config/auth/api-key.yml
+      - classpath:config/auth/campus-auth.yml
+      - classpath:config/auth/teacher-access.yml
+      - classpath:config/auth/audit.yml
+      - classpath:config/auth/sanitization.yml
+      
+      # ====== monitor 模块配置 ======
+      - classpath:config/base/monitoring-base.yml
+      - classpath:config/monitor/slow-query-alerts.yml
+      - classpath:config/monitor/error-tracking.yml
+      - classpath:config/monitor/persistence-monitoring-base.yml
+      
+      # ====== tracing 模块配置 ======
+      - classpath:config/tracing/tracing-base.yml
+      
+      # ====== persistence 模块配置 ======
+      - classpath:config/persistence/postgresql.yml
+      - classpath:config/persistence/state-persistence-base.yml
+
+      # ====== billing 模块配置 ======
+      - classpath:config/billing/notification.yml
+      - classpath:config/billing/free-quota.yml
+      
+      # ====== 向后兼容配置（保留原有路径） ======
+      - classpath:config/base/server-base.yml
+      - classpath:config/security/security-base.yml
+      - classpath:config/security/persistence-base.yml
+      - classpath:config/security/audit-base.yml
+
+      # ====== 外部配置文件（最高优先级）======
+      # Docker 部署时挂载到 /app/config/
+      - optional:file:/app/config/application.yml
+      - optional:file:/app/config/auth/jwt.yml
+      - optional:file:/app/config/auth/campus-auth.yml
+      - optional:file:/app/config/auth/teacher-access.yml
+      - optional:file:/app/config/router/services.yml
+
+# ========================================
+# 配置模块说明（v2.8.x）
+# ========================================
+# 新模块化配置结构：
+#
+# common 模块（公共基础设施）:
+# - config/common/server.yml       # 服务器配置
+# - config/common/webclient.yml    # WebClient 配置
+# - config/common/logging.yml      # 日志配置
+#
+# config-service 模块（配置服务）:
+# - config/config-service/core.yml # ConfigurationService 配置
+#
+# router 模块（路由服务）:
+# - config/router/adapter.yml      # 适配器配置
+# - config/router/loadbalancer.yml # 负载均衡配置
+# - config/router/ratelimit.yml    # 限流配置
+# - config/router/circuitbreaker.yml # 熔断器配置
+# - config/router/fallback.yml     # 降级配置
+# - config/router/services.yml     # 服务实例配置
+#
+# auth 模块（认证服务）:
+# - config/auth/jwt.yml            # JWT 认证配置
+# - config/auth/api-key.yml        # API Key 配置
+# - config/auth/audit.yml          # 安全审计配置
+# - config/auth/sanitization.yml   # 数据脱敏配置
+#
+# monitor 模块（监控服务）:
+# - config/base/monitoring-base.yml
+# - config/monitoring/*.yml
+#
+# tracing 模块（链路追踪）:
+# - config/tracing/tracing-base.yml
+#
+# persistence 模块（持久化服务）:
+# - config/persistence/state-persistence-base.yml
+#
+# 向后兼容：
+# - config/base/server-base.yml    # 保留原有配置
+# - config/base/model-services-base.yml
+# - config/security/*.yml
+
+# ========================================
+# 配置加载优先级说明
+# ========================================
+# 配置加载优先级（高优先级覆盖低优先级）：
+# 1. 模块配置文件（最低优先级）
+# 2. 主配置文件 application.yml
+# 3. 环境配置文件 application-{profile}.yml
+# 4. 环境变量（最高优先级）
+#
+# 敏感配置项必须使用环境变量：
+# - JWT_SECRET: JWT 密钥（长度 >= 32 字符）
+# - INITIAL_ADMIN_PASSWORD: 管理员密码
+# - GPUSTACK_API_TOKEN: GPUStack API Token
+# - REDIS_PASSWORD: Redis 密码（如启用 Redis）
+
+# ========================================
+# 使用说明
+# ========================================
+# 1. 基础配置修改：编辑对应模块配置文件
+# 2. 环境差异配置：编辑对应的环境配置文件
+# 3. 敏感配置：使用环境变量注入
+#
+# 启动示例：
+# 开发环境：java -jar app.jar --spring.profiles.active=dev
+# 生产环境：java -jar app.jar --spring.profiles.active=prod -DJWT_SECRET=your-secret

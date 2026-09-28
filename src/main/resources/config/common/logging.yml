@@ -1,0 +1,9 @@
+# ========================================
+# 日志配置 (common 模块)
+# ========================================
+# 详细日志配置由 logback-spring.xml 管理，此处仅保留 Spring Boot 日志初始化级别
+
+logging:
+  level:
+    root: INFO
+    org.unreal.modelrouter: DEBUG

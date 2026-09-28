@@ -1,0 +1,79 @@
+# 学校 CAS 2.0 统一身份认证。当前策略：所有 CAS 用户默认获得 ADMIN。
+
+jairouter:
+
+  campus-auth:
+
+    enabled: ${CAMPUS_AUTH_ENABLED:false}
+
+    cas-base-url: ${CAMPUS_CAS_BASE_URL:https://cas.ntit.edu.cn/cas/}
+
+    public-base-url: ${CAMPUS_PUBLIC_BASE_URL:}
+
+    callback-path: /api/auth/cas/callback
+
+    session-timeout: ${CAMPUS_SESSION_TIMEOUT:30m}
+
+    state-ttl: ${CAMPUS_STATE_TTL:5m}
+
+    connect-timeout: ${CAMPUS_CONNECT_TIMEOUT:5s}
+
+    response-timeout: ${CAMPUS_RESPONSE_TIMEOUT:8s}
+
+    max-response-bytes: ${CAMPUS_MAX_RESPONSE_BYTES:262144}
+    cookie-secure: ${CAMPUS_SESSION_COOKIE_SECURE:true}
+
+    admin-accounts: ${CAMPUS_ADMIN_ACCOUNTS:}
+    # 临时开关：所有通过 CAS 的用户默认获得 ADMIN，关闭后仅白名单可获得 ADMIN。
+    default-admin: ${CAMPUS_DEFAULT_ADMIN:true}
+
+    # 临时放行 CAS 会话：跳过实名认证和余额检查、不扣本地余额；仍记录模型用量。
+    unrestricted-access: ${CAMPUS_UNRESTRICTED_ACCESS:false}
+
+    allowed-target-prefixes:
+
+      - /admin
+
+    emergency-login:
+
+      enabled: ${EMERGENCY_LOGIN_ENABLED:false}
+
+      allowed-cidrs: ${EMERGENCY_LOGIN_ALLOWED_CIDRS:127.0.0.1/32,::1/128}
+      # 仅当直连来源位于这些网段时才信任 X-Forwarded-For/X-Real-IP。
+      trusted-proxy-cidrs: ${EMERGENCY_LOGIN_TRUSTED_PROXY_CIDRS:}
+
+
+
+spring:
+
+  session:
+
+    store-type: ${CAMPUS_SESSION_STORE_TYPE:none}
+
+    timeout: ${CAMPUS_SESSION_TIMEOUT:30m}
+
+    redis:
+
+      namespace: ${CAMPUS_SESSION_NAMESPACE:jairouter:session}
+
+
+
+server:
+
+  reactive:
+
+    session:
+
+      cookie:
+
+        name: JAIROUTER_SESSION
+
+        http-only: true
+
+        secure: ${CAMPUS_SESSION_COOKIE_SECURE:true}
+
+        same-site: lax
+
+        path: /
+
+

@@ -1,0 +1,32 @@
+# Add this file to the standalone Compose stack after setting PUBLIC_DOMAIN.
+# Gateway and PostgreSQL stay bound to the host loopback interface.
+services:
+  gateway:
+    env_file:
+      - .env
+    environment:
+      CAMPUS_PUBLIC_BASE_URL: https://${PUBLIC_DOMAIN:?set PUBLIC_DOMAIN in .env}
+      CAMPUS_SESSION_COOKIE_SECURE: "true"
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+
+  https-proxy:
+    image: caddy:2-alpine
+    depends_on:
+      gateway:
+        condition: service_healthy
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:?set PUBLIC_DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+    networks: [gateway-network]
+
+volumes:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,20 @@
+# 文件说明：compose.yml：运行环境与组件参数配置。
+name: ai-gateway-local-cas-demo
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cas_demo
+      POSTGRES_USER: cas_demo
+      POSTGRES_PASSWORD: ${DEMO_DB_PASSWORD:?local demo password required}
+    ports:
+      - "127.0.0.1:39445:5432"
+    volumes:
+      - cas-demo-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cas_demo -d cas_demo"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  cas-demo-postgres:

@@ -1,0 +1,69 @@
+# ========================================
+# 预发布环境配置（v2.8.x 精简版）
+# ========================================
+# 此文件仅包含预发布环境特定的差异化配置
+# 基础配置通过模块化导入，详见 application.yml
+
+# 日志配置（预发布环境标准日志）
+logging:
+  level:
+    root: INFO
+    org.unreal.modelrouter: INFO
+    org.springframework: WARN
+  file:
+    name: logs/jairouter-staging.log
+
+# 管理端点（预发布环境部分开放）
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
+    jwt-tokens:
+      enabled: true
+    jwt-blacklist:
+      enabled: true
+
+# 安全配置（预发布环境）
+jairouter:
+  security:
+    enabled: true
+    
+    jwt:
+      enabled: true
+      secret: "${STAGING_JWT_SECRET:}"
+      issuer: "jairouter-staging"
+      
+      persistence:
+        enabled: true
+        primary-storage: redis
+        redis:
+          enabled: true
+          host: "${REDIS_HOST:localhost}"
+          port: "${REDIS_PORT:6379}"
+          password: "${REDIS_PASSWORD:}"
+          database: "${REDIS_DATABASE:2}"
+    
+    api-key:
+      enabled: true
+    
+    audit:
+      log-level: "INFO"
+      retention-days: 30
+      alert-enabled: true
+    
+    sanitization:
+      response:
+        enabled: true
+
+# 性能配置（预发布环境）
+jairouter:
+  security:
+    performance:
+      authentication:
+        thread-pool-size: 10
+      cache:
+        redis:
+          enabled: true
+          host: "${REDIS_HOST:localhost}"
+          port: "${REDIS_PORT:6379}"
+          database: 2

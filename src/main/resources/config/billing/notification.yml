@@ -1,0 +1,10 @@
+# 余额预警通知配置
+jairouter:
+  billing:
+    notification:
+      # 是否启用通知（需配置算力平台地址后开启）
+      enabled: false
+      # 算力平台基础 URL（system 模块 SMS REST 端点）
+      compute-platform-base-url: ${COMPUTE_PLATFORM_URL:http://localhost:8080}
+      # 预警冷却时间（小时）
+      alert-cooldown-hours: 1

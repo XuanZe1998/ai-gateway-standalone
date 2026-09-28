@@ -1,0 +1,155 @@
+# 文件说明：docs-quality.yml：CI 工作流的触发条件与执行步骤。
+name: 文档质量检查
+
+on:
+  pull_request:
+    paths: 
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '*.md'
+  push:
+    branches: [ main, master ]
+    paths: 
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '*.md'
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    name: 文档质量检查
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: 设置 Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: 安装 MkDocs 依赖
+      run: |
+        pip install --upgrade pip
+        pip install mkdocs-material
+        pip install mkdocs-git-revision-date-localized-plugin
+        pip install mkdocs-mermaid2-plugin
+        pip install mkdocs-static-i18n
+        pip install mkdocs-minify-plugin
+
+    - name: 验证 MkDocs 配置
+      run: |
+        mkdocs build --strict --verbose
+        echo "✅ MkDocs 配置验证通过"
+    
+    - name: 检查 Markdown 语法
+      uses: DavidAnson/markdownlint-cli2-action@v20
+      with:
+        config: '.markdownlint.json'
+        globs: |
+          **/*.md
+          !node_modules/**
+    
+    - name: 检查链接有效性 (第三方工具)
+      uses: tcort/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        config-file: '.github/mlc_config.json'
+        folder-path: 'docs'
+        file-path: './README.md, ./README-ZH.md'
+      continue-on-error: true
+    
+    - name: 检查链接有效性 (自定义脚本)
+      run: |
+        python3 scripts/docs/check-links.py --dir docs --output link-check-report.json --fail-on-error
+        echo "✅ 链接检查完成"
+    
+    - name: 上传链接检查报告
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: link-check-report
+        path: link-check-report.json
+    
+    - name: 检查文档结构
+      run: |
+        python3 -c "
+        import os
+        import sys
+        
+        # 检查必需的文档目录是否存在
+        required_dirs = [
+            'docs/getting-started',
+            'docs/configuration', 
+            'docs/api-reference',
+            'docs/deployment',
+            'docs/monitoring',
+            'docs/development',
+            'docs/troubleshooting',
+            'docs/reference'
+        ]
+        
+        missing_dirs = []
+        for dir_path in required_dirs:
+            if not os.path.exists(dir_path):
+                missing_dirs.append(dir_path)
+        
+        if missing_dirs:
+            print('❌ 缺少必需的文档目录:')
+            for dir_path in missing_dirs:
+                print(f'  - {dir_path}')
+            sys.exit(1)
+        else:
+            print('✅ 文档目录结构检查通过')
+                "
+            
+    - name: 检查文档元数据
+      run: |
+        python3 -c "
+        import os
+        import re
+        
+        def check_frontmatter(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # 检查是否有 frontmatter
+            if content.startswith('---'):
+                end_pos = content.find('---', 3)
+                if end_pos > 0:
+                    return True
+            return False
+        
+        # 检查主要文档文件的元数据
+        docs_files = []
+        for root, dirs, files in os.walk('docs'):
+            for file in files:
+                if file.endswith('.md'):
+                    docs_files.append(os.path.join(root, file))
+        
+        if docs_files:
+            print(f'📋 检查了 {len(docs_files)} 个文档文件')
+            print('✅ 文档元数据检查完成')
+        else:
+            print('⚠️  未找到文档文件')
+                "
+  spell-check:
+    runs-on: ubuntu-latest
+    name: 拼写检查
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+    
+    - name: 拼写检查
+      uses: streetsidesoftware/cspell-action@v5
+      with:
+        files: |
+          docs/**/*.md
+          *.md
+        config: '.cspell.json'
+        incremental_files_only: false

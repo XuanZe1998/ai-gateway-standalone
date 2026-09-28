@@ -1,0 +1,262 @@
+# 文件说明：ai-gateway.yaml：Kubernetes 资源与部署策略。
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-gateway-cluster-config
+  namespace: ai-gateway
+data:
+  SPRING_PROFILES_ACTIVE: "standalone,cluster,cas"
+  PG_SCHEMA: "public"
+  PG_POOL_MAX: "15"
+  PG_POOL_MIN: "3"
+  REDIS_DATABASE: "0"
+  HIBERNATE_DDL_AUTO: "validate"
+  FLYWAY_ENABLED: "true"
+  CONFIG_SYNC_INTERVAL_MS: "3000"
+  DISTRIBUTED_RATE_LIMIT_ENABLED: "true"
+  DISTRIBUTED_RATE_LIMIT_FAIL_OPEN: "false"
+  DISTRIBUTED_RATE_LIMIT_TIMEOUT_MS: "250"
+  # Keep disabled until the school has registered the exact callback URL and supplied real typeCode values.
+  CAMPUS_AUTH_ENABLED: "false"
+  CAMPUS_CAS_BASE_URL: "https://cas.ntit.edu.cn/cas/"
+  CAMPUS_PUBLIC_BASE_URL: "https://ai.example.edu"
+  CAMPUS_SESSION_TIMEOUT: "30m"
+  CAMPUS_SESSION_STORE_TYPE: "redis"
+  CAMPUS_SESSION_NAMESPACE: "jairouter:session"
+  CAMPUS_SESSION_COOKIE_SECURE: "true"
+  EMERGENCY_LOGIN_ENABLED: "false"
+  EMERGENCY_LOGIN_ALLOWED_CIDRS: "127.0.0.1/32,::1/128"
+  EMERGENCY_LOGIN_TRUSTED_PROXY_CIDRS: ""
+  TEACHER_ACCESS_ENABLED: "false"
+  TEACHER_REQUIRE_CLIENT_CERTIFICATE: "true"
+  TEACHER_PUBLIC_BASE_URL: "https://ai.example.edu"
+  STUDENT_MONTHLY_TOKEN_QUOTA: "1000000"
+  STAFF_MONTHLY_TOKEN_QUOTA: "3000000"
+  TEACHER_MONTHLY_TOKEN_QUOTA: "5000000"
+  QUOTA_TIME_ZONE: "Asia/Shanghai"
+  INITIAL_ADMIN_USERNAME: "admin"
+  JAVA_OPTS: "-Xms1g -Xmx4g -XX:+UseG1GC -XX:+UseContainerSupport -XX:+ExitOnOutOfMemoryError"
+  TZ: "Asia/Shanghai"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-gateway
+  namespace: ai-gateway
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ai-gateway
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ai-gateway
+        app.kubernetes.io/component: api
+    spec:
+      terminationGracePeriodSeconds: 90
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: ai-gateway
+                    app.kubernetes.io/component: api
+      containers:
+        - name: gateway
+          image: registry.example.edu/ai/ai-gateway:replace-with-immutable-tag
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: ai-gateway-cluster-config
+            - secretRef:
+                name: ai-gateway-secrets
+          env:
+            - name: GATEWAY_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SCHEDULING_ENABLED
+              value: "false"
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 6Gi
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 15"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            runAsUser: 10010
+            runAsGroup: 10010
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: logs
+              mountPath: /app/logs
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-gateway-worker
+  namespace: ai-gateway
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ai-gateway
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ai-gateway
+        app.kubernetes.io/component: worker
+    spec:
+      terminationGracePeriodSeconds: 90
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: worker
+          image: registry.example.edu/ai/ai-gateway:replace-with-immutable-tag
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: ai-gateway-cluster-config
+            - secretRef:
+                name: ai-gateway-secrets
+          env:
+            - name: GATEWAY_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SCHEDULING_ENABLED
+              value: "true"
+          resources:
+            requests:
+              cpu: "500m"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            runAsUser: 10010
+            runAsGroup: 10010
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: logs
+              mountPath: /app/logs
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-gateway
+  namespace: ai-gateway
+  labels:
+    app.kubernetes.io/name: ai-gateway
+    app.kubernetes.io/component: api
+spec:
+  selector:
+    app.kubernetes.io/name: ai-gateway
+    app.kubernetes.io/component: api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ai-gateway
+  namespace: ai-gateway
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ai-gateway
+      app.kubernetes.io/component: api
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ai-gateway
+  namespace: ai-gateway
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: ["ai.example.edu"]
+      secretName: ai-gateway-tls
+  rules:
+    - host: ai.example.edu
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ai-gateway
+                port:
+                  name: http
+

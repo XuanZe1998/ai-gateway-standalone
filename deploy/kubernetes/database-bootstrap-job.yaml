@@ -1,0 +1,35 @@
+# 文件说明：database-bootstrap-job.yaml：Kubernetes 资源与部署策略。
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ai-gateway-database-bootstrap
+  namespace: ai-gateway
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ai-gateway
+        app.kubernetes.io/component: database-bootstrap
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: bootstrap
+          image: registry.example.edu/ai/ai-gateway:replace-with-immutable-tag
+          args:
+            - --spring.main.web-application-type=none
+            - --spring.jpa.hibernate.ddl-auto=update
+            - --spring.flyway.enabled=false
+            - --jairouter.cluster.config-sync.enabled=false
+            - --jairouter.cluster.rate-limit.enabled=false
+            - --jairouter.scheduling.enabled=false
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: standalone,cluster
+            - name: PG_SCHEMA
+              value: public
+            - name: INITIAL_ADMIN_USERNAME
+              value: admin
+          envFrom:
+            - secretRef:
+                name: ai-gateway-secrets

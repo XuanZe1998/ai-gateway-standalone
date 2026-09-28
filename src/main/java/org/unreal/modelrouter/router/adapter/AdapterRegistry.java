@@ -1,0 +1,189 @@
+// 文件说明：AdapterRegistry：负责模型路由与请求转发中的上游协议适配。
+package org.unreal.modelrouter.router.adapter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Configuration;
+import org.unreal.modelrouter.router.adapter.impl.GpuStackAdapter;
+import org.unreal.modelrouter.router.adapter.impl.LocalAiAdapter;
+import org.unreal.modelrouter.router.adapter.impl.NormalOpenAiAdapter;
+import org.unreal.modelrouter.router.adapter.impl.OllamaAdapter;
+import org.unreal.modelrouter.router.adapter.impl.VllmAdapter;
+import org.unreal.modelrouter.router.adapter.impl.XinferenceAdapter;
+import org.unreal.modelrouter.router.model.ModelRouterProperties;
+import org.unreal.modelrouter.router.model.ModelServiceRegistry;
+import org.unreal.modelrouter.persistence.repository.ModelCallStatsRepository;
+import org.unreal.modelrouter.router.adapter.builder.RequestBuilder;
+import org.unreal.modelrouter.router.adapter.checker.CapabilityChecker;
+import org.unreal.modelrouter.router.adapter.mapper.ResponseMapper;
+import org.unreal.modelrouter.router.adapter.processor.HttpRequestProcessor;
+import org.unreal.modelrouter.router.adapter.error.AdapterErrorHandler;
+import org.unreal.modelrouter.router.adapter.retry.RetryPolicy;
+import org.unreal.modelrouter.router.adapter.handler.ResponseHandler;
+import org.unreal.modelrouter.router.adapter.selector.InstanceSelector;
+import org.unreal.modelrouter.router.adapter.transformer.ResponseTransformer;
+import org.unreal.modelrouter.router.adapter.metrics.AdapterMetricsRecorder;
+import org.unreal.modelrouter.router.adapter.tracing.AdapterTracingManager;
+import org.unreal.modelrouter.router.adapter.error.ErrorResponseBuilder;
+import org.unreal.modelrouter.router.adapter.request.NonStreamingRequestProcessor;
+import org.unreal.modelrouter.router.adapter.handler.MultipartRequestHandler;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+@Configuration
+public class AdapterRegistry {
+
+    private final Map<String, ServiceCapability> adapters;
+    private final ModelRouterProperties properties;
+    private final ModelServiceRegistry registry;
+    private final ObjectMapper objectMapper;
+    private final ModelCallStatsRepository statsRepository;
+    private final RequestBuilder requestBuilder;
+    private final ResponseHandler responseHandler;
+    private final InstanceSelector instanceSelector;
+    private final ResponseTransformer responseTransformer;
+    private final CapabilityChecker capabilityChecker;
+    private final AdapterErrorHandler errorHandler;
+    private final RetryPolicy retryPolicy;
+    private final HttpRequestProcessor httpRequestProcessor;
+    private final ResponseMapper responseMapper;
+    private final AdapterMetricsRecorder metricsRecorder;
+    private final AdapterTracingManager tracingManager;
+    private final ErrorResponseBuilder errorResponseBuilder;
+    private final NonStreamingRequestProcessor nonStreamingProcessor;
+    private final MultipartRequestHandler multipartRequestHandler;
+    private final org.unreal.modelrouter.billing.BalanceCheckService balanceCheckService;
+
+    public AdapterRegistry(final ModelRouterProperties properties,
+                           final ModelServiceRegistry registry,
+                           final ObjectMapper objectMapper,
+                           final ModelCallStatsRepository statsRepository,
+                           final RequestBuilder requestBuilder,
+                           final ResponseHandler responseHandler,
+                           final InstanceSelector instanceSelector,
+                           final ResponseTransformer responseTransformer,
+                           final CapabilityChecker capabilityChecker,
+                           final HttpRequestProcessor httpRequestProcessor,
+                           final ResponseMapper responseMapper,
+                           final AdapterErrorHandler errorHandler,
+                           final RetryPolicy retryPolicy,
+                           final AdapterMetricsRecorder metricsRecorder,
+                           final AdapterTracingManager tracingManager,
+                           final ErrorResponseBuilder errorResponseBuilder,
+                           final NonStreamingRequestProcessor nonStreamingProcessor,
+                           final MultipartRequestHandler multipartRequestHandler,
+                           final org.unreal.modelrouter.billing.BalanceCheckService balanceCheckService) {
+        this.properties = properties;
+        this.registry = registry;
+        this.objectMapper = objectMapper;
+        this.statsRepository = statsRepository;
+        this.requestBuilder = requestBuilder;
+        this.responseHandler = responseHandler;
+        this.instanceSelector = instanceSelector;
+        this.responseTransformer = responseTransformer;
+        this.capabilityChecker = capabilityChecker;
+        this.errorHandler = errorHandler;
+        this.retryPolicy = retryPolicy;
+        this.httpRequestProcessor = httpRequestProcessor;
+        this.responseMapper = responseMapper;
+        this.metricsRecorder = metricsRecorder;
+        this.tracingManager = tracingManager;
+        this.errorResponseBuilder = errorResponseBuilder;
+        this.nonStreamingProcessor = nonStreamingProcessor;
+        this.multipartRequestHandler = multipartRequestHandler;
+        this.balanceCheckService = balanceCheckService;
+        this.adapters = new HashMap<>();
+        initializeAdapters();
+    }
+
+    private void initializeAdapters() {
+        // 注册各种adapter实现
+        adapters.put("normal", new NormalOpenAiAdapter(registry, objectMapper, statsRepository, requestBuilder, responseHandler, instanceSelector, responseTransformer, capabilityChecker, errorHandler, retryPolicy, httpRequestProcessor, responseMapper, metricsRecorder, tracingManager, errorResponseBuilder, nonStreamingProcessor, multipartRequestHandler, balanceCheckService));
+        adapters.put("gpustack", new GpuStackAdapter(registry, objectMapper, statsRepository, requestBuilder, responseHandler, instanceSelector, responseTransformer, capabilityChecker, errorHandler, retryPolicy, httpRequestProcessor, responseMapper, metricsRecorder, tracingManager, errorResponseBuilder, nonStreamingProcessor, multipartRequestHandler, balanceCheckService));
+        adapters.put("ollama", new OllamaAdapter(registry, objectMapper, statsRepository, requestBuilder, responseHandler, instanceSelector, responseTransformer, capabilityChecker, errorHandler, retryPolicy, httpRequestProcessor, responseMapper, metricsRecorder, tracingManager, errorResponseBuilder, nonStreamingProcessor, multipartRequestHandler, balanceCheckService));
+        adapters.put("vllm", new VllmAdapter(registry, objectMapper, statsRepository, requestBuilder, responseHandler, instanceSelector, responseTransformer, capabilityChecker, errorHandler, retryPolicy, httpRequestProcessor, responseMapper, metricsRecorder, tracingManager, errorResponseBuilder, nonStreamingProcessor, multipartRequestHandler, balanceCheckService));
+        adapters.put("xinference", new XinferenceAdapter(registry, objectMapper, statsRepository, requestBuilder, responseHandler, instanceSelector, responseTransformer, capabilityChecker, errorHandler, retryPolicy, httpRequestProcessor, responseMapper, metricsRecorder, tracingManager, errorResponseBuilder, nonStreamingProcessor, multipartRequestHandler, balanceCheckService));
+        adapters.put("localai", new LocalAiAdapter(registry, objectMapper, statsRepository, requestBuilder, responseHandler, instanceSelector, responseTransformer, capabilityChecker, errorHandler, retryPolicy, httpRequestProcessor, responseMapper, metricsRecorder, tracingManager, errorResponseBuilder, nonStreamingProcessor, multipartRequestHandler, balanceCheckService));
+    }
+
+    /**
+     * 根据服务类型获取对应的Adapter
+     */
+    public ServiceCapability getAdapter(final ModelServiceRegistry.ServiceType serviceType) {
+        String adapterName = getAdapterName(serviceType);
+        ServiceCapability adapter = adapters.get(adapterName.toLowerCase());
+
+        if (adapter == null) {
+            throw new IllegalArgumentException("Unsupported adapter: " + adapterName);
+        }
+
+        return adapter;
+    }
+
+    /**
+     * 根据实例获取对应的Adapter（实例级适配器优先）
+     */
+    public ServiceCapability getAdapter(final ModelServiceRegistry.ServiceType serviceType, 
+                                       final ModelRouterProperties.ModelInstance instance) {
+        String adapterName = getAdapterName(serviceType, instance);
+        ServiceCapability adapter = adapters.get(adapterName.toLowerCase());
+
+        if (adapter == null) {
+            throw new IllegalArgumentException("Unsupported adapter: " + adapterName);
+        }
+
+        return adapter;
+    }
+
+    /**
+     * 获取指定服务类型的adapter名称
+     */
+    private String getAdapterName(final ModelServiceRegistry.ServiceType serviceType) {
+        // 优先使用服务级配置
+        String adapterName = registry.getServiceAdapter(serviceType);
+
+        // 回退到全局配置
+        if (adapterName == null) {
+            adapterName = Optional.ofNullable(properties.getAdapter())
+                    .orElse("normal");
+        }
+
+        return adapterName;
+    }
+
+    /**
+     * 获取指定实例的adapter名称（实例级适配器优先）
+     */
+    private String getAdapterName(final ModelServiceRegistry.ServiceType serviceType, 
+                                 final ModelRouterProperties.ModelInstance instance) {
+        // 1. 优先使用实例级配置
+        if (instance != null && instance.getAdapter() != null && !instance.getAdapter().trim().isEmpty()) {
+            return instance.getAdapter();
+        }
+
+        // 2. 回退到服务级配置
+        String adapterName = registry.getServiceAdapter(serviceType);
+        if (adapterName != null && !adapterName.trim().isEmpty()) {
+            return adapterName;
+        }
+
+        // 3. 最后回退到全局配置
+        return Optional.ofNullable(properties.getAdapter())
+                .orElse("normal");
+    }
+
+    /**
+     * 检查adapter是否支持指定的服务类型
+     */
+    public boolean isAdapterSupported(final String adapterName) {
+        return adapters.containsKey(adapterName.toLowerCase());
+    }
+
+    /**
+     * 获取所有可用的adapter
+     */
+    public Map<String, ServiceCapability> getAllAdapters() {
+        return new HashMap<>(adapters);
+    }
+}

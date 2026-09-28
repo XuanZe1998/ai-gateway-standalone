@@ -1,0 +1,6 @@
+# 文件说明：leaf.cnf：运行环境与组件参数配置。
+[server]
+basicConstraints=critical,CA:FALSE
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth
+subjectAltName=DNS:localhost,IP:127.0.0.1,IP:::1

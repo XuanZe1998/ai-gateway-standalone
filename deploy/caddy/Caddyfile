@@ -1,0 +1,9 @@
+# 文件说明：Caddyfile：运行环境与组件参数配置。
+{$PUBLIC_DOMAIN} {
+    encode zstd gzip
+
+    @private path /actuator /actuator/* /swagger-ui.html /swagger-ui/* /v3/api-docs /v3/api-docs/* /internal /internal/*
+    respond @private 404
+
+    reverse_proxy gateway:8080
+}

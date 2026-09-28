@@ -1,0 +1,34 @@
+# 复制为 teacher-access.yml 后再启用。不要把真实 client-secret 写入本文件。
+jairouter:
+  teacher-access:
+    enabled: ${TEACHER_ACCESS_ENABLED:false}
+    issuer: ${TEACHER_TOKEN_ISSUER:https://ai.ntit.edu.cn}
+    audience: ${TEACHER_TOKEN_AUDIENCE:ai-gateway}
+    public-base-url: ${TEACHER_PUBLIC_BASE_URL:https://ai.ntit.edu.cn}
+    token-secret: ${TEACHER_TOKEN_SECRET}
+    access-token-ttl: ${TEACHER_ACCESS_TOKEN_TTL:5m}
+    require-client-certificate: true
+    max-devices-per-teacher: ${TEACHER_MAX_DEVICES:2}
+    registration-id: ntit
+    staff-number-claim: ${TEACHER_STAFF_NUMBER_CLAIM:employee_number}
+    system-user-id-claim: ${TEACHER_SYSTEM_USER_ID_CLAIM:system_user_id}
+    user-account-claim: ${TEACHER_USER_ACCOUNT_CLAIM:preferred_username}
+    display-name-claim: ${TEACHER_DISPLAY_NAME_CLAIM:name}
+    role-claim: ${TEACHER_ROLE_CLAIM:groups}
+    teacher-role-values: ${TEACHER_ROLE_VALUES:TEACHER}
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          ntit:
+            provider: ntit
+            client-id: ${NTIT_OIDC_CLIENT_ID}
+            client-secret: ${NTIT_OIDC_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: [openid, profile]
+        provider:
+          ntit:
+            issuer-uri: ${NTIT_OIDC_ISSUER_URI}

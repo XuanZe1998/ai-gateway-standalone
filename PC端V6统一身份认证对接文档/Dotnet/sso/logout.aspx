@@ -1,0 +1,35 @@
+﻿<%@ Page Language="C#" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<script runat="server">
+
+    public bool doLogout(HttpRequest request)
+    {
+        return true;
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (doLogout(Request))
+        {
+            com.kingstar.sso.client.single.CasUtils.logout(Session);
+            Response.Redirect(com.kingstar.sso.client.single.CasUtils.getLogoutUrl(Request));
+        }
+        else
+        {
+            Response.Redirect(com.kingstar.sso.client.single.CasUtils.getLoginUrl(Request));
+        }
+    }
+
+</script>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,117 @@
+# 文件说明：production-addons.yaml：Kubernetes 资源与部署策略。
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ai-gateway
+  namespace: ai-gateway
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ai-gateway
+  minReplicas: 3
+  maxReplicas: 12
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 60
+        - type: Pods
+          value: 3
+          periodSeconds: 60
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 600
+      policies:
+        - type: Percent
+          value: 25
+          periodSeconds: 60
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 65
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75
+---
+# Requires Prometheus Operator / kube-prometheus-stack.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ai-gateway
+  namespace: ai-gateway
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames: ["ai-gateway"]
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ai-gateway
+      app.kubernetes.io/component: api
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: 30s
+      scrapeTimeout: 10s
+---
+# Requires Prometheus Operator / kube-prometheus-stack.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ai-gateway-production
+  namespace: ai-gateway
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: ai-gateway.availability
+      rules:
+        - alert: AiGatewayInsufficientReplicas
+          expr: kube_deployment_status_replicas_available{namespace="ai-gateway",deployment="ai-gateway"} < 2
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "AI Gateway 可用副本不足"
+            description: "连续 5 分钟少于 2 个 API 副本可用。"
+        - alert: AiGatewayHighErrorRate
+          expr: |
+            sum(rate(http_server_requests_seconds_count{namespace="ai-gateway",status=~"5.."}[5m]))
+            /
+            clamp_min(sum(rate(http_server_requests_seconds_count{namespace="ai-gateway"}[5m])), 1)
+            > 0.05
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "AI Gateway 5xx 错误率超过 5%"
+            description: "排查上游模型、数据库、Redis 和最近发布。"
+        - alert: AiGatewayP95LatencyHigh
+          expr: |
+            histogram_quantile(0.95,
+              sum by (le) (rate(http_server_requests_seconds_bucket{namespace="ai-gateway"}[5m]))) > 10
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "AI Gateway P95 延迟超过 10 秒"
+        - alert: AiGatewayJvmMemoryPressure
+          expr: |
+            sum(jvm_memory_used_bytes{namespace="ai-gateway",area="heap"}) by (pod)
+            /
+            clamp_min(sum(jvm_memory_max_bytes{namespace="ai-gateway",area="heap"}) by (pod), 1)
+            > 0.85
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "AI Gateway JVM 堆使用率超过 85%"

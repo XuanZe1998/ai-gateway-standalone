@@ -1,0 +1,28 @@
+# Production teacher OIDC + mTLS profile template.
+# Copy to application-teacher.yml only after the real IdP values and school PKI stores are available.
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          ntit:
+            provider: ntit
+            client-id: ${NTIT_OIDC_CLIENT_ID}
+            client-secret: ${NTIT_OIDC_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: [openid, profile]
+        provider:
+          ntit:
+            issuer-uri: ${NTIT_OIDC_ISSUER_URI}
+
+server:
+  ssl:
+    enabled: true
+    key-store: ${TEACHER_TLS_KEYSTORE:file:/app/config/tls/server.p12}
+    key-store-type: PKCS12
+    key-store-password: ${TEACHER_TLS_KEYSTORE_PASSWORD}
+    trust-store: ${TEACHER_TLS_TRUSTSTORE:file:/app/config/tls/school-ca-truststore.p12}
+    trust-store-type: PKCS12
+    trust-store-password: ${TEACHER_TLS_TRUSTSTORE_PASSWORD}
+    client-auth: need

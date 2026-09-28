@@ -1,0 +1,359 @@
+/* JAiRouter 文档站点自定义样式 */
+
+/* 性能优化 */
+:root {
+  --md-primary-fg-color: #1976d2;
+  --md-primary-fg-color--light: #42a5f5;
+  --md-primary-fg-color--dark: #1565c0;
+  --md-accent-fg-color: #2196f3;
+}
+
+/* 字体优化 - 使用系统字体栈提升加载速度 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 代码字体优化 */
+code, pre {
+  font-family: "SFMono-Regular", "Monaco", "Inconsolata", "Fira Code", "Droid Sans Mono", "Courier New", monospace;
+}
+
+/* 响应式图片 */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 代码块优化 */
+.highlight {
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.highlight pre {
+  margin: 0;
+  padding: 1rem;
+  line-height: 1.5;
+}
+
+/* 代码复制按钮样式 */
+.md-clipboard {
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.md-clipboard:hover {
+  background-color: var(--md-accent-fg-color);
+}
+
+/* 搜索框优化 */
+.md-search__input {
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.md-search__input:focus {
+  box-shadow: 0 0 0 2px var(--md-accent-fg-color);
+}
+
+/* 导航优化 */
+.md-nav__item {
+  transition: all 0.2s ease;
+}
+
+.md-nav__link:hover {
+  background-color: rgba(25, 118, 210, 0.1);
+  border-radius: 4px;
+}
+
+/* 表格响应式优化 */
+.md-typeset table:not([class]) {
+  font-size: 0.9rem;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: white;
+  font-weight: 600;
+}
+
+.md-typeset table:not([class]) tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* 移动端优化 */
+@media screen and (max-width: 768px) {
+  .md-typeset table:not([class]) {
+    font-size: 0.8rem;
+  }
+  
+  .md-typeset h1 {
+    font-size: 1.8rem;
+  }
+  
+  .md-typeset h2 {
+    font-size: 1.5rem;
+  }
+  
+  .md-typeset h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* 告警框样式优化 */
+.md-typeset .admonition {
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 1.5rem 0;
+}
+
+.md-typeset .admonition-title {
+  font-weight: 600;
+  border-radius: 6px 6px 0 0;
+}
+
+/* 语言切换器样式 */
+.language-switcher {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.language-switcher a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: var(--md-primary-fg-color);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.language-switcher a:hover,
+.language-switcher a.active {
+  background-color: var(--md-primary-fg-color);
+  color: white;
+}
+
+/* 深色模式下的语言切换器 */
+[data-md-color-scheme="slate"] .language-switcher {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+
+[data-md-color-scheme="slate"] .language-switcher a {
+  color: var(--md-default-fg-color);
+}
+
+/* 移动端隐藏语言切换器 */
+@media screen and (max-width: 768px) {
+  .language-switcher {
+    display: none;
+  }
+}
+
+/* 加载动画优化 */
+.md-content {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* 深色模式滚动条 */
+[data-md-color-scheme="slate"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-md-color-scheme="slate"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 打印样式优化 */
+@media print {
+  .md-header,
+  .md-sidebar,
+  .md-footer,
+  .language-switcher {
+    display: none !important;
+  }
+  
+  .md-main__inner {
+    margin: 0 !important;
+  }
+  
+  .md-content {
+    max-width: none !important;
+  }
+}
+
+/* 性能优化 - 减少重绘 */
+.md-nav__link,
+.md-tabs__link,
+.md-footer__link {
+  will-change: transform;
+}
+
+/* 焦点可访问性优化 */
+.md-nav__link:focus,
+.md-tabs__link:focus,
+.md-search__input:focus {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .md-typeset table:not([class]) th {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .md-nav__link:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 减少动画的用户偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 谷歌广告样式 */
+.google-ad {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.google-ad:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 广告标题样式 */
+.google-ad-title {
+  font-size: 0.8rem;
+  color: var(--md-default-fg-color--light);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 侧边栏广告样式 */
+.google-ad-sidebar {
+  max-width: 100%;
+  margin: 1.5rem 0;
+}
+
+.google-ad-sidebar .adsbygoogle {
+  width: 100%;
+  min-height: 250px;
+}
+
+/* 深色模式下的广告样式 */
+[data-md-color-scheme="slate"] .google-ad {
+  background-color: var(--md-default-bg-color);
+  border-color: var(--md-default-fg-color--lightest);
+}
+
+[data-md-color-scheme="slate"] .google-ad-title {
+  color: var(--md-default-fg-color--light);
+}
+
+/* 移动端广告样式 */
+@media screen and (max-width: 768px) {
+  .google-ad {
+    display: none !important;
+  }
+}
+
+/* 平板端广告调整 */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .google-ad-sidebar {
+    margin: 1rem 0;
+  }
+  
+  .google-ad-sidebar .adsbygoogle {
+    min-height: 200px;
+  }
+}
+
+/* 广告加载状态 */
+.google-ad.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* 广告错误状态 */
+.google-ad.error {
+  display: none;
+}
+
+/* 打印时隐藏广告 */
+@media print {
+  .google-ad {
+    display: none !important;
+  }
+}

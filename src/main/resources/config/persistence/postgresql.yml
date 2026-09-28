@@ -1,0 +1,30 @@
+# ========================================
+# PostgreSQL 数据源配置
+# ========================================
+# 独立网关使用自己的 PostgreSQL 实例
+# 默认值仅用于本地开发环境（dev），实际连接由各 profile 覆盖：
+#   - application-dev.yml   → sldd-dev schema
+#   - application-test.yml  → sldd-test schema
+#   - application-prod.yml  → sldd-prod schema
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${PG_HOST:localhost}:${PG_PORT:5432}/${PG_DB:ai_gateway}?currentSchema=${PG_SCHEMA:public}&sslmode=disable&stringtype=unspecified
+    username: ${PG_USER:ai_gateway}
+    password: ${PG_PASSWORD:ai_gateway}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000
+      max-lifetime: 900000
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true

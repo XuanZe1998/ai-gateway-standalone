@@ -1,0 +1,44 @@
+# ========================================
+# 服务器基础配置
+# ========================================
+# 此文件包含应用程序的基础服务器配置
+# 包括端口、线程配置等基础设施相关配置
+
+server:
+  port: 8080
+
+# Spring Boot 基础配置
+spring:
+  webflux:
+    multipart:
+      max-in-memory-size: 10MB        # 内存中multipart数据的最大大小
+      max-disk-usage-per-part: 100MB  # 每个部分可使用的最大磁盘空间
+      max-parts: 50                   # 最大部分数量
+      max-headers-size: 8KB           # 请求头最大大小
+      file-storage-directory: ${java.io.tmpdir} # 临时文件存储目录
+
+  # Reactor Netty服务器配置
+  reactor:
+    netty:
+      max-initial-line-length: 4096   # 初始行最大长度
+      max-header-size: 8192          # 头部最大大小
+      max-chunk-size: 8192           # 块最大大小
+
+# 存储配置
+store:
+  type: jpa               # v1.5.1+: 使用 JPA 数据库存储
+  path: ./config          # 配置路径（用于导入导出）
+  fallback-storage: memory # 备用存储类型（用于降级）
+
+# WebClient 基础配置
+webclient:
+  connection-timeout: 15s
+  read-timeout: 60s
+  write-timeout: 60s
+  max-in-memory-size: 10MB
+
+# 基础日志配置
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-}] %logger{50} - %msg%n"

@@ -1,0 +1,37 @@
+# Cloudflare Tunnel for the public domain configured in .env.
+# Create a remotely-managed Tunnel in Cloudflare before starting this stack.
+services:
+  gateway:
+    env_file:
+      - .env
+    environment:
+      CAMPUS_PUBLIC_BASE_URL: ${CAMPUS_PUBLIC_BASE_URL:?set the public HTTPS URL in .env}
+      CAMPUS_SESSION_COOKIE_SECURE: "true"
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+
+  tunnel-proxy:
+    image: caddy:2-alpine
+    depends_on:
+      gateway:
+        condition: service_healthy
+    volumes:
+      - ./deploy/caddy/Caddyfile.tunnel:/etc/caddy/Caddyfile:ro
+    restart: unless-stopped
+    networks: [gateway-network]
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN_FILE: /run/secrets/cloudflare_tunnel_token
+    secrets:
+      - cloudflare_tunnel_token
+    depends_on:
+      tunnel-proxy:
+        condition: service_started
+    restart: unless-stopped
+    networks: [gateway-network]
+
+secrets:
+  cloudflare_tunnel_token:
+    file: ./.cloudflare-tunnel-token

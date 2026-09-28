@@ -1,0 +1,6 @@
+<!-- 文件说明：spotbugs-security-include.xml：构建或运行时的 XML 配置。 -->
+<FindBugsFilter>
+    <Match>
+        <Bug category="SECURITY"/>
+    </Match>
+</FindBugsFilter>

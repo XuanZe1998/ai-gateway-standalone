@@ -1,0 +1,27 @@
+# Local-only mTLS verification overlay.
+# The generated CA and client private key are exportable test credentials; never use them as the school CA/MDM credentials.
+services:
+  gateway:
+    environment:
+      SERVER_SSL_ENABLED: "true"
+      SERVER_SSL_KEY_STORE: file:/app/config/tls-dev/server.p12
+      SERVER_SSL_KEY_STORE_TYPE: PKCS12
+      SERVER_SSL_KEY_STORE_PASSWORD: ${TEACHER_TLS_KEYSTORE_PASSWORD}
+      SERVER_SSL_TRUST_STORE: file:/app/config/tls-dev/truststore.p12
+      SERVER_SSL_TRUST_STORE_TYPE: PKCS12
+      SERVER_SSL_TRUST_STORE_PASSWORD: ${TEACHER_TLS_TRUSTSTORE_PASSWORD}
+      SERVER_SSL_CLIENT_AUTH: need
+      TEACHER_ACCESS_ENABLED: "false"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          curl --fail --silent
+          --cert /app/config/tls-dev/teacher-client.crt
+          --key /app/config/tls-dev/teacher-client.key
+          --cacert /app/config/tls-dev/dev-ca.crt
+          https://localhost:8080/actuator/health
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s

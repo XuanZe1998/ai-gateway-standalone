@@ -1,0 +1,26 @@
+# ========================================
+# 适配器配置 (router 模块)
+# ========================================
+# 此文件包含适配器类型配置
+# 位置：org.unreal.modelrouter.router.adapter
+
+model:
+  # 全局适配器配置
+  # 如果服务没有指定适配器，将使用此配置
+  # 支持: normal, gpustack, ollama, vllm, xinference, localai
+  adapter: gpustack
+
+# 流式 chat 请求 stream_options 自动注入
+# 用于需要显式设置 stream_options.include_usage=true 才返回 usage 的平台（如火山方舟）
+jairouter:
+  adapter:
+    stream-usage-injection:
+      enabled: true
+      patterns:
+        - ".*ark\\.cn-beijing\\.volces\\.com.*"   # 火山方舟（不注入不返回 usage）
+        - ".*volces\\.com.*"                      # 火山引擎其他区域
+        - ".*ctyun.*"                             # 天翼云（不确定，保守注入，无副作用）
+        # DeepSeek/GLM/Kimi/OpenAI 默认返回 usage，无需注入；如发现缺失可在此追加
+      options:
+        include_usage: true
+        chunk_include_usage: false

@@ -1,0 +1,5 @@
+# 文件说明：namespace.yaml：Kubernetes 资源与部署策略。
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-gateway

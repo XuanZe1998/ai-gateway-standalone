@@ -1,0 +1,37 @@
+# 文件说明：Dockerfile.cluster：容器镜像构建步骤与运行环境。
+FROM eclipse-temurin:17-jdk-alpine AS build
+
+WORKDIR /workspace
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+COPY src src
+RUN chmod +x mvnw \
+    && ./mvnw -B package \
+        -DskipTests \
+        -Dcheckstyle.skip=true \
+        -Dspotbugs.skip=true \
+        -Djacoco.skip=true \
+        -Dfrontend.build.skip=true
+
+FROM eclipse-temurin:17-jre-alpine
+
+RUN apk add --no-cache curl \
+    && addgroup -S -g 10010 gateway \
+    && adduser -S -D -u 10010 -G gateway -h /app gateway \
+    && mkdir -p /app/config /app/logs \
+    && chown -R gateway:gateway /app
+
+WORKDIR /app
+COPY --from=build --chown=gateway:gateway \
+    /workspace/target/ai-gateway-standalone-*.jar /app/app.jar
+
+USER gateway
+EXPOSE 8080
+
+ENV SPRING_PROFILES_ACTIVE="standalone,cluster"
+ENV JAVA_OPTS="-Xms1g -Xmx4g -XX:+UseG1GC -XX:+UseContainerSupport -XX:+ExitOnOutOfMemoryError"
+
+HEALTHCHECK --interval=20s --timeout=5s --start-period=90s --retries=5 \
+  CMD curl --fail --silent http://localhost:8080/actuator/health/readiness || exit 1
+
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]

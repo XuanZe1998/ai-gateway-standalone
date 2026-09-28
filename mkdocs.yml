@@ -1,0 +1,290 @@
+# 文件说明：文档站点与导航配置。
+site_name: JAiRouter 文档
+site_description: AI模型服务路由和负载均衡网关
+site_author: Lincoln
+site_url: https://jairouter.com/
+
+repo_name: Lincoln-cn/jairouter
+repo_url: https://github.com/Lincoln-cn/jairouter
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: zh
+  custom_dir: docs/overrides
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色模式
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色模式
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+    - content.tabs.link
+    - navigation.tracking
+
+plugins:
+  - search:
+      lang: 
+        - zh
+        - en
+      separator: '[\s\-\.]+'
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+        remove_empty_space: true
+  - i18n:
+      docs_structure: folder
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: zh
+          default: true
+          name: 中文
+          build: true
+          site_name: "JAiRouter 文档"
+        - locale: en
+          name: English
+          build: true
+          site_name: "JAiRouter Documentation"
+          nav_translations:
+            首页: Home
+            入门: Getting Started
+            安装指南: Installation Guide
+            快速开始: Quick Start
+            第一步: First Steps
+            配置指南: Configuration
+            应用配置: Application Config
+            动态配置: Dynamic Config
+            负载均衡: Load Balancing
+            限流配置: Rate Limiting
+            熔断器: Circuit Breaker
+            存储配置: Store Configuration
+            安全功能: Security Features
+            API Key管理: API Key Management
+            JWT认证: JWT Authentication
+            安全黑名单: Security Blacklist
+            审计日志管理: Audit Log Management
+            数据脱敏: Data Sanitization
+            API参考: API Reference
+            统一API: Universal API
+            管理API: Management API
+            监控API: Monitoring API
+            OpenAPI规范: OpenAPI Specification
+            部署指南: Deployment
+            Docker部署: Docker Deployment
+            Kubernetes部署: Kubernetes Deployment
+            生产环境: Production
+            中国优化: China Optimization
+            GitHub Pages: GitHub Pages
+            监控指南: Monitoring
+            监控设置: Setup
+            仪表板: Dashboards
+            告警配置: Alerts
+            故障排查: Troubleshooting
+            分布式追踪: Distributed Tracing
+            追踪概述: Tracing Overview
+            快速入门: Quick Start
+            配置参考: Configuration Reference
+            使用指南: Usage Guide
+            性能调优: Performance Tuning
+            故障排除: Troubleshooting
+            运维指南: Operations Guide
+            开发指南: Development
+            架构说明: Architecture
+            贡献指南: Contributing
+            测试指南: Testing
+            代码质量: Code Quality
+            部署测试: Deployment Testing
+            性能优化: Performance Optimization
+            常见问题: Common Issues
+            关键问题修复: Key Issue Fixes
+            性能问题: Performance Issues
+            调试指南: Debugging Guide
+            参考资料: Reference
+            更新日志: Changelog
+            发展路线图: Roadmap
+            FAQ: FAQ
+            术语表: Glossary
+  - git-revision-date-localized:
+      type: date
+      enable_creation_date: true
+      fallback_to_build_date: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - 首页: zh/index.md
+  - 入门:
+    - zh/getting-started/index.md
+    - 安装指南: zh/getting-started/installation.md
+    - 快速开始: zh/getting-started/quick-start.md
+    - 快速开始(v1.8): zh/getting-started/quick-start-v1.8.md
+    - 第一步: zh/getting-started/first-steps.md
+  - 配置指南:
+    - zh/configuration/index.md
+    - 应用配置: zh/configuration/application-config.md
+    - 模块化配置: zh/configuration/modular-config.md
+    - 动态配置: zh/configuration/dynamic-config.md
+    - 负载均衡: zh/configuration/load-balancing.md
+    - 限流配置: zh/configuration/rate-limiting.md
+    - 熔断器: zh/configuration/circuit-breaker.md
+    - 存储配置: zh/configuration/store-config.md
+    - JWT持久化: zh/configuration/jwt-persistence.md
+    - 状态持久化: zh/configuration/state-persistence.md
+    - 版本管理: zh/configuration/version-management.md
+    - 验证规则: zh/configuration/validation-rules.md
+  - 安全功能:
+    - zh/security/index.md
+    - API Key管理: zh/security/api-key-management.md
+    - JWT认证: zh/security/jwt-authentication.md
+    - 安全黑名单: zh/security/blacklist-management.md
+    - 审计日志管理: zh/security/audit-log-management.md
+    - 数据脱敏: zh/security/data-sanitization.md
+    - 故障排除: zh/security/troubleshooting.md
+  - API参考:
+    - zh/api-reference/index.md
+    - 统一API: zh/api-reference/universal-api.md
+    - 管理API: zh/api-reference/management-api.md
+    - 监控API: zh/api-reference/monitoring-api.md
+    - OpenAPI规范: zh/api-reference/openapi-spec.md
+  - 部署指南:
+    - zh/deployment/index.md
+    - 全校级分布式部署: zh/deployment/campus-distributed-deployment.md
+    - 全校生产上线准备: zh/deployment/production-readiness.md
+    - Docker部署: zh/deployment/docker.md
+    - Docker优化: zh/deployment/docker-optimized.md
+    - Kubernetes部署: zh/deployment/kubernetes.md
+    - 生产环境: zh/deployment/production.md
+    - 中国优化: zh/deployment/china-optimization.md
+    - GitHub Pages: zh/deployment/github-pages.md
+    - JWT持久化检查清单: zh/deployment/jwt-persistence-deployment-checklist.md
+  - 监控指南:
+    - zh/monitoring/index.md
+    - 监控设置: zh/monitoring/setup.md
+    - 监控配置: zh/monitoring/configuration.md
+    - 仪表板: zh/monitoring/dashboards.md
+    - 告警配置: zh/monitoring/alerts.md
+    - 告警规则指南: zh/monitoring/alert_rules_guide.md
+    - 慢查询配置: zh/monitoring/slow-query-alerts.md
+    - 监控指标: zh/monitoring/metrics.md
+    - 性能监控: zh/monitoring/performance.md
+    - 错误追踪: zh/monitoring/error-tracking.md
+    - 监控测试: zh/monitoring/testing.md
+    - 故障排查: zh/monitoring/troubleshooting.md
+  - 分布式追踪:
+    - zh/tracing/index.md
+    - 快速入门: zh/tracing/quickstart.md
+    - 配置参考: zh/tracing/config-reference.md
+    - 使用指南: zh/tracing/usage-guide.md
+    - 性能调优: zh/tracing/performance-tuning.md
+    - 故障排除: zh/tracing/troubleshooting.md
+    - 运维指南: zh/tracing/operations-guide.md
+  - 开发指南:
+    - zh/development/index.md
+    - 架构说明: zh/development/architecture.md
+    - 架构重构: zh/development/architecture-refactoring.md
+    - 贡献指南: zh/development/contributing.md
+    - 测试指南: zh/development/testing.md
+    - 代码质量: zh/development/code-quality.md
+    - 部署测试: zh/development/deployment-testing.md
+    - 性能优化: zh/development/performance-optimization.md
+    - v1.4.0变更日志: zh/development/V1.4.0-changelog.md
+    - v1.4.1变更日志: zh/development/V1.4.1-changelog.md
+    - v2.7.x Package重构: zh/development/v2.7.x-package-refactoring.md
+    - 追踪全链路设计: zh/development/tracing-full-chain-design.md
+    - 追踪集成: zh/development/tracing-integration.md
+  - 故障排查:
+    - zh/troubleshooting/index.md
+    - 常见问题: zh/troubleshooting/common-issues.md
+    - 关键问题修复: zh/troubleshooting/issue-fixes.md
+    - 性能问题: zh/troubleshooting/performance.md
+    - 调试指南: zh/troubleshooting/debugging.md
+  - 参考资料:
+    - zh/reference/index.md
+    - 更新日志: zh/reference/changelog.md
+    - 发展路线图: zh/reference/roadmap.md
+    - FAQ: zh/reference/faq.md
+    - 术语表: zh/reference/glossary.md
+    - 适配器更新: zh/reference/adapter-updates.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Lincoln-cn/jairouter
+      name: GitHub Repository
+    - icon: fontawesome/solid/book
+      link: https://lincoln-cn.github.io/JAiRouter
+      name: Documentation
+  alternate:
+    - name: 中文
+      link: /
+      lang: zh
+    - name: English
+      link: /en/
+      lang: en
+  analytics:
+    provider: google
+    property: G-C3YPY477RC  # 替换为实际的 Google Analytics ID
+    feedback:
+      title: 这个页面有帮助吗？
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: 有帮助
+          data: 1
+          note: >-
+            感谢您的反馈！
+        - icon: material/emoticon-sad-outline
+          name: 需要改进
+          data: 0
+          note: >-
+            感谢您的反馈！请通过 GitHub Issues 告诉我们如何改进。
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/language-switcher.js
+  - https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8229708772289943
+
+copyright: Copyright &copy; 2025 JAiRouter Team

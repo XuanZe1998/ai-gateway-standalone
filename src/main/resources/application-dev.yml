@@ -1,0 +1,103 @@
+# ========================================
+# 开发环境配置（v2.8.x 精简版）
+# ========================================
+# 此文件包含开发环境所有差异化配置
+# 启动方式：java -jar app.jar --spring.profiles.active=dev
+
+# 服务器配置（开发环境）
+server:
+  port: 38008
+
+# Swagger API 文档配置（仅开发环境）
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+  api-docs:
+    path: /v3/api-docs
+  packages-to-scan: org.unreal.modelrouter.controller
+  show-actuator: true
+  cache:
+    disabled: true
+
+# ========================================
+# 数据库配置（开发环境）
+# ========================================
+# 显式声明开发环境的 PG 连接（与 postgresql.yml 默认值一致）
+spring:
+  datasource:
+    url: jdbc:postgresql://{ip}:35432/postgres?currentSchema=sldd-dev&sslmode=disable&stringtype=unspecified
+    username: postgres
+    password: {pwd}
+
+# 日志配置（开发环境详细日志）
+logging:
+  level:
+    org.unreal.modelrouter: DEBUG
+    org.springframework: INFO
+
+# 管理端点（开发环境全部开放）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    jwt-tokens:
+      enabled: true
+    jwt-blacklist:
+      enabled: true
+    jwt-persistence-health:
+      enabled: true
+
+# WebClient 配置（开发环境宽松超时）
+webclient:
+  connection-timeout: 5s
+  read-timeout: 15s
+  write-timeout: 15s
+
+# 调试模式
+debug: false
+
+# ========================================
+# 安全 + 余额预警通知（开发环境）
+# ========================================
+jairouter:
+  security:
+    enabled: true
+
+    jwt:
+      enabled: true
+      secret: "dev-secret-key-for-testing-only-32-characters-minimum"
+
+      accounts:
+        - username: "admin"
+          password: "{noop}admin123"
+          roles: ["ADMIN", "USER"]
+          enabled: true
+        - username: "user"
+          password: "{noop}user123"
+          roles: ["USER"]
+          enabled: true
+
+    api-key:
+      enabled: true
+
+    audit:
+      log-level: "DEBUG"
+      include-request-body: true
+      include-response-body: true
+
+    sanitization:
+      response:
+        enabled: false
+
+  billing:
+    notification:
+      enabled: true
+      compute-platform-base-url: http://{ip}:38002
+      alert-cooldown-hours: 1

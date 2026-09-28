@@ -1,0 +1,40 @@
+# Standalone default model registry.
+# It is deliberately empty so the gateway never contacts an environment-specific upstream.
+# Add instances in the admin UI, or edit /app/config/router/services.yml.
+model:
+  adapter: normal
+  load-balance:
+    type: round-robin
+  services:
+    chat:
+      adapter: normal
+      load-balance: { type: least-connections }
+      instances: []
+    embedding:
+      adapter: normal
+      load-balance: { type: round-robin }
+      instances: []
+    rerank:
+      adapter: normal
+      load-balance: { type: round-robin }
+      instances: []
+    tts:
+      adapter: normal
+      load-balance: { type: round-robin }
+      instances: []
+    stt:
+      adapter: normal
+      load-balance: { type: round-robin }
+      instances: []
+    imgGen:
+      adapter: normal
+      load-balance: { type: round-robin }
+      instances: []
+    imgEdit:
+      adapter: normal
+      load-balance: { type: round-robin }
+      instances: []
+    vidGen:
+      adapter: normal
+      load-balance: { type: round-robin }
+      instances: []

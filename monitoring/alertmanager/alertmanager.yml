@@ -1,0 +1,136 @@
+# AlertManager 配置文件
+# 用于配置告警通知渠道和路由规则
+
+global:
+  # 默认通知配置
+  resolve_timeout: 5m
+  # SMTP 配置（邮件通知）
+  smtp_smarthost: 'localhost:25'
+  smtp_from: 'alertmanager@jairouter.com'
+  smtp_auth_username: 'alertmanager@jairouter.com'
+  smtp_auth_password: ''
+  # Slack API URL（可选）
+  # slack_api_url: 'https://hooks.slack.com/services/xxx/yyy/zzz'
+  # 企业微信 Webhook（可选）
+  # wechat_api_secret: 'your-secret'
+  # wechat_api_corp_id: 'your-corp-id'
+  # wechat_api_agent_id: '1000001'
+
+# 模板文件
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# 告警路由
+route:
+  # 默认接收器
+  receiver: 'default-receiver'
+  # 分组标签
+  group_by: ['alertname', 'severity', 'service']
+  # 分组等待时间
+  group_wait: 30s
+  # 分组间隔时间
+  group_interval: 5m
+  # 重复告警间隔
+  repeat_interval: 4h
+  # 子路由
+  routes:
+    # 致命告警 - 立即通知
+    - match:
+        severity: critical
+      receiver: 'critical-receiver'
+      group_wait: 10s
+      repeat_interval: 1h
+      continue: true
+    
+    # 警告级别告警
+    - match:
+        severity: warning
+      receiver: 'warning-receiver'
+      group_wait: 1m
+      repeat_interval: 2h
+    
+    # 信息级别告警
+    - match:
+        severity: info
+      receiver: 'info-receiver'
+      group_wait: 5m
+      repeat_interval: 12h
+    
+    # JAiRouter 异常管理告警
+    - match:
+        service: jairouter
+      receiver: 'jairouter-receiver'
+      group_by: ['alertname', 'error_code', 'severity']
+      group_wait: 30s
+      group_interval: 2m
+      repeat_interval: 1h
+
+# 接收器配置
+receivers:
+  # 默认接收器
+  - name: 'default-receiver'
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook'
+        send_resolved: true
+
+  # 紧急告警接收器
+  - name: 'critical-receiver'
+    # 邮件通知
+    email_configs:
+      - to: 'admin@jairouter.com'
+        send_resolved: true
+        html: '{{ template "email.default.html" . }}'
+    # Webhook 通知
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/critical'
+        send_resolved: true
+    # 可以添加更多通知渠道
+    # pagerduty_configs:
+    #   - service_key: 'your-pagerduty-key'
+    # opsgenie_configs:
+    #   - api_key: 'your-opsgenie-key'
+
+  # 警告接收器
+  - name: 'warning-receiver'
+    email_configs:
+      - to: 'team@jairouter.com'
+        send_resolved: true
+    webhook_configs:
+      - url: 'http://localhost:5001/webhook/warning'
+        send_resolved: true
+
+  # 信息接收器
+  - name: 'info-receiver'
+    email_configs:
+      - to: 'team@jairouter.com'
+        send_resolved: true
+
+  # JAiRouter 专用接收器
+  - name: 'jairouter-receiver'
+    email_configs:
+      - to: 'jairouter-alerts@jairouter.com'
+        send_resolved: true
+        html: '{{ template "email.jairouter.html" . }}'
+    webhook_configs:
+      - url: 'http://jairouter:8080/api/admin/alerts/webhook'
+        send_resolved: true
+        max_alerts: 10
+
+# 抑制规则
+inhibit_rules:
+  # 如果服务不可用，抑制其他告警
+  - source_match:
+      alertname: 'JAiRouterServiceDown'
+    target_match_re:
+      alertname: '.+'
+    equal: ['service', 'instance']
+  
+  # 如果熔断器开启，抑制下游服务告警
+  - source_match:
+      alertname: 'JAiRouterCircuitBreakerOpen'
+    target_match_re:
+      alertname: 'JAiRouterBackend.*'
+    equal: ['service']
+
+# 告警模板
+# 在 /etc/alertmanager/templates/ 目录下创建模板文件

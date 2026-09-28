@@ -1,0 +1,7 @@
+# 文件说明：application-test.yml：运行环境与组件参数配置。
+store:
+  type: jpa
+
+logging:
+  level:
+    org.unreal.modelrouter.store: DEBUG

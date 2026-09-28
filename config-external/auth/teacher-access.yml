@@ -1,0 +1,51 @@
+# ========================================
+# 教师统一认证 + 受管设备绑定
+# ========================================
+jairouter:
+  teacher-access:
+    # 完成 OIDC 和学校 CA 配置前必须保持关闭
+    enabled: ${TEACHER_ACCESS_ENABLED:false}
+    issuer: ${TEACHER_TOKEN_ISSUER:https://ai.ntit.edu.cn}
+    audience: ${TEACHER_TOKEN_AUDIENCE:ai-gateway}
+    public-base-url: ${TEACHER_PUBLIC_BASE_URL:https://ai.ntit.edu.cn}
+    # 生产环境必须使用独立、32 字节以上随机密钥
+    token-secret: ${TEACHER_TOKEN_SECRET:}
+    access-token-ttl: ${TEACHER_ACCESS_TOKEN_TTL:5m}
+    require-client-certificate: true
+    max-devices-per-teacher: ${TEACHER_MAX_DEVICES:2}
+    registration-id: ntit
+    staff-number-claim: ${TEACHER_STAFF_NUMBER_CLAIM:employee_number}
+    system-user-id-claim: ${TEACHER_SYSTEM_USER_ID_CLAIM:system_user_id}
+    user-account-claim: ${TEACHER_USER_ACCOUNT_CLAIM:preferred_username}
+    display-name-claim: ${TEACHER_DISPLAY_NAME_CLAIM:name}
+    role-claim: ${TEACHER_ROLE_CLAIM:groups}
+    teacher-role-values: ${TEACHER_ROLE_VALUES:TEACHER}
+    default-permissions:
+      - USER
+      - READ
+      - WRITE
+      - CHAT
+      - EMBEDDING
+      - RERANK
+      - TTS
+      - STT
+      - IMGGEN
+      - IMGEDIT
+      - VIDGEN
+
+# 启用后在部署环境的 application.yml 中补充学校 IdP（不要将 client-secret 提交到代码库）：
+# spring:
+#   security:
+#     oauth2:
+#       client:
+#         registration:
+#           ntit:
+#             provider: ntit
+#             client-id: ${NTIT_OIDC_CLIENT_ID}
+#             client-secret: ${NTIT_OIDC_CLIENT_SECRET}
+#             authorization-grant-type: authorization_code
+#             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+#             scope: [openid, profile]
+#         provider:
+#           ntit:
+#             issuer-uri: ${NTIT_OIDC_ISSUER_URI}
