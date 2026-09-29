@@ -90,6 +90,18 @@ public class ModelPricingService {
     }
 
     /**
+     * 判断模型是否配置了可用计费（供调用前校验）。
+     * 整体计费需输入/输出价齐全；阶梯计费需至少一档。
+     */
+    public boolean hasUsablePricing(String modelName, String channelId) {
+        ModelPricing pricing = getPrice(modelName, channelId);
+        if (pricing == null) return false;
+        if (Integer.valueOf(2).equals(pricing.getBillingMode())) return !pricing.getTiers().isEmpty();
+        return pricing.getInputPrice() != null && pricing.getOutputPrice() != null;
+    }
+
+
+    /**
      * 视频计费规则快照（JSON 字符串）：任务创建时锁定提交时刻的计费规则，
      * 结算时优先用快照计价——平台侧后续改价/删规则不影响已提交任务的账单生成。
      * 快照仅含视频计费相关字段（priceMode/billingUnit/modelId/启用规则行），

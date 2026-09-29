@@ -153,6 +153,8 @@ public class ProtocolPassthroughService {
         return Mono.deferContextual(ctx -> {
             UserIdentity identity = ctx.getOrDefault(UserIdentity.CONTEXT_KEY, UserIdentity.SYSTEM);
             return balanceCheckService.checkBalance(identity, ModelServiceRegistry.ServiceType.chat.name())
+                    .then(Mono.fromRunnable(() -> balanceCheckService.requirePricingConfigured(
+                            instance.getName(), instance.getChannelId())))
                     .then(stream
                             ? doStreaming(protocol, upstreamRequestNode, client, path, instance, model, startTime, identity)
                             : doNonStreaming(protocol, upstreamRequestNode, client, path, instance, model, startTime, identity));

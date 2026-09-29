@@ -23,6 +23,7 @@
             <el-menu-item index="/security/api-keys">API 密钥管理</el-menu-item><el-menu-item index="/security/jwt-tokens">JWT 令牌管理</el-menu-item><el-menu-item index="/security/blacklist">安全黑名单</el-menu-item><el-menu-item index="/security/audit-logs">审计日志</el-menu-item>
           </el-sub-menu>
           <el-menu-item index="/system/model-square"><el-icon><Reading /></el-icon><span>模型广场内容</span></el-menu-item>
+          <el-menu-item index="/system/pricing"><el-icon><Coin /></el-icon><span>模型定价管理</span></el-menu-item>
           <el-menu-item index="/system/accounts"><el-icon><User /></el-icon><span>账户管理</span></el-menu-item>
           <el-menu-item index="/exceptions/list"><el-icon><Warning /></el-icon><span>异常管理</span></el-menu-item>
           <el-menu-item index="/token-usage/statistics"><el-icon><DataAnalysis /></el-icon><span>Token 统计</span></el-menu-item>
@@ -53,7 +54,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Connection, Cpu, DataAnalysis, House, Lock, Menu, Monitor, Reading, Setting, User, UserFilled, Warning } from '@element-plus/icons-vue'
+import { Coin, Connection, Cpu, DataAnalysis, House, Lock, Menu, Monitor, Reading, Setting, User, UserFilled, Warning } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 const route=useRoute(); const router=useRouter(); const userStore=useUserStore()
 const mobileMenuOpen=ref(false)
@@ -69,7 +70,27 @@ async function handleUserCommand(command:string){
 </script>
 
 <style scoped>
-.layout-container{height:100vh;background:#f5f7fa}.layout-menu{height:100vh;background:linear-gradient(150deg,#26384a,#34495e);border:0}.layout-menu :deep(.el-menu-item),.layout-menu :deep(.el-sub-menu__title){color:#dfe8f1}.layout-menu :deep(.is-active){color:#409eff!important;background:rgba(64,158,255,.12)}.logo{height:72px;display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;font-size:19px;font-weight:600}.layout-header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #e6e8eb}.user-info{display:flex;align-items:center;gap:10px;cursor:pointer}.layout-main{padding:28px;overflow:auto;min-width:0}.nav-label{padding:21px 21px 8px;color:#7fa9c3;font-size:11px;font-weight:700;letter-spacing:.11em}.layout-menu{overflow-y:auto;overflow-x:hidden}.navigation{background:#10243d;overflow:auto}.layout-container{min-height:100vh;height:100vh}.layout-header{height:68px;box-shadow:0 1px 12px #1233540d}.logo{justify-content:flex-start;padding-left:23px} .mobile-menu-button{display:none}
+.layout-container{height:100vh;background:#f5f7fa}
+.layout-menu{height:100vh;background:linear-gradient(150deg,#26384a,#34495e);border:0}
+.layout-menu :deep(.el-menu-item),.layout-menu :deep(.el-sub-menu__title){color:#dfe8f1}
+.layout-menu :deep(.is-active){color:#409eff!important;background:rgba(64,158,255,.12)}
+.logo{height:72px;display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;font-size:19px;font-weight:600}
+.layout-header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #e6e8eb}
+.user-info{display:flex;align-items:center;gap:10px;cursor:pointer}
+.layout-main{padding:28px;overflow:auto;min-width:0}
+.nav-label{padding:21px 21px 8px;color:#7fa9c3;font-size:11px;font-weight:700;letter-spacing:.11em}
+.layout-menu{overflow-y:auto;overflow-x:hidden}
+.navigation{background:#10243d;overflow:auto}
+.layout-container{min-height:100vh;height:100vh}
+.layout-header{height:68px;box-shadow:0 1px 12px #1233540d}
+.logo{justify-content:flex-start;padding-left:23px}
+.mobile-menu-button{display:none}
+.layout-menu :deep(.el-menu-item:hover),
+.layout-menu :deep(.el-sub-menu__title:hover){color:#fff;background:rgba(255,255,255,.10)}
+.layout-menu :deep(.el-menu-item.is-active:hover){color:#409eff;background:rgba(64,158,255,.22)}
+.layout-menu :deep(.el-menu--inline){background:rgba(255,255,255,.04)}
+
+
 @media(max-width:800px){
   .navigation{position:fixed;left:0;top:0;bottom:0;z-index:102;transform:translateX(-100%);transition:transform .2s ease;width:240px!important;box-shadow:10px 0 28px #0f314055}
   .navigation.navigation-open{transform:translateX(0)}

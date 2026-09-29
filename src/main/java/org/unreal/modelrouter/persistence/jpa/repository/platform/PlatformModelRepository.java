@@ -28,4 +28,8 @@ public interface PlatformModelRepository extends JpaRepository<PlatformModelEnti
     Optional<PlatformModelEntity> findByRealNameAndDeletedFalse(String realName);
 
     List<PlatformModelEntity> findByChannelIdAndDeletedFalse(String channelId);
+
+    /** 表内最大 id（本地分配主键用；standalone 下无平台写入） */
+    @Query("SELECT COALESCE(MAX(m.id), 0) FROM PlatformModelEntity m")
+    Long findMaxId();
 }

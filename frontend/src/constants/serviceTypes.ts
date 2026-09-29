@@ -19,6 +19,7 @@ export enum ServiceType {
   STT = 'stt',
   IMG_GEN = 'imgGen',
   IMG_EDIT = 'imgEdit',
+  VID_GEN = 'vidGen',
 }
 
 /**
@@ -32,6 +33,7 @@ export const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
   [ServiceType.STT]: '语音识别',
   [ServiceType.IMG_GEN]: '图像生成',
   [ServiceType.IMG_EDIT]: '图像编辑',
+  [ServiceType.VID_GEN]: '视频生成',
 }
 
 /**
@@ -50,6 +52,7 @@ export const COMMON_SERVICE_TYPES = [
   ServiceType.STT,
   ServiceType.IMG_GEN,
   ServiceType.IMG_EDIT,
+  ServiceType.VID_GEN,
 ]
 
 /**
