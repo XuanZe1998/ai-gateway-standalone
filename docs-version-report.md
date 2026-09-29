@@ -3,22 +3,22 @@
 ## 版本统计
 
 - 总文档数: 182
-- 近7天变更: 29
+- 近7天变更: 37
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-09-28 08:16:48
+- 最后扫描: 2026-09-29 08:16:25
 
 ## 最近变更
 
+- **MODIFIED**: docs/zh/index.md (1.0.1 → 1.0.2) - 2026-09-29
+- **MODIFIED**: docs/en/index.md (1.0.1 → 1.0.2) - 2026-09-29
+- **MODIFIED**: docs-version-report.md (1.0.12 → 1.0.13) - 2026-09-29
+- **MODIFIED**: README.md (1.0.13 → 1.0.14) - 2026-09-29
+- **MODIFIED**: README-ZH.md (1.0.5 → 1.0.6) - 2026-09-29
+- **MODIFIED**: README-STANDALONE.md (1.0.0 → 1.0.1) - 2026-09-29
+- **MODIFIED**: QWEN.md (1.0.2 → 1.0.3) - 2026-09-29
+- **MODIFIED**: CLAUDE.md (1.0.0 → 1.0.1) - 2026-09-29
 - **CREATED**: docs/zh/troubleshooting/campus-cas-login-not-found.md ( → 1.0.0) - 2026-09-28
 - **CREATED**: docs/zh/deployment/vm-capacity-sizing-30000-users.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/zh/deployment/production-readiness.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/zh/deployment/campus-distributed-deployment.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/weekly-report-2026-09-14-to-09-18.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/teacher-device-bound-access.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/superpowers/specs/2026-07-07-ai-account-balance-migration-design.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/superpowers/specs/2026-07-01-stream-options-injection-design.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/superpowers/specs/2026-06-24-free-tokens-design.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/superpowers/specs/2026-06-24-billing-discount-enterprise-personal-design.md ( → 1.0.0) - 2026-09-28
 
 ## 过期文档 (30天未更新)
 
@@ -49,7 +49,6 @@
 - docs/en/getting-started/index.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/en/getting-started/installation.md (版本: 1.0.2, 最后更新: 2025-09-02)
 - docs/en/getting-started/quick-start.md (版本: 1.0.1, 最后更新: 2025-08-29)
-- docs/en/index.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/en/monitoring/alerts.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/en/monitoring/configuration.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/en/monitoring/dashboards.md (版本: 1.0.1, 最后更新: 2025-08-29)
@@ -94,7 +93,6 @@
 - docs/zh/getting-started/index.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/zh/getting-started/installation.md (版本: 1.0.3, 最后更新: 2026-04-17)
 - docs/zh/getting-started/quick-start.md (版本: 1.0.2, 最后更新: 2025-09-02)
-- docs/zh/index.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/zh/monitoring/alert_rules_guide.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/zh/monitoring/alerts.md (版本: 1.0.1, 最后更新: 2025-08-29)
 - docs/zh/monitoring/configuration.md (版本: 1.0.1, 最后更新: 2025-08-29)
@@ -707,6 +705,14 @@
 
 ## 所有文档版本
 
+- **docs/zh/index.md**: v1.0.2 - 2026-09-29 (57a80611)
+- **docs/en/index.md**: v1.0.2 - 2026-09-29 (57a80611)
+- **docs-version-report.md**: v1.0.13 - 2026-09-29 (57a80611)
+- **README.md**: v1.0.14 - 2026-09-29 (57a80611)
+- **README-ZH.md**: v1.0.6 - 2026-09-29 (57a80611)
+- **README-STANDALONE.md**: v1.0.1 - 2026-09-29 (57a80611)
+- **QWEN.md**: v1.0.3 - 2026-09-29 (57a80611)
+- **CLAUDE.md**: v1.0.1 - 2026-09-29 (57a80611)
 - **docs/zh/troubleshooting/campus-cas-login-not-found.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/zh/deployment/vm-capacity-sizing-30000-users.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/zh/deployment/production-readiness.md**: v1.0.0 - 2026-09-28 (05931b92)
@@ -730,12 +736,6 @@
 - **docs/README.md**: v1.0.2 - 2026-09-28 (05931b92)
 - **docs/README-UPSTREAM.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/CHANGELOG-v2.5.x.md**: v1.0.0 - 2026-09-28 (05931b92)
-- **docs-version-report.md**: v1.0.12 - 2026-09-28 (05931b92)
-- **README.md**: v1.0.13 - 2026-09-28 (05931b92)
-- **README-ZH.md**: v1.0.5 - 2026-09-28 (05931b92)
-- **README-STANDALONE.md**: v1.0.0 - 2026-09-28 (05931b92)
-- **QWEN.md**: v1.0.2 - 2026-09-28 (05931b92)
-- **CLAUDE.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/zh/development/v2.7.x-package-refactoring.md**: v1.0.0 - 2026-04-29 (05931b92)
 - **docs/zh/getting-started/quick-start-v1.8.md**: v1.0.1 - 2026-04-28 (05931b92)
 - **docs/zh/configuration/state-persistence.md**: v1.0.0 - 2026-04-28 (05931b92)
@@ -830,7 +830,6 @@
 - **docs/zh/monitoring/configuration.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/zh/monitoring/alerts.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/zh/monitoring/alert_rules_guide.md**: v1.0.1 - 2025-08-29 (05931b92)
-- **docs/zh/index.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/zh/getting-started/index.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/zh/development/tracing-integration.md**: v1.0.0 - 2025-08-29 (05931b92)
 - **docs/zh/development/testing.md**: v1.0.1 - 2025-08-29 (05931b92)
@@ -867,7 +866,6 @@
 - **docs/en/monitoring/dashboards.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/en/monitoring/configuration.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/en/monitoring/alerts.md**: v1.0.1 - 2025-08-29 (05931b92)
-- **docs/en/index.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/en/getting-started/quick-start.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/en/getting-started/index.md**: v1.0.1 - 2025-08-29 (05931b92)
 - **docs/en/getting-started/first-steps.md**: v1.0.1 - 2025-08-29 (05931b92)

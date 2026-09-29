@@ -2,11 +2,11 @@
   "versions": {
     "README.md": {
       "FilePath": "README.md",
-      "Version": "1.0.13",
-      "LastModified": "2026-09-28T08:16:47.897070",
-      "ContentHash": "a06b94204a236fc9",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.14",
+      "LastModified": "2026-09-29T08:16:25.067479",
+      "ContentHash": "fd1f0463346ca85b",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
@@ -367,11 +367,11 @@
     },
     "docs/en/index.md": {
       "FilePath": "docs/en/index.md",
-      "Version": "1.0.1",
-      "LastModified": "2025-08-29T03:02:12.198524",
-      "ContentHash": "242e7d827a597de4",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.2",
+      "LastModified": "2026-09-29T08:16:25.161159",
+      "ContentHash": "0f923b7bfb059e09",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": [
         "docs/en/configuration/index.md",
@@ -994,11 +994,11 @@
     },
     "docs/zh/index.md": {
       "FilePath": "docs/zh/index.md",
-      "Version": "1.0.1",
-      "LastModified": "2025-08-29T03:02:12.387004",
-      "ContentHash": "0aa55bb7a354b039",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.2",
+      "LastModified": "2026-09-29T08:16:25.366839",
+      "ContentHash": "2f9e2ff6cb5d55f6",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": [
         "docs/zh/configuration/index.md",
@@ -1799,11 +1799,11 @@
     },
     "README-ZH.md": {
       "FilePath": "README-ZH.md",
-      "Version": "1.0.5",
-      "LastModified": "2026-09-28T08:16:47.895111",
-      "ContentHash": "b796fb0fbec08179",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.6",
+      "LastModified": "2026-09-29T08:16:25.065601",
+      "ContentHash": "588c5aaf2019e2ad",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": [
         "README.md"
@@ -1825,11 +1825,11 @@
     },
     "QWEN.md": {
       "FilePath": "QWEN.md",
-      "Version": "1.0.2",
-      "LastModified": "2026-09-28T08:16:47.891062",
-      "ContentHash": "c0a0767712c885b3",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.3",
+      "LastModified": "2026-09-29T08:16:25.061423",
+      "ContentHash": "fdbc244d86e76784",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
@@ -2104,31 +2104,31 @@
     },
     "docs-version-report.md": {
       "FilePath": "docs-version-report.md",
-      "Version": "1.0.12",
-      "LastModified": "2026-09-28T08:16:47.899341",
-      "ContentHash": "0738094427f131b6",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.13",
+      "LastModified": "2026-09-29T08:16:25.069570",
+      "ContentHash": "256c608063654aed",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
     "CLAUDE.md": {
       "FilePath": "CLAUDE.md",
-      "Version": "1.0.0",
-      "LastModified": "2026-09-28T08:16:47.888922",
-      "ContentHash": "0e343bf41331ccb6",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.1",
+      "LastModified": "2026-09-29T08:16:25.059292",
+      "ContentHash": "e01a6333a3f2541c",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
     "README-STANDALONE.md": {
       "FilePath": "README-STANDALONE.md",
-      "Version": "1.0.0",
-      "LastModified": "2026-09-28T08:16:47.893033",
-      "ContentHash": "4c510d7ca7a9fb76",
-      "GitCommit": "05931b92",
-      "Author": "XuanZe1998",
+      "Version": "1.0.1",
+      "LastModified": "2026-09-29T08:16:25.063370",
+      "ContentHash": "9ac7f736c3151408",
+      "GitCommit": "57a80611",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
@@ -2348,1038 +2348,6 @@
     }
   },
   "changes": [
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.176",
-      "NewVersion": "1.0.177",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-11T04:29:38.324342",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.177",
-      "NewVersion": "1.0.178",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-12T04:25:03.370395",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.178",
-      "NewVersion": "1.0.179",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-13T04:21:57.938106",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.179",
-      "NewVersion": "1.0.180",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-14T04:10:29.886404",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.180",
-      "NewVersion": "1.0.181",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-16T04:26:06.394015",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.181",
-      "NewVersion": "1.0.182",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-17T04:20:51.712667",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.182",
-      "NewVersion": "1.0.183",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-18T04:22:25.192559",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.183",
-      "NewVersion": "1.0.184",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-19T04:21:03.341637",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.184",
-      "NewVersion": "1.0.185",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-20T04:15:55.698046",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.185",
-      "NewVersion": "1.0.186",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-21T04:07:32.696615",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.186",
-      "NewVersion": "1.0.187",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-22T04:18:24.809210",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.187",
-      "NewVersion": "1.0.188",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-23T04:25:05.812598",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.188",
-      "NewVersion": "1.0.189",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-24T04:19:51.296758",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.189",
-      "NewVersion": "1.0.190",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-25T04:21:24.899420",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.190",
-      "NewVersion": "1.0.191",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-26T04:17:56.665486",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.191",
-      "NewVersion": "1.0.192",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-27T04:13:48.636151",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.192",
-      "NewVersion": "1.0.193",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-02-28T03:55:39.671263",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.193",
-      "NewVersion": "1.0.194",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-01T04:22:44.698010",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.194",
-      "NewVersion": "1.0.195",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-02T04:14:41.419765",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.195",
-      "NewVersion": "1.0.196",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-03T04:15:26.948292",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.196",
-      "NewVersion": "1.0.197",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-04T04:09:05.670985",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README-ZH.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-03-05T04:12:30.102383",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "README.md",
-      "OldVersion": "1.0.6",
-      "NewVersion": "1.0.7",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-05T04:12:30.104513",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.197",
-      "NewVersion": "1.0.198",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-05T04:12:30.106710",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README-EN.md",
-      "OldVersion": "1.0.5",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-03-05T04:12:30.736666",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.198",
-      "NewVersion": "1.0.199",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-06T04:09:41.808053",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.199",
-      "NewVersion": "1.0.200",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-07T04:01:07.642207",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.200",
-      "NewVersion": "1.0.201",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-08T04:11:41.324852",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.201",
-      "NewVersion": "1.0.202",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-09T04:19:01.806479",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.202",
-      "NewVersion": "1.0.203",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-10T04:10:00.113972",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.203",
-      "NewVersion": "1.0.204",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-11T04:10:27.496458",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README-ZH.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "1.0.1",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-12T04:14:09.984895",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README.md",
-      "OldVersion": "1.0.7",
-      "NewVersion": "1.0.8",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-12T04:14:09.987014",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.204",
-      "NewVersion": "1.0.205",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-12T04:14:09.989548",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/development/architecture.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-12T04:14:10.397439",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/development/contributing.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-12T04:14:10.404091",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/reference/adapter-updates.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-03-12T04:14:10.515795",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/reference/faq.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-12T04:14:10.521137",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/reference/index.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-12T04:14:10.529021",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.205",
-      "NewVersion": "1.0.206",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-03-13T04:12:32.625722",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "QWEN.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:12.943315",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "README-ZH.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:12.945350",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README.md",
-      "OldVersion": "1.0.8",
-      "NewVersion": "1.0.9",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:12.947353",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/en/deployment/docker-optimized.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.053970",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/en/deployment/docker.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.056031",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/en/deployment/production.md",
-      "OldVersion": "1.0.3",
-      "NewVersion": "1.0.4",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.085249",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/en/development/V1.4.1-changelog.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.087890",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/en/development/index.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.117410",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/en/monitoring/alert_rules_guide.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.174924",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/en/reference/adapter-updates.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.249838",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/en/reference/changelog.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.252176",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/en/security/blacklist-management.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.285100",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/api-reference/universal-api.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.410502",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/configuration/dynamic-config.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.426571",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/configuration/jwt-persistence.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.435727",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/configuration/validation-rules.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.462573",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/deployment/docker-optimized.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.476502",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/deployment/docker.md",
-      "OldVersion": "1.0.4",
-      "NewVersion": "1.0.5",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.480008",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/deployment/jwt-persistence-deployment-checklist.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.496179",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/deployment/production.md",
-      "OldVersion": "1.0.3",
-      "NewVersion": "1.0.4",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.505870",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/development/V1.4.0-changelog.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.508220",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/development/V1.4.1-changelog.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.510612",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/development/architecture-refactoring.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.512979",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/development/index.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.536305",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/development/tracing-full-chain-design.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.551977",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/getting-started/first-steps.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.561935",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/getting-started/installation.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.571143",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/getting-started/quick-start-v1.8.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.573192",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/reference/changelog.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.673849",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/reference/faq.md",
-      "OldVersion": "1.0.3",
-      "NewVersion": "1.0.4",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.676517",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/security/api-key-management.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.695193",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/security/audit-log-management.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.697603",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/security/blacklist-management.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.700108",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/security/jwt-authentication.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-17T04:49:13.716782",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/zh/troubleshooting/issue-fixes.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-17T04:49:13.792480",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.206",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-17T04:49:13.798968",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "RELEASE-NOTES-1.9.3.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-18T04:32:30.701617",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-18T04:32:30.703791",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "1.0.1",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-19T04:50:52.953868",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-20T05:13:08.904952",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-21T04:48:40.240628",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.3",
-      "NewVersion": "1.0.4",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-22T04:46:36.835635",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.4",
-      "NewVersion": "1.0.5",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-23T04:50:32.239742",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.5",
-      "NewVersion": "1.0.6",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-24T04:54:49.023114",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.6",
-      "NewVersion": "1.0.7",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-25T04:36:24.637896",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.7",
-      "NewVersion": "1.0.8",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-26T05:12:05.162590",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.8",
-      "NewVersion": "1.0.9",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-27T05:24:21.315672",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "QWEN.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "1.0.1",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-28T05:31:17.039874",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README.md",
-      "OldVersion": "1.0.9",
-      "NewVersion": "1.0.10",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-28T05:31:17.044147",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "RELEASE-1.8.1.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.045696",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "RELEASE-NOTES-1.8.1.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.047253",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.9",
-      "NewVersion": "1.0.10",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-28T05:31:17.050704",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/en/configuration/state-persistence.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.107889",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/configuration/state-persistence.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.378804",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/getting-started/quick-start-v1.8.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "1.0.1",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-28T05:31:17.462863",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "v2.2.x-开发总结.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.610331",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "v2.3.0-系列版本规划.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.612705",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "v2.3.1-系列版本规划.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.614895",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "v2.3.3-健康检查显示修复计划.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.616844",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "v2.3.x-开发总结.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.618733",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "工作进度-v1.9.4-v1.9.5.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-28T05:31:17.620705",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "README-ZH.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-29T05:26:47.449325",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README.md",
-      "OldVersion": "1.0.10",
-      "NewVersion": "1.0.11",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-04-29T05:26:47.451726",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs/docs-version-report.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-29T05:26:47.462107",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs/zh/development/v2.7.x-package-refactoring.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-29T05:26:48.263706",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "RELEASE-NOTES-1.9.3.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568868",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.10",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568903",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "RELEASE-1.8.1.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568921",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "RELEASE-NOTES-1.8.1.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568936",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "v2.2.x-开发总结.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568951",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "v2.3.0-系列版本规划.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568967",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "v2.3.1-系列版本规划.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568982",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "v2.3.3-健康检查显示修复计划.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.568998",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "v2.3.x-开发总结.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.569011",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "工作进度-v1.9.4-v1.9.5.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "",
-      "ChangeType": "DELETED",
-      "Timestamp": "2026-04-29T05:26:48.569026",
-      "Description": "文档已删除"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "",
-      "NewVersion": "1.0.0",
-      "ChangeType": "CREATED",
-      "Timestamp": "2026-04-30T05:30:41.283816",
-      "Description": "文档created"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.0",
-      "NewVersion": "1.0.1",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-01T05:41:59.422992",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.1",
-      "NewVersion": "1.0.2",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-02T05:11:32.654306",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.2",
-      "NewVersion": "1.0.3",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-03T05:30:49.273734",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.3",
-      "NewVersion": "1.0.4",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-04T05:35:10.970205",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.4",
-      "NewVersion": "1.0.5",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-05T05:15:46.478004",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.5",
-      "NewVersion": "1.0.6",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-06T05:29:36.903462",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README-ZH.md",
-      "OldVersion": "1.0.3",
-      "NewVersion": "1.0.4",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-07T05:32:16.118233",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "README.md",
-      "OldVersion": "1.0.11",
-      "NewVersion": "1.0.12",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-07T05:32:16.120341",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.6",
-      "NewVersion": "1.0.7",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-07T05:32:16.122505",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.7",
-      "NewVersion": "1.0.8",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-08T04:53:30.943261",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.8",
-      "NewVersion": "1.0.9",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-09T05:21:48.570907",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.9",
-      "NewVersion": "1.0.10",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-10T05:37:31.414391",
-      "Description": "文档modified"
-    },
-    {
-      "FilePath": "docs-version-report.md",
-      "OldVersion": "1.0.10",
-      "NewVersion": "1.0.11",
-      "ChangeType": "MODIFIED",
-      "Timestamp": "2026-05-11T05:59:03.846726",
-      "Description": "文档modified"
-    },
     {
       "FilePath": "CLAUDE.md",
       "OldVersion": "",
@@ -3611,7 +2579,71 @@
       "ChangeType": "CREATED",
       "Timestamp": "2026-09-28T08:16:48.284065",
       "Description": "文档created"
+    },
+    {
+      "FilePath": "CLAUDE.md",
+      "OldVersion": "1.0.0",
+      "NewVersion": "1.0.1",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.059300",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "QWEN.md",
+      "OldVersion": "1.0.2",
+      "NewVersion": "1.0.3",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.061429",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "README-STANDALONE.md",
+      "OldVersion": "1.0.0",
+      "NewVersion": "1.0.1",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.063376",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "README-ZH.md",
+      "OldVersion": "1.0.5",
+      "NewVersion": "1.0.6",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.065608",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "README.md",
+      "OldVersion": "1.0.13",
+      "NewVersion": "1.0.14",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.067512",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs-version-report.md",
+      "OldVersion": "1.0.12",
+      "NewVersion": "1.0.13",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.069575",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs/en/index.md",
+      "OldVersion": "1.0.1",
+      "NewVersion": "1.0.2",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.161168",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs/zh/index.md",
+      "OldVersion": "1.0.1",
+      "NewVersion": "1.0.2",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-09-29T08:16:25.366848",
+      "Description": "文档modified"
     }
   ],
-  "last_updated": "2026-09-28T08:16:48.436498"
+  "last_updated": "2026-09-29T08:16:25.558831"
 }
