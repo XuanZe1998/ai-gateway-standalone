@@ -3,12 +3,13 @@
 ## 版本统计
 
 - 总文档数: 182
-- 近7天变更: 37
+- 近7天变更: 38
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-09-29 08:16:25
+- 最后扫描: 2026-09-30 08:17:08
 
 ## 最近变更
 
+- **MODIFIED**: docs-version-report.md (1.0.13 → 1.0.14) - 2026-09-30
 - **MODIFIED**: docs/zh/index.md (1.0.1 → 1.0.2) - 2026-09-29
 - **MODIFIED**: docs/en/index.md (1.0.1 → 1.0.2) - 2026-09-29
 - **MODIFIED**: docs-version-report.md (1.0.12 → 1.0.13) - 2026-09-29
@@ -18,7 +19,6 @@
 - **MODIFIED**: QWEN.md (1.0.2 → 1.0.3) - 2026-09-29
 - **MODIFIED**: CLAUDE.md (1.0.0 → 1.0.1) - 2026-09-29
 - **CREATED**: docs/zh/troubleshooting/campus-cas-login-not-found.md ( → 1.0.0) - 2026-09-28
-- **CREATED**: docs/zh/deployment/vm-capacity-sizing-30000-users.md ( → 1.0.0) - 2026-09-28
 
 ## 过期文档 (30天未更新)
 
@@ -705,9 +705,9 @@
 
 ## 所有文档版本
 
+- **docs-version-report.md**: v1.0.14 - 2026-09-30 (061cceaa)
 - **docs/zh/index.md**: v1.0.2 - 2026-09-29 (57a80611)
 - **docs/en/index.md**: v1.0.2 - 2026-09-29 (57a80611)
-- **docs-version-report.md**: v1.0.13 - 2026-09-29 (57a80611)
 - **README.md**: v1.0.14 - 2026-09-29 (57a80611)
 - **README-ZH.md**: v1.0.6 - 2026-09-29 (57a80611)
 - **README-STANDALONE.md**: v1.0.1 - 2026-09-29 (57a80611)
