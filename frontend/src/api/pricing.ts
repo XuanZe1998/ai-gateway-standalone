@@ -51,17 +51,56 @@ export interface PricingTier {
 export interface PricingDetail {
   editable: PricingEditable
   tiers: PricingTier[]
+  /** 当前计费组的维度显示别名（dimensionKey → 已保存别名；未设置的 key 不出现） */
+  dimensionAliases: Record<string, string>
 }
 
-/** 手动保存主定价的载荷与 PricingEditable 结构一致 */
-export type PricingSavePayload = PricingEditable
+/** 阶梯模式：每档价格快照（按档位顺序对位） */
+export interface TierPriceSnapshot {
+  inputPrice: number | null
+  cacheHitInputPrice: number | null
+  outputPrice: number | null
+  cacheCreateInputPrice: number | null
+  cacheHitExplicitInputPrice: number | null
+  thinkingPrice: number | null
+}
+
+/** 阶梯档位区间（仅区间，价格在编辑定价弹窗的阶梯矩阵中维护） */
+export interface TierRange {
+  lowerLimitK: number | null
+  upperLimitK: number | null
+  unlimited: boolean
+}
+
+/** 手动保存主定价的载荷：整体模式填主价字段，阶梯模式填 tierPrices；dimensionAliases 随保存整组提交 */
+export interface PricingSavePayload {
+  serviceType: string
+  modelId: string
+  vendor: string | null
+  billingMode: number
+  inputPrice: number | null
+  cacheHitInputPrice: number | null
+  outputPrice: number | null
+  cacheCreateInputPrice: number | null
+  cacheHitExplicitInputPrice: number | null
+  enableInputToken: boolean
+  enableCacheHitInput: boolean
+  enableOutputToken: boolean
+  enableCacheCreateInput: boolean
+  enableCacheHitExplicitInput: boolean
+  thinkingBillingMode: number
+  thinkingPrice: number | null
+  discount: number | null
+  dimensionAliases: Record<string, string>
+  tierPrices?: TierPriceSnapshot[]
+}
 
 export const getPricingList = () => request.get<PricingRow[]>('/admin/pricing').then(r => r.data)
 export const getPricingDetail = (serviceType: string, modelId: string) =>
   request.get<PricingDetail>('/admin/pricing/detail', { params: { serviceType, modelId } }).then(r => r.data)
 export const savePricing = (body: PricingSavePayload) =>
   request.put<PricingRow>('/admin/pricing', body).then(r => r.data)
-export const savePricingTiers = (serviceType: string, modelId: string, tiers: PricingTier[]) =>
+export const savePricingTiers = (serviceType: string, modelId: string, tiers: TierRange[]) =>
   request.put<PricingRow>('/admin/pricing/tiers', { serviceType, modelId, tiers }).then(r => r.data)
 export const deletePricing = (serviceType: string, modelId: string) =>
   request.delete<boolean>('/admin/pricing', { params: { serviceType, modelId } }).then(r => r.data)
@@ -110,4 +149,79 @@ export const STRATEGY_GROUP: Record<string, { label: string; keys: PricingStrate
   imgGen: { label: '图像计费', keys: ['normalPrice','output','cacheHit','cacheCreate','cacheHitExplicit','thinking','discount'] },
   imgEdit: { label: '图像计费', keys: ['normalPrice','output','cacheHit','cacheCreate','cacheHitExplicit','thinking','discount'] }
 }
+
+/** 取维度显示名：优先别名，未设置用默认名（后台与模型广场共用口径） */
+export function aliasLabel(key: PricingStrategyKey, aliases: Record<string, string> | null | undefined): string {
+  const alias = aliases?.[key]?.trim()
+  return alias ? alias : PRICING_STRATEGIES[key].label
+}
+
+// ===== 规则引擎 API（billingMode=3）=====
+
+/** 计费维度 */
+export interface BillingDimension {
+  id: number
+  groupKey: string
+  dimensionKey: string
+  displayName: string
+  unit: string
+  valueType: 'price' | 'flag' | 'discount'
+  sortOrder: number
+  enabled: boolean
+}
+
+/** 上下文字段元数据 */
+export interface ContextField {
+  field: string
+  label: string
+  valueType: 'int' | 'boolean' | 'string'
+  operators: string[]
+}
+
+/** 计费规则 */
+export interface PricingRule {
+  id: number
+  modelId: number
+  modelName: string
+  ruleName: string
+  matchJson: string
+  priceJson: string
+  priority: number
+  enabled: boolean
+}
+
+/** 条件树节点（表单式编辑器内部模型） */
+export interface ConditionNode {
+  operator?: 'AND' | 'OR' | 'NOT'
+  conditions?: ConditionNode[]
+  field?: string
+  op?: string
+  value?: number | boolean | string | number[] | string[] | null
+}
+
+/** 维度管理 API */
+export const getDimensions = (groupKey?: string) =>
+  request.get<BillingDimension[]>('/admin/billing/dimensions', { params: groupKey ? { groupKey } : {} }).then(r => r.data)
+export const createDimension = (body: { groupKey: string; dimensionKey: string; displayName: string; unit: string; valueType: string }) =>
+  request.post<BillingDimension>('/admin/billing/dimensions', body).then(r => r.data)
+export const updateDimension = (id: number, body: { displayName?: string; unit?: string; sortOrder?: number; enabled?: boolean }) =>
+  request.put<BillingDimension>(`/admin/billing/dimensions/${id}`, body).then(r => r.data)
+export const deleteDimension = (id: number) =>
+  request.delete(`/admin/billing/dimensions/${id}`)
+
+/** 规则管理 API */
+export const getRules = (modelName: string) =>
+  request.get<PricingRule[]>('/admin/pricing/rules', { params: { modelName } }).then(r => r.data)
+export const createRule = (body: { serviceType: string; modelName: string; ruleName: string; matchJson: string; priceJson: string; priority?: number }) =>
+  request.post<PricingRule>('/admin/pricing/rules', body).then(r => r.data)
+export const updateRule = (id: number, body: { ruleName?: string; matchJson?: string; priceJson?: string; enabled?: boolean }) =>
+  request.put<PricingRule>(`/admin/pricing/rules/${id}`, body).then(r => r.data)
+export const deleteRule = (id: number) =>
+  request.delete(`/admin/pricing/rules/${id}`)
+export const reorderRules = (orderedRuleIds: number[]) =>
+  request.post('/admin/pricing/rules/reorder', { orderedRuleIds })
+
+/** 上下文字段元数据 API */
+export const getContextFields = () =>
+  request.get<ContextField[]>('/admin/pricing/context-fields').then(r => r.data)
 

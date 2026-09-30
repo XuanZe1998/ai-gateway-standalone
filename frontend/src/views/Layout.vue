@@ -24,6 +24,7 @@
           </el-sub-menu>
           <el-menu-item index="/system/model-square"><el-icon><Reading /></el-icon><span>模型广场内容</span></el-menu-item>
           <el-menu-item index="/system/pricing"><el-icon><Coin /></el-icon><span>模型定价管理</span></el-menu-item>
+          <el-menu-item index="/system/billing-dimensions"><el-icon><Coin /></el-icon><span>计费维度管理</span></el-menu-item>
           <el-menu-item index="/system/accounts"><el-icon><User /></el-icon><span>账户管理</span></el-menu-item>
           <el-menu-item index="/exceptions/list"><el-icon><Warning /></el-icon><span>异常管理</span></el-menu-item>
           <el-menu-item index="/token-usage/statistics"><el-icon><DataAnalysis /></el-icon><span>Token 统计</span></el-menu-item>

@@ -7,8 +7,10 @@ import org.springframework.web.server.ResponseStatusException;
 import org.unreal.modelrouter.auth.security.model.UserIdentity;
 import org.unreal.modelrouter.billing.*;
 import org.unreal.modelrouter.billing.freequota.FreeQuotaProperties;
+import org.unreal.modelrouter.billing.pricing.BillingDimensionAliasService;
 import org.unreal.modelrouter.persistence.jpa.entity.ModelSquareContentEntity;
 import org.unreal.modelrouter.persistence.jpa.entity.platform.PlatformModelEntity;
+import org.unreal.modelrouter.persistence.jpa.repository.BillingDimensionAliasRepository;
 import org.unreal.modelrouter.persistence.jpa.repository.ModelSquareContentRepository;
 import org.unreal.modelrouter.persistence.jpa.repository.platform.*;
 import org.unreal.modelrouter.router.model.ModelRouterProperties.ModelInstance;
@@ -28,7 +30,10 @@ class ModelSquareServiceTest {
     final ModelPricingService pricing = mock(ModelPricingService.class);
     final DiscountCalculationService discounts = mock(DiscountCalculationService.class);
     final ObjectMapper mapper = new ObjectMapper();
-    final ModelSquareService service = new ModelSquareService(registry, models, tiers, content, pricing, discounts, new ModelSquarePricing(), new FreeQuotaProperties(), mapper);
+    // 真实别名服务 + mock 仓库：单测不触发 @PostConstruct，缓存为空 → 维度名走默认名
+    final ModelSquareService service = new ModelSquareService(registry, models, tiers, content, pricing, discounts,
+            new ModelSquarePricing(new BillingDimensionAliasService(mock(BillingDimensionAliasRepository.class))),
+            new FreeQuotaProperties(), mapper);
     ModelInstance instance(String id, String channel) {
         var i = new ModelInstance(); i.setName(id); i.setChannelId(channel); i.setStatus("active");
         i.setBaseUrl("https://SECRET-UPSTREAM/"); return i;

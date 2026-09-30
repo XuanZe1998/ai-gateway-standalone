@@ -176,6 +176,12 @@ const router = createRouter({
           name: 'pricing-management',
           component: () => import('@/views/PricingManagement.vue'),
           meta: { title: '模型定价管理' }
+        },
+        {
+          path: 'billing-dimensions',
+          name: 'billing-dimensions',
+          component: () => import('@/views/DimensionManagement.vue'),
+          meta: { title: '计费维度管理' }
         }
       ]
     },

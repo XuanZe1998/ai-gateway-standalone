@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.unreal.modelrouter.auth.security.model.UserIdentity;
+import org.unreal.modelrouter.billing.rule.PricingRuleEngine;
+import org.unreal.modelrouter.billing.rule.UsageContext;
 import org.unreal.modelrouter.persistence.jpa.entity.BillingRecordEntity;
 import org.unreal.modelrouter.persistence.jpa.repository.BillingRecordRepository;
 
@@ -30,6 +32,7 @@ public class BillingService {
     private final EnterpriseLookupService enterpriseLookupService;
     private final org.unreal.modelrouter.persistence.jpa.repository.platform.PlatformSystemUserRepository systemUserRepository;
     private final DiscountCalculationService discountCalculationService;
+    private final PricingRuleEngine ruleEngine;
     private final ObjectMapper objectMapper;
 
     public BillingService(ModelPricingService pricingService,
@@ -38,6 +41,7 @@ public class BillingService {
                           EnterpriseLookupService enterpriseLookupService,
                           org.unreal.modelrouter.persistence.jpa.repository.platform.PlatformSystemUserRepository systemUserRepository,
                           DiscountCalculationService discountCalculationService,
+                          PricingRuleEngine ruleEngine,
                           ObjectMapper objectMapper) {
         this.pricingService = pricingService;
         this.billingRepository = billingRepository;
@@ -45,6 +49,7 @@ public class BillingService {
         this.enterpriseLookupService = enterpriseLookupService;
         this.systemUserRepository = systemUserRepository;
         this.discountCalculationService = discountCalculationService;
+        this.ruleEngine = ruleEngine;
         this.objectMapper = objectMapper;
     }
 
@@ -191,23 +196,48 @@ public class BillingService {
         BigDecimal cacheHitExplicitInputPrice = BigDecimal.ZERO;
         BigDecimal thinkingPrice = pricing != null ? pricing.getThinkingPrice() : BigDecimal.ZERO;
         if (pricing != null) {
-            inputPrice = pricing.getInputPrice();
-            outputPrice = pricing.getOutputPrice();
-            cacheHitInputPrice = pricing.getCacheHitInputPrice();
-            cacheCreateInputPrice = pricing.getCacheCreateInputPrice();
-            cacheHitExplicitInputPrice = pricing.getCacheHitExplicitInputPrice();
+            if (Integer.valueOf(3).equals(pricing.getBillingMode())) {
+                // ===== 规则计费（billingMode=3，数据驱动条件树）：价格单位 元/M token → 元/token =====
+                UsageContext usageCtx = new UsageContext(
+                        promptTokens, completionTokens,
+                        false, false, promptTokens,
+                        ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now(),
+                        ctx.getServiceType(), ctx.getVendor(),
+                        cacheHit > 0, thinkingMode != 1);
+                PricingRuleEngine.MatchedPricing matched = ruleEngine.match(pricing.getRules(), usageCtx);
+                if (matched == null) {
+                    // 资损兜底：未命中任何规则拒计费，绝不按 0 元落账（与视频拒计费同策略）
+                    throw new IllegalStateException("规则计费未命中任何规则: model=" + ctx.getModelName()
+                            + ", ruleCount=" + pricing.getRules().size());
+                }
+                inputPrice = perToken(matched.prices().getOrDefault("normalPrice", BigDecimal.ZERO));
+                outputPrice = perToken(matched.prices().getOrDefault("output", BigDecimal.ZERO));
+                cacheHitInputPrice = perToken(matched.prices().getOrDefault("cacheHit", BigDecimal.ZERO));
+                cacheCreateInputPrice = perToken(matched.prices().getOrDefault("cacheCreate", BigDecimal.ZERO));
+                cacheHitExplicitInputPrice = perToken(matched.prices().getOrDefault("cacheHitExplicit", BigDecimal.ZERO));
+                // 思考单独计费（thinkingMode=2）时取命中规则的价格，其余模式置 0 由下方思考合并逻辑处理
+                if (thinkingMode == 2) {
+                    thinkingPrice = perToken(matched.prices().getOrDefault("thinking", BigDecimal.ZERO));
+                }
+            } else {
+                inputPrice = pricing.getInputPrice();
+                outputPrice = pricing.getOutputPrice();
+                cacheHitInputPrice = pricing.getCacheHitInputPrice();
+                cacheCreateInputPrice = pricing.getCacheCreateInputPrice();
+                cacheHitExplicitInputPrice = pricing.getCacheHitExplicitInputPrice();
 
-            if (Integer.valueOf(2).equals(pricing.getBillingMode()) && !pricing.getTiers().isEmpty()) {
-                ModelPricingService.ModelPricing.PriceTier tier = matchTier(pricing.getTiers(), promptTokens);
-                if (tier != null) {
-                    inputPrice = tier.inputPrice();
-                    outputPrice = tier.outputPrice();
-                    cacheHitInputPrice = tier.cacheHitInputPrice();
-                    cacheCreateInputPrice = tier.cacheCreateInputPrice();
-                    cacheHitExplicitInputPrice = tier.cacheHitExplicitInputPrice();
-                    // thinkingBillingMode=2 且阶梯计费时，思考价取命中档位的 thinkingPrice
-                    if (thinkingMode == 2) {
-                        thinkingPrice = tier.thinkingPrice();
+                if (Integer.valueOf(2).equals(pricing.getBillingMode()) && !pricing.getTiers().isEmpty()) {
+                    ModelPricingService.ModelPricing.PriceTier tier = matchTier(pricing.getTiers(), promptTokens);
+                    if (tier != null) {
+                        inputPrice = tier.inputPrice();
+                        outputPrice = tier.outputPrice();
+                        cacheHitInputPrice = tier.cacheHitInputPrice();
+                        cacheCreateInputPrice = tier.cacheCreateInputPrice();
+                        cacheHitExplicitInputPrice = tier.cacheHitExplicitInputPrice();
+                        // thinkingBillingMode=2 且阶梯计费时，思考价取命中档位的 thinkingPrice
+                        if (thinkingMode == 2) {
+                            thinkingPrice = tier.thinkingPrice();
+                        }
                     }
                 }
             }
@@ -388,6 +418,13 @@ public class BillingService {
             }
         }
         return matched;
+    }
+
+    /** 规则计费单价换算：元/M token → 元/token（规则 price_json 为管理员填写口径） */
+    private BigDecimal perToken(BigDecimal pricePerMillion) {
+        return pricePerMillion != null
+                ? pricePerMillion.divide(MILLION, 10, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
     }
 
     // ==================== 视频模型计费（价格模式 + 计费单位 + 分辨率规则） ====================
