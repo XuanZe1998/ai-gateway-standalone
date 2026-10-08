@@ -2,13 +2,15 @@
 
 ## 版本统计
 
-- 总文档数: 182
-- 近7天变更: 7
+- 总文档数: 183
+- 近7天变更: 9
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-10-07 08:29:05
+- 最后扫描: 2026-10-08 04:15:19
 
 ## 最近变更
 
+- **CREATED**: docs/pricing-rule-engine-design.md ( → 1.0.0) - 2026-10-08
+- **MODIFIED**: docs-version-report.md (1.0.21 → 1.0.22) - 2026-10-08
 - **MODIFIED**: docs-version-report.md (1.0.20 → 1.0.21) - 2026-10-07
 - **MODIFIED**: docs-version-report.md (1.0.19 → 1.0.20) - 2026-10-06
 - **MODIFIED**: docs-version-report.md (1.0.18 → 1.0.19) - 2026-10-05
@@ -702,7 +704,8 @@
 
 ## 所有文档版本
 
-- **docs-version-report.md**: v1.0.21 - 2026-10-07 (09678a45)
+- **docs/pricing-rule-engine-design.md**: v1.0.0 - 2026-10-08 (8c50c0db)
+- **docs-version-report.md**: v1.0.22 - 2026-10-08 (b1f3427f)
 - **docs/zh/index.md**: v1.0.2 - 2026-09-29 (57a80611)
 - **docs/en/index.md**: v1.0.2 - 2026-09-29 (57a80611)
 - **README.md**: v1.0.14 - 2026-09-29 (57a80611)

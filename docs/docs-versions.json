@@ -2104,10 +2104,10 @@
     },
     "docs-version-report.md": {
       "FilePath": "docs-version-report.md",
-      "Version": "1.0.21",
-      "LastModified": "2026-10-07T08:29:04.938441",
-      "ContentHash": "1313de2d4c02b82f",
-      "GitCommit": "09678a45",
+      "Version": "1.0.22",
+      "LastModified": "2026-10-08T04:15:18.980861",
+      "ContentHash": "6058f8bffb6ed335",
+      "GitCommit": "b1f3427f",
       "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
@@ -2343,6 +2343,16 @@
       "ContentHash": "87609f1cc10d363b",
       "GitCommit": "05931b92",
       "Author": "XuanZe1998",
+      "ChangeSummary": "",
+      "Dependencies": []
+    },
+    "docs/pricing-rule-engine-design.md": {
+      "FilePath": "docs/pricing-rule-engine-design.md",
+      "Version": "1.0.0",
+      "LastModified": "2026-10-08T04:15:19.183015",
+      "ContentHash": "20e1bdd66473badc",
+      "GitCommit": "8c50c0db",
+      "Author": "osmanthus456",
       "ChangeSummary": "",
       "Dependencies": []
     }
@@ -2707,7 +2717,23 @@
       "ChangeType": "MODIFIED",
       "Timestamp": "2026-10-07T08:29:04.938449",
       "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs-version-report.md",
+      "OldVersion": "1.0.21",
+      "NewVersion": "1.0.22",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-08T04:15:18.980871",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs/pricing-rule-engine-design.md",
+      "OldVersion": "",
+      "NewVersion": "1.0.0",
+      "ChangeType": "CREATED",
+      "Timestamp": "2026-10-08T04:15:19.183028",
+      "Description": "文档created"
     }
   ],
-  "last_updated": "2026-10-07T08:29:05.439478"
+  "last_updated": "2026-10-08T04:15:19.599928"
 }
