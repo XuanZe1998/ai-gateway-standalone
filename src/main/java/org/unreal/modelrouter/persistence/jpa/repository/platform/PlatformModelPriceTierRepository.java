@@ -1,6 +1,7 @@
 package org.unreal.modelrouter.persistence.jpa.repository.platform;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.unreal.modelrouter.persistence.jpa.entity.platform.PlatformModelPriceTierEntity;
 
@@ -16,4 +17,11 @@ public interface PlatformModelPriceTierRepository extends JpaRepository<Platform
      * 按模型 id 查询阶梯档位（按 tier_order 升序）。
      */
     List<PlatformModelPriceTierEntity> findByModelIdOrderByTierOrderAsc(Long modelId);
+
+    /** 表内最大 id（本地分配主键用） */
+    @Query("SELECT COALESCE(MAX(t.id), 0) FROM PlatformModelPriceTierEntity t")
+    Long findMaxId();
+    
+    /** 删除某模型的全部阶梯档位（管理入口整体替换用） */
+    void deleteByModelId(Long modelId);
 }

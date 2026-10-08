@@ -1,8 +1,10 @@
 package org.unreal.modelrouter.catalog;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.unreal.modelrouter.billing.DiscountBreakdown;
 import org.unreal.modelrouter.billing.ModelPricingService.ModelPricing;
+import org.unreal.modelrouter.billing.pricing.BillingDimensionAliasService;
 import org.unreal.modelrouter.persistence.jpa.entity.platform.PlatformModelEntity;
 import org.unreal.modelrouter.persistence.jpa.entity.platform.PlatformModelPriceTierEntity;
 import java.math.BigDecimal;
@@ -11,9 +13,12 @@ import java.util.List;
 import static org.unreal.modelrouter.catalog.ModelSquareDtos.*;
 
 @Component
+@RequiredArgsConstructor
 public class ModelSquarePricing {
     private static final BigDecimal MILLION = new BigDecimal("1000000");
     private static final String TOKEN_UNIT = "元 / 百万 Token";
+
+    private final BillingDimensionAliasService aliasService;
     public Scheme present(String serviceType, ModelPricing p, DiscountBreakdown d,
                           PlatformModelEntity raw, List<PlatformModelPriceTierEntity> rawTiers) {
         if (p == null) return unknown("未匹配到实际路由的计费配置");
@@ -47,7 +52,7 @@ public class ModelSquarePricing {
                         .findFirst().orElse(null);
                 String condition = "输入 Token ∈ [" + number(tier.lowerLimit() == null ? BigDecimal.ZERO : tier.lowerLimit())
                         + ", " + (tier.unlimited() || tier.upperLimit() == null ? "∞" : number(tier.upperLimit())) + ")";
-                tokenRows(rows, p, d, condition, tier.inputPrice(), tier.outputPrice(), tier.cacheHitInputPrice(),
+                tokenRows(rows, p, d, condition, serviceType, tier.inputPrice(), tier.outputPrice(), tier.cacheHitInputPrice(),
                         tier.cacheCreateInputPrice(), tier.cacheHitExplicitInputPrice(), tier.thinkingPrice(),
                         source == null ? null : List.of(known(source.getInputPrice(), tier.inputPrice()), known(source.getOutputPrice(), tier.outputPrice()),
                                 known(source.getCacheHitInputPrice(), tier.cacheHitInputPrice()), known(source.getCacheCreateInputPrice(), tier.cacheCreateInputPrice()),
@@ -55,7 +60,7 @@ public class ModelSquarePricing {
             }
             notes.add("按本次输入 Token 总量匹配档位（含下界、不含上界），不是累进阶梯；重叠区间按实际档位顺序取最后一个匹配项。");
         } else {
-            tokenRows(rows, p, d, "全部用量", p.getInputPrice(), p.getOutputPrice(), p.getCacheHitInputPrice(),
+            tokenRows(rows, p, d, "全部用量", serviceType, p.getInputPrice(), p.getOutputPrice(), p.getCacheHitInputPrice(),
                     p.getCacheCreateInputPrice(), p.getCacheHitExplicitInputPrice(), p.getThinkingPrice(),
                     raw == null ? null : List.of(known(raw.getInputPrice(), p.getInputPrice()), known(raw.getOutputPrice(), p.getOutputPrice()),
                             known(raw.getCacheHitInputPrice(), p.getCacheHitInputPrice()), known(raw.getCacheCreateInputPrice(), p.getCacheCreateInputPrice()),
@@ -67,20 +72,21 @@ public class ModelSquarePricing {
         if (!"vidGen".equals(serviceType)) notes.add("实际账单逐计费项向上取整到分后汇总；单价不是一次请求的固定费用。");
         return new Scheme("", mode, configured, d, List.copyOf(rows), List.copyOf(notes));
     }
-    private void tokenRows(List<PriceLine> rows, ModelPricing p, DiscountBreakdown d, String condition,
+    private void tokenRows(List<PriceLine> rows, ModelPricing p, DiscountBreakdown d, String condition, String serviceType,
                            BigDecimal input, BigDecimal output, BigDecimal hit, BigDecimal create,
                            BigDecimal explicit, BigDecimal thinking, List<Boolean> known) {
-        rows.add(line("普通输入", TOKEN_UNIT, input, p.isEnableInputToken(), has(known, 0, input), true, d, condition));
-        rows.add(line("普通输出", TOKEN_UNIT, output, p.isEnableOutputToken(), has(known, 1, output), true, d, condition));
-        rows.add(line("缓存命中输入", TOKEN_UNIT, hit, p.isEnableInputToken() && p.isEnableCacheHitInput(), has(known, 2, hit), true, d, condition));
-        rows.add(line("显式缓存创建", TOKEN_UNIT, create, p.isEnableInputToken() && p.isEnableCacheCreateInput(), has(known, 3, create), true, d, condition));
-        rows.add(line("显式缓存命中", TOKEN_UNIT, explicit, p.isEnableInputToken() && p.isEnableCacheHitExplicitInput(), has(known, 4, explicit), true, d, condition));
+        rows.add(line(aliasService.displayName(serviceType, "normalPrice", "普通输入"), TOKEN_UNIT, input, p.isEnableInputToken(), has(known, 0, input), true, d, condition));
+        rows.add(line(aliasService.displayName(serviceType, "output", "普通输出"), TOKEN_UNIT, output, p.isEnableOutputToken(), has(known, 1, output), true, d, condition));
+        rows.add(line(aliasService.displayName(serviceType, "cacheHit", "缓存命中输入"), TOKEN_UNIT, hit, p.isEnableInputToken() && p.isEnableCacheHitInput(), has(known, 2, hit), true, d, condition));
+        rows.add(line(aliasService.displayName(serviceType, "cacheCreate", "显式缓存创建"), TOKEN_UNIT, create, p.isEnableInputToken() && p.isEnableCacheCreateInput(), has(known, 3, create), true, d, condition));
+        rows.add(line(aliasService.displayName(serviceType, "cacheHitExplicit", "显式缓存命中"), TOKEN_UNIT, explicit, p.isEnableInputToken() && p.isEnableCacheHitExplicitInput(), has(known, 4, explicit), true, d, condition));
+        String thinkingName = aliasService.displayName(serviceType, "thinking", "思考 Token");
         if (!p.isEnableOutputToken() || Integer.valueOf(3).equals(p.getThinkingBillingMode())) {
-            rows.add(line("思考 Token", TOKEN_UNIT, thinking, false, true, true, d, condition));
+            rows.add(line(thinkingName, TOKEN_UNIT, thinking, false, true, true, d, condition));
         } else if (Integer.valueOf(2).equals(p.getThinkingBillingMode())) {
-            rows.add(line("思考 Token", TOKEN_UNIT, thinking, true, has(known, 5, thinking), true, d, condition));
+            rows.add(line(thinkingName, TOKEN_UNIT, thinking, true, has(known, 5, thinking), true, d, condition));
         } else {
-            rows.add(new PriceLine("思考 Token", TOKEN_UNIT, null, null, "IN_OUTPUT", condition + "；并入输出，不重复收费"));
+            rows.add(new PriceLine(thinkingName, TOKEN_UNIT, null, null, "IN_OUTPUT", condition + "；并入输出，不重复收费"));
         }
     }
     private boolean has(List<Boolean> source, int i, BigDecimal value) {

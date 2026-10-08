@@ -90,6 +90,24 @@ public class ModelPricingService {
     }
 
     /**
+     * 判断模型是否配置了可用计费（供调用前校验）。
+     * 整体计费需输入/输出价齐全；阶梯计费需至少一档且每档输入/输出价齐全
+     * （防止只建挡位不填价格导致 0 元计费资损）。
+     */
+    public boolean hasUsablePricing(String modelName, String channelId) {
+        ModelPricing pricing = getPrice(modelName, channelId);
+        if (pricing == null) return false;
+        return switch (pricing.getBillingMode()) {
+            case 2 -> !pricing.getTiers().isEmpty()
+                    && pricing.getTiers().stream()
+                        .allMatch(t -> t.inputPrice() != null && t.outputPrice() != null);
+            case 3 -> !pricing.getRules().isEmpty(); // 规则模式：至少一条启用规则
+            default -> pricing.getInputPrice() != null && pricing.getOutputPrice() != null;
+        };
+    }
+
+
+    /**
      * 视频计费规则快照（JSON 字符串）：任务创建时锁定提交时刻的计费规则，
      * 结算时优先用快照计价——平台侧后续改价/删规则不影响已提交任务的账单生成。
      * 快照仅含视频计费相关字段（priceMode/billingUnit/modelId/启用规则行），
@@ -163,6 +181,8 @@ public class ModelPricingService {
         private final BigDecimal discountRate;     // 小数（0.8=8折）
         // 阶梯档位（billingMode=2 时非空）
         private final List<PriceTier> tiers;
+        // 规则计费数据（billingMode=3 时非空，已按 priority 升序）
+        private final List<PricingRuleData> rules;
         // ===== 视频模型计费元数据（modelType=3 专用，非视频模型为 null/空）=====
         private final Integer priceMode;        // 1=统一价格, 2=按条件定价；null 默认 1
         private final String billingUnit;       // second=元/秒, token=元/M token；null 默认 second
@@ -184,6 +204,10 @@ public class ModelPricingService {
                 thinkingPrice = thinkingPrice != null ? thinkingPrice : BigDecimal.ZERO;
             }
         }
+
+        /** 规则计费行（billingMode=3）：match_json 条件树 + price_json 动态维度价格 */
+        public record PricingRuleData(Long ruleId, String ruleName, int priority,
+                                      String matchJson, String priceJson) {}
 
         /**
          * 视频模型分辨率价格规则行（仅启用行）。
@@ -233,6 +257,7 @@ public class ModelPricingService {
             this.thinkingBillingMode = 1;
             this.thinkingPrice = BigDecimal.ZERO;
             this.tiers = List.of();
+            this.rules = List.of();
             // 视频计费元数据默认值：非视频模型（priceMode 为 null 时计费侧不走视频分支）
             this.priceMode = null;
             this.billingUnit = null;
@@ -289,6 +314,43 @@ public class ModelPricingService {
             this.priceMode = priceMode;
             this.billingUnit = billingUnit;
             this.videoPriceRules = videoPriceRules != null ? videoPriceRules : List.of();
+            this.rules = List.of();
+        }
+
+        /** 全参构造器（含视频计费元数据 + 规则化计费，规则引擎同步使用） */
+        public ModelPricing(String modelName, String channelId, Long modelId, String vendor,
+                            Integer billingMode,
+                            BigDecimal inputPrice, BigDecimal cacheHitInputPrice, BigDecimal outputPrice,
+                            BigDecimal cacheCreateInputPrice, BigDecimal cacheHitExplicitInputPrice,
+                            boolean enableInputToken, boolean enableCacheHitInput, boolean enableOutputToken,
+                            boolean enableCacheCreateInput, boolean enableCacheHitExplicitInput,
+                            Integer thinkingBillingMode, BigDecimal thinkingPrice,
+                            BigDecimal discountRate, List<PriceTier> tiers,
+                            Integer priceMode, String billingUnit, List<VideoPriceRule> videoPriceRules,
+                            List<PricingRuleData> rules) {
+            this.modelName = modelName;
+            this.channelId = channelId;
+            this.modelId = modelId;
+            this.vendor = vendor;
+            this.billingMode = billingMode != null ? billingMode : 1;
+            this.inputPrice = inputPrice != null ? inputPrice : BigDecimal.ZERO;
+            this.cacheHitInputPrice = cacheHitInputPrice != null ? cacheHitInputPrice : BigDecimal.ZERO;
+            this.outputPrice = outputPrice != null ? outputPrice : BigDecimal.ZERO;
+            this.cacheCreateInputPrice = cacheCreateInputPrice != null ? cacheCreateInputPrice : BigDecimal.ZERO;
+            this.cacheHitExplicitInputPrice = cacheHitExplicitInputPrice != null ? cacheHitExplicitInputPrice : BigDecimal.ZERO;
+            this.enableInputToken = enableInputToken;
+            this.enableCacheHitInput = enableCacheHitInput;
+            this.enableOutputToken = enableOutputToken;
+            this.enableCacheCreateInput = enableCacheCreateInput;
+            this.enableCacheHitExplicitInput = enableCacheHitExplicitInput;
+            this.thinkingBillingMode = thinkingBillingMode != null ? thinkingBillingMode : 1;
+            this.thinkingPrice = thinkingPrice != null ? thinkingPrice : BigDecimal.ZERO;
+            this.discountRate = discountRate != null ? discountRate : BigDecimal.ONE;
+            this.tiers = tiers != null ? List.copyOf(tiers) : List.of();
+            this.priceMode = priceMode;
+            this.billingUnit = billingUnit;
+            this.videoPriceRules = videoPriceRules != null ? List.copyOf(videoPriceRules) : List.of();
+            this.rules = rules != null ? List.copyOf(rules) : List.of();
         }
 
         public String getModelName() { return modelName; }
@@ -313,6 +375,7 @@ public class ModelPricingService {
         public Integer getPriceMode() { return priceMode; }
         public String getBillingUnit() { return billingUnit; }
         public List<VideoPriceRule> getVideoPriceRules() { return videoPriceRules; }
+        public List<PricingRuleData> getRules() { return rules; }
     }
 
     /**

@@ -8,7 +8,9 @@ import org.unreal.modelrouter.auth.security.model.UserIdentity;
 import org.unreal.modelrouter.auth.security.util.RealNameAuthUtils;
 import org.unreal.modelrouter.billing.ModelPricingService;
 import org.unreal.modelrouter.persistence.jpa.entity.platform.*;
+import org.unreal.modelrouter.persistence.jpa.entity.PricingRuleEntity;
 import org.unreal.modelrouter.persistence.jpa.repository.platform.*;
+import org.unreal.modelrouter.persistence.jpa.repository.PricingRuleRepository;
 import org.unreal.modelrouter.router.model.ModelRouterProperties;
 
 import java.math.BigDecimal;
@@ -35,6 +37,7 @@ public class PlatformDataSyncService {
     private final org.unreal.modelrouter.persistence.jpa.repository.platform.PlatformUserCompanyRepository userCompanyRepository;
     private final PlatformModelPriceTierRepository priceTierRepository;
     private final PlatformVideoPriceRepository videoPriceRepository;
+    private final PricingRuleRepository pricingRuleRepository;
 
     /**
      * 获取所有有效的原始模型实体（供 ModelServiceRegistry 按 modelType 分组）
@@ -132,6 +135,10 @@ public class PlatformDataSyncService {
         if (Integer.valueOf(2).equals(m.getBillingMode())) {
             return true;
         }
+        if (Integer.valueOf(3).equals(m.getBillingMode())) {
+            // 规则计费：规则行缺失时由计费侧拒计费兜底（与阶梯模式同策略）
+            return true;
+        }
         return m.getInputPrice() != null && m.getOutputPrice() != null;
     }
 
@@ -212,6 +219,17 @@ public class PlatformDataSyncService {
             }
         }
 
+        // 规则计费（billingMode=3 时加载，数据驱动：条件树 match_json + 维度价格 price_json）
+        List<ModelPricingService.ModelPricing.PricingRuleData> rules = List.of();
+        if (Integer.valueOf(3).equals(m.getBillingMode()) && m.getId() != null) {
+            rules = pricingRuleRepository.findByModelIdAndEnabledTrueOrderByPriorityAsc(m.getId()).stream()
+                    .map(r -> new ModelPricingService.ModelPricing.PricingRuleData(
+                            r.getId(), r.getRuleName(),
+                            r.getPriority() != null ? r.getPriority() : 100,
+                            r.getMatchJson(), r.getPriceJson()))
+                    .toList();
+        }
+
         return new ModelPricingService.ModelPricing(
                 m.getRealName(), channelId, m.getId(), m.getVendor(),
                 m.getBillingMode(),
@@ -219,7 +237,8 @@ public class PlatformDataSyncService {
                 enableInput, enableCacheHit, enableOutput, enableCacheCreate, enableCacheHitExplicit,
                 m.getThinkingBillingMode(), thinkingPrice,
                 discountRate, tiers,
-                priceMode, billingUnit, videoRules);
+                priceMode, billingUnit, videoRules,
+                rules);
     }
 
     /** 元/M token → 元/token（null 返回 ZERO） */

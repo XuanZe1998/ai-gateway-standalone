@@ -26,6 +26,7 @@ public class BalanceCheckService {
 
     private final EnterpriseLookupService enterpriseLookupService;
     private final FreeQuotaService freeQuotaService;
+    private final ModelPricingService pricingService;
 
     /**
      * 校验实名认证状态与余额。
@@ -131,4 +132,19 @@ public class BalanceCheckService {
     }
 
     private record AccountRef(String accountId, Integer accountType) {}
+
+    /**
+     * 模型计费规则校验：未配置可用计费的模型拒绝调用（防止 0 元计费资损）。
+     * 调用方在选定模型实例后调用。
+     */
+    public void requirePricingConfigured(String modelName, String channelId) {
+        if (!pricingService.hasUsablePricing(modelName, channelId)) {
+            log.warn("模型未配置可用计费规则，拒绝调用: model={}, channelId={}", modelName, channelId);
+            throw new ResponseStatusException(
+                    HttpStatus.PAYMENT_REQUIRED,
+                    "该模型未配置计费规则，暂不可调用。"
+            );
+        }
+    }
+
 }

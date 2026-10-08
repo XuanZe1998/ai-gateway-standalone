@@ -151,6 +151,8 @@ public abstract class BaseAdapter implements ServiceCapability {
         return Mono.deferContextual(ctx -> {
             UserIdentity identity = ctx.getOrDefault(UserIdentity.CONTEXT_KEY, UserIdentity.SYSTEM);
             return balanceCheckService.checkBalance(identity, serviceType.name())
+                    .then(Mono.fromRunnable(() -> balanceCheckService.requirePricingConfigured(
+                            selectedInstance.getName(), selectedInstance.getChannelId())))
                     .then(processRequestWithRetry(request, authorization, client, path, selectedInstance,
                             serviceType, modelNameFromRequest, processor, startTime, 0));
         });

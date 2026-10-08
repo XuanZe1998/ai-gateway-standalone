@@ -3,15 +3,19 @@ package org.unreal.modelrouter.catalog;
 import org.junit.jupiter.api.Test;
 import org.unreal.modelrouter.billing.DiscountBreakdown;
 import org.unreal.modelrouter.billing.ModelPricingService.ModelPricing;
+import org.unreal.modelrouter.billing.pricing.BillingDimensionAliasService;
 import org.unreal.modelrouter.persistence.jpa.entity.platform.PlatformModelEntity;
 import org.unreal.modelrouter.persistence.jpa.entity.platform.PlatformModelPriceTierEntity;
+import org.unreal.modelrouter.persistence.jpa.repository.BillingDimensionAliasRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ModelSquarePricingTest {
-    final ModelSquarePricing presenter = new ModelSquarePricing();
+    // 真实别名服务 + mock 仓库：单测不触发 @PostConstruct，缓存为空 → displayName 走默认名
+    final ModelSquarePricing presenter = new ModelSquarePricing(
+            new BillingDimensionAliasService(mock(BillingDimensionAliasRepository.class)));
     final DiscountBreakdown discount = new DiscountBreakdown(new BigDecimal("0.9"), new BigDecimal("0.8"), new BigDecimal("0.5"), new BigDecimal("0.4"));
     ModelPricing price() {
         ModelPricing p = mock(ModelPricing.class);

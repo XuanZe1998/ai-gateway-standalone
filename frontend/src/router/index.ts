@@ -1,6 +1,7 @@
 // 文件说明：index：前端模块，集中维护相关类型、状态或交互逻辑。
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { title } from 'process'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -169,6 +170,18 @@ const router = createRouter({
           name: 'account-management',
           component: () => import('../views/security/JwtAccountManagement.vue'),
           meta: { title: '账户管理', icon: 'user' }
+        },
+        {
+          path: 'pricing',
+          name: 'pricing-management',
+          component: () => import('@/views/PricingManagement.vue'),
+          meta: { title: '模型定价管理' }
+        },
+        {
+          path: 'billing-dimensions',
+          name: 'billing-dimensions',
+          component: () => import('@/views/DimensionManagement.vue'),
+          meta: { title: '计费维度管理' }
         }
       ]
     },
