@@ -3,21 +3,22 @@
 ## 版本统计
 
 - 总文档数: 183
-- 近7天变更: 9
+- 近7天变更: 16
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-10-08 04:15:19
+- 最后扫描: 2026-10-08 08:45:13
 
 ## 最近变更
 
+- **MODIFIED**: docs/zh/index.md (1.0.2 → 1.0.3) - 2026-10-08
+- **MODIFIED**: docs/en/index.md (1.0.2 → 1.0.3) - 2026-10-08
+- **MODIFIED**: docs-version-report.md (1.0.22 → 1.0.23) - 2026-10-08
+- **MODIFIED**: README.md (1.0.14 → 1.0.15) - 2026-10-08
+- **MODIFIED**: README-ZH.md (1.0.6 → 1.0.7) - 2026-10-08
+- **MODIFIED**: README-STANDALONE.md (1.0.1 → 1.0.2) - 2026-10-08
+- **MODIFIED**: QWEN.md (1.0.3 → 1.0.4) - 2026-10-08
+- **MODIFIED**: CLAUDE.md (1.0.1 → 1.0.2) - 2026-10-08
 - **CREATED**: docs/pricing-rule-engine-design.md ( → 1.0.0) - 2026-10-08
 - **MODIFIED**: docs-version-report.md (1.0.21 → 1.0.22) - 2026-10-08
-- **MODIFIED**: docs-version-report.md (1.0.20 → 1.0.21) - 2026-10-07
-- **MODIFIED**: docs-version-report.md (1.0.19 → 1.0.20) - 2026-10-06
-- **MODIFIED**: docs-version-report.md (1.0.18 → 1.0.19) - 2026-10-05
-- **MODIFIED**: docs-version-report.md (1.0.17 → 1.0.18) - 2026-10-04
-- **MODIFIED**: docs-version-report.md (1.0.16 → 1.0.17) - 2026-10-03
-- **MODIFIED**: docs-version-report.md (1.0.15 → 1.0.16) - 2026-10-02
-- **MODIFIED**: docs-version-report.md (1.0.14 → 1.0.15) - 2026-10-01
 
 ## 过期文档 (30天未更新)
 
@@ -704,15 +705,15 @@
 
 ## 所有文档版本
 
+- **docs/zh/index.md**: v1.0.3 - 2026-10-08 (ab416b2c)
+- **docs/en/index.md**: v1.0.3 - 2026-10-08 (ab416b2c)
+- **docs-version-report.md**: v1.0.23 - 2026-10-08 (ab416b2c)
+- **README.md**: v1.0.15 - 2026-10-08 (ab416b2c)
+- **README-ZH.md**: v1.0.7 - 2026-10-08 (ab416b2c)
+- **README-STANDALONE.md**: v1.0.2 - 2026-10-08 (ab416b2c)
+- **QWEN.md**: v1.0.4 - 2026-10-08 (ab416b2c)
+- **CLAUDE.md**: v1.0.2 - 2026-10-08 (ab416b2c)
 - **docs/pricing-rule-engine-design.md**: v1.0.0 - 2026-10-08 (8c50c0db)
-- **docs-version-report.md**: v1.0.22 - 2026-10-08 (b1f3427f)
-- **docs/zh/index.md**: v1.0.2 - 2026-09-29 (57a80611)
-- **docs/en/index.md**: v1.0.2 - 2026-09-29 (57a80611)
-- **README.md**: v1.0.14 - 2026-09-29 (57a80611)
-- **README-ZH.md**: v1.0.6 - 2026-09-29 (57a80611)
-- **README-STANDALONE.md**: v1.0.1 - 2026-09-29 (57a80611)
-- **QWEN.md**: v1.0.3 - 2026-09-29 (57a80611)
-- **CLAUDE.md**: v1.0.1 - 2026-09-29 (57a80611)
 - **docs/zh/troubleshooting/campus-cas-login-not-found.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/zh/deployment/vm-capacity-sizing-30000-users.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/zh/deployment/production-readiness.md**: v1.0.0 - 2026-09-28 (05931b92)
