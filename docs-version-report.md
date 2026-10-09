@@ -5,10 +5,11 @@
 - 总文档数: 183
 - 近7天变更: 16
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-10-08 08:45:13
+- 最后扫描: 2026-10-09 08:48:55
 
 ## 最近变更
 
+- **MODIFIED**: docs-version-report.md (1.0.23 → 1.0.24) - 2026-10-09
 - **MODIFIED**: docs/zh/index.md (1.0.2 → 1.0.3) - 2026-10-08
 - **MODIFIED**: docs/en/index.md (1.0.2 → 1.0.3) - 2026-10-08
 - **MODIFIED**: docs-version-report.md (1.0.22 → 1.0.23) - 2026-10-08
@@ -18,7 +19,6 @@
 - **MODIFIED**: QWEN.md (1.0.3 → 1.0.4) - 2026-10-08
 - **MODIFIED**: CLAUDE.md (1.0.1 → 1.0.2) - 2026-10-08
 - **CREATED**: docs/pricing-rule-engine-design.md ( → 1.0.0) - 2026-10-08
-- **MODIFIED**: docs-version-report.md (1.0.21 → 1.0.22) - 2026-10-08
 
 ## 过期文档 (30天未更新)
 
@@ -705,9 +705,9 @@
 
 ## 所有文档版本
 
+- **docs-version-report.md**: v1.0.24 - 2026-10-09 (2038691e)
 - **docs/zh/index.md**: v1.0.3 - 2026-10-08 (ab416b2c)
 - **docs/en/index.md**: v1.0.3 - 2026-10-08 (ab416b2c)
-- **docs-version-report.md**: v1.0.23 - 2026-10-08 (ab416b2c)
 - **README.md**: v1.0.15 - 2026-10-08 (ab416b2c)
 - **README-ZH.md**: v1.0.7 - 2026-10-08 (ab416b2c)
 - **README-STANDALONE.md**: v1.0.2 - 2026-10-08 (ab416b2c)
