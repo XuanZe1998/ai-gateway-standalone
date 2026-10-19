@@ -28,6 +28,7 @@ public class UsageContext {
     private final String vendor;
     private final boolean cacheHit;
     private final boolean thinkingEnabled;
+    private boolean fastMode;
 
     /**
      * 全字段构造。
@@ -73,6 +74,7 @@ public class UsageContext {
             case "vendor" -> vendor;
             case "cacheHit" -> cacheHit;
             case "thinkingEnabled" -> thinkingEnabled;
+            case "fastMode" -> fastMode;
             // 预留字段（dateRange/userType/accountTier/apiKeyType/hasFreeQuota/department/modelVersion）
             // 后续按需开放：在此加 case + 对应实例字段即可，引擎与计费核心零改动
             default -> null;
@@ -93,4 +95,5 @@ public class UsageContext {
     public String getVendor() { return vendor; }
     public boolean isCacheHit() { return cacheHit; }
     public boolean isThinkingEnabled() { return thinkingEnabled; }
+    public UsageContext fastMode(boolean value) { this.fastMode = value; return this; }
 }

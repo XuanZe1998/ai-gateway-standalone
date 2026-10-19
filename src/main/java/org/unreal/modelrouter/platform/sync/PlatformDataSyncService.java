@@ -38,6 +38,7 @@ public class PlatformDataSyncService {
     private final PlatformModelPriceTierRepository priceTierRepository;
     private final PlatformVideoPriceRepository videoPriceRepository;
     private final PricingRuleRepository pricingRuleRepository;
+    private final org.unreal.modelrouter.persistence.jpa.repository.CampusIdentityBindingRepository campusBindings;
 
     /**
      * 获取所有有效的原始模型实体（供 ModelServiceRegistry 按 modelType 分组）
@@ -209,12 +210,12 @@ public class PlatformDataSyncService {
                         .filter(r -> !Boolean.FALSE.equals(r.getEnabled()))
                         // 逻辑删除行（平台数据异常遗留）不参与计费（Repository 已过滤，此处双保险）
                         .filter(r -> !Boolean.TRUE.equals(r.getDeleted()))
-                        // 价格为空或非正数（平台配置疏忽：先建行后填价）不参与计费，防止按 0 元落账
-                        .filter(r -> r.getPrice() != null && r.getPrice().compareTo(BigDecimal.ZERO) > 0)
+                        // 空/负数价格无效；显式配置的 0 元允许参与（截图可能有免费分辨率）。
+                        .filter(r -> r.getPrice() != null && r.getPrice().signum() >= 0)
                         .map(r -> new ModelPricingService.ModelPricing.VideoPriceRule(
                                 normalizeResolution(r.getOutputResolution()),
                                 r.getHasVideoInput(),
-                                toVideoUnitPrice(r.getPrice(), unit, divisor)))
+                                toVideoUnitPrice(r.getPrice(), unit, divisor), r.getInputPrice()))
                         .toList();
             }
         }
@@ -244,7 +245,7 @@ public class PlatformDataSyncService {
     /** 元/M token → 元/token（null 返回 ZERO） */
     private static BigDecimal toPerToken(BigDecimal pricePerMillion, BigDecimal divisor) {
         return pricePerMillion != null
-                ? pricePerMillion.divide(divisor, 10, RoundingMode.HALF_UP)
+                ? pricePerMillion.divide(divisor, 14, RoundingMode.HALF_UP)
                 : BigDecimal.ZERO;
     }
 
@@ -256,7 +257,7 @@ public class PlatformDataSyncService {
             return BigDecimal.ZERO;
         }
         if ("token".equals(billingUnit)) {
-            return price.divide(divisor, 10, RoundingMode.HALF_UP);
+            return price.divide(divisor, 14, RoundingMode.HALF_UP);
         }
         return price;
     }
@@ -344,6 +345,10 @@ public class PlatformDataSyncService {
      * ai_api_key.user_id → sldd_system_users.id(PK) → 实名认证校验 → company_id → ai_enterprise（可选）
      */
     private UserLink resolveUserLink(Long platformUserId) {
+        return resolveUserLink(platformUserId, true);
+    }
+
+    private UserLink resolveUserLink(Long platformUserId, boolean requireRealName) {
         if (platformUserId == null) {
             log.info("用户关联跳过: platformUserId 为 null");
             return null;
@@ -359,7 +364,7 @@ public class PlatformDataSyncService {
             // 实名认证校验：必须严格成对
             Integer userType = user.getUserType();
             Integer verifyStatus = user.getVerifyStatus();
-            if (!RealNameAuthUtils.isRealNameAuthenticated(userType, verifyStatus)) {
+            if (requireRealName && !RealNameAuthUtils.isRealNameAuthenticated(userType, verifyStatus)) {
                 log.warn("实名认证校验失败: platformUserId={}, userType={}, verifyStatus={}",
                         platformUserId, userType, verifyStatus);
                 return null;
@@ -404,6 +409,20 @@ public class PlatformDataSyncService {
     public Optional<UserIdentity> getUserIdentityBySystemUserId(
             final Long platformUserId, final String userAccount) {
         UserLink link = resolveUserLink(platformUserId);
+        return identityFromLink(platformUserId, userAccount, link);
+    }
+
+    /** Key holders qualify only while their saved campus account binding is enabled. */
+    public Optional<UserIdentity> getCampusUserIdentityBySystemUserId(
+            final Long platformUserId, final String userAccount) {
+        if (platformUserId == null || !campusBindings.existsBySystemUserIdAndEnabledTrue(platformUserId)) {
+            return Optional.empty();
+        }
+        return identityFromLink(platformUserId, userAccount, resolveUserLink(platformUserId, false))
+                .map(UserIdentity::withCampusAuthentication);
+    }
+
+    private Optional<UserIdentity> identityFromLink(Long platformUserId, String userAccount, UserLink link) {
         if (link == null) {
             return Optional.empty();
         }

@@ -38,6 +38,30 @@ class VideoTaskArchiverTest {
         return new VideoTaskArchiver(repository, objectMapper, pricingService);
     }
 
+    @Test void immediatelyCompletedDepartmentTaskStillEntersTheSettlementLifecycle() {
+        var budgets=org.mockito.Mockito.mock(org.unreal.modelrouter.billing.DepartmentBudgetService.class);
+        var snapshot=new org.unreal.modelrouter.billing.DepartmentUsageSnapshot("request-fast","code:D1","学院","DEPARTMENT",false,"DEPARTMENT",1,"u1",2,
+                org.unreal.modelrouter.billing.DepartmentBudgetService.month(),null,null,null,null);
+        when(budgets.encode(snapshot)).thenReturn("saved-policy");
+        var archiver=archiver();archiver.setDepartmentBudgets(budgets);
+        archiver.archiveSubmitted("fast-task","upstream-fast","succeeded","m",null,objectMapper.createObjectNode(),"{}",UserIdentity.SYSTEM.withUsageSnapshot(snapshot),null,null);
+        var captor=ArgumentCaptor.forClass(VideoTaskEntity.class);verify(repository).save(captor.capture());
+        assertThat(captor.getValue().getStatus()).isEqualTo("submitted");
+        assertThat(captor.getValue().getUsageSnapshot()).isEqualTo("saved-policy");
+        verify(budgets).bindTask(snapshot,"fast-task");
+    }
+
+    @Test void ambiguousVideoSubmissionTimeoutRetainsBudgetForReconciliation() {
+        var budgets=org.mockito.Mockito.mock(org.unreal.modelrouter.billing.DepartmentBudgetService.class);
+        var snapshot=new org.unreal.modelrouter.billing.DepartmentUsageSnapshot("request-timeout","code:D1","学院","DEPARTMENT",false,"DEPARTMENT",1,"u1",2,
+                org.unreal.modelrouter.billing.DepartmentBudgetService.month(),null,null,null,null);
+        when(budgets.encode(snapshot)).thenReturn("saved-policy");when(budgets.decode("saved-policy")).thenReturn(snapshot);
+        var archiver=archiver();archiver.setDepartmentBudgets(budgets);
+        archiver.archiveSubmitFailed("timeout-task","m",null,objectMapper.createObjectNode(),"504","timeout",UserIdentity.SYSTEM.withUsageSnapshot(snapshot),null,null);
+        verify(budgets).unconfirmed(org.mockito.ArgumentMatchers.eq(snapshot),org.mockito.ArgumentMatchers.isNull(),org.mockito.ArgumentMatchers.anyString());
+        verify(budgets,org.mockito.Mockito.never()).release(any());
+    }
+
     private ObjectNode requestWithBase64(final String base64Payload) {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("model", "doubao-seedance-2-5-251215");

@@ -31,7 +31,7 @@ class CampusKeyAuthenticationTest {
         String secret = "gw2_test";
         when(keys.authenticate(secret)).thenReturn(new CampusGatewayKeyService.KeyView("key-1", 42L,
                 "cas:account", "assignment", "ACTIVE", LocalDateTime.now(), LocalDateTime.now(), null));
-        when(platform.getUserIdentityBySystemUserId(42L, "cas:account")).thenReturn(Optional.of(
+        when(platform.getCampusUserIdentityBySystemUserId(42L, "cas:account")).thenReturn(Optional.of(
                 new UserIdentity("cas:account", "campus-user", null, null, null, null,
                         null, true, 2, 42L, 2)));
         Authentication result = manager().authenticate(new ApiKeyAuthentication(secret)).block();

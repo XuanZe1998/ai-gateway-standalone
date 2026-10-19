@@ -19,7 +19,7 @@ public class FreeQuotaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, unique = true, length = 64)
+    @Column(name = "user_id", nullable = false, unique = true, length = 255)
     private String userId;
 
     @Column(name = "total_quota", nullable = false)
@@ -52,10 +52,10 @@ public class FreeQuotaEntity {
     @Column(name = "update_time", nullable = false)
     private LocalDateTime updateTime;
 
-    @Column(name = "creator", length = 64)
+    @Column(name = "creator", length = 255)
     private String creator;
 
-    @Column(name = "updater", length = 64)
+    @Column(name = "updater", length = 255)
     private String updater;
 
     @Column(name = "deleted", nullable = false)

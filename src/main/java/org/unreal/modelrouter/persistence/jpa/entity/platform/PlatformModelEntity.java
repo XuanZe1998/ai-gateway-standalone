@@ -45,10 +45,10 @@ public class PlatformModelEntity {
     @Column(name = "support_tools")
     private Boolean supportTools;
 
-    @Column(name = "input_price")
+    @Column(name = "input_price", precision = 20, scale = 8)
     private BigDecimal inputPrice;
 
-    @Column(name = "output_price")
+    @Column(name = "output_price", precision = 20, scale = 8)
     private BigDecimal outputPrice;
 
     @Column(name = "discount")
@@ -73,19 +73,19 @@ public class PlatformModelEntity {
     @Column(name = "enable_cache_hit_explicit_input")
     private Boolean enableCacheHitExplicitInput; // 显式缓存命中是否计费；null 默认 false
 
-    @Column(name = "cache_hit_input_price")
+    @Column(name = "cache_hit_input_price", precision = 20, scale = 8)
     private BigDecimal cacheHitInputPrice; // 元/M token
 
-    @Column(name = "cache_create_input_price")
+    @Column(name = "cache_create_input_price", precision = 20, scale = 8)
     private BigDecimal cacheCreateInputPrice; // 元/M token
 
-    @Column(name = "cache_hit_explicit_input_price")
+    @Column(name = "cache_hit_explicit_input_price", precision = 20, scale = 8)
     private BigDecimal cacheHitExplicitInputPrice; // 元/M token
 
     @Column(name = "thinking_billing_mode")
     private Integer thinkingBillingMode; // 1=计入输出token, 2=单独计费, 3=不计费；null 默认 1
 
-    @Column(name = "thinking_price")
+    @Column(name = "thinking_price", precision = 20, scale = 8)
     private BigDecimal thinkingPrice; // 元/M token，仅 thinkingBillingMode=2 有效
 
     // ===== 视频模型计费元数据（model_type=3 专用，可能为 null，业务侧按默认值兜底）=====

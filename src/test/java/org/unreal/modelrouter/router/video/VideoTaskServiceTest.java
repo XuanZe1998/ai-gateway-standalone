@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.nullable;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -69,6 +70,7 @@ class VideoTaskServiceTest {
     @BeforeEach
     void setUp() {
         service = new VideoTaskService(registry, balanceCheckService, archiver, objectMapper, pricingService);
+        org.mockito.Mockito.lenient().when(balanceCheckService.uncertain(any(),anyString())).thenReturn(Mono.empty());
     }
 
     @AfterEach
@@ -122,7 +124,7 @@ class VideoTaskServiceTest {
     void createTask_insufficientBalance_returns402() {
         VideoGenerationRequest request = newRequest();
         stubInstanceSelection("http://localhost:1");
-        when(balanceCheckService.checkBalance(any(), anyString()))
+        when(balanceCheckService.prepare(any(), anyString(), anyString(), nullable(String.class), any()))
                 .thenReturn(Mono.error(new ResponseStatusException(HttpStatus.PAYMENT_REQUIRED, "余额不足")));
 
         StepVerifier.create(service.createTask(request, null))
@@ -343,7 +345,7 @@ class VideoTaskServiceTest {
     }
 
     private ResponseEntity<?> submit(final VideoGenerationRequest request) {
-        when(balanceCheckService.checkBalance(any(), anyString())).thenReturn(Mono.empty());
+        when(balanceCheckService.prepare(any(), anyString(), anyString(), nullable(String.class), any())).thenAnswer(call -> Mono.just(call.getArgument(0, org.unreal.modelrouter.auth.security.model.UserIdentity.class)));
         return service.createTask(request, null).block(java.time.Duration.ofSeconds(10));
     }
 

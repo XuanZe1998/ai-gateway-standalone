@@ -43,8 +43,12 @@ public class PlatformVideoPriceEntity {
     private Boolean enabled;
 
     /** 单价：单位由主表 ai_model.billing_unit 决定（second=元/秒，token=元/M token） */
-    @Column(name = "price")
+    @Column(name = "price", precision = 20, scale = 8)
     private BigDecimal price;
+
+    /** Optional video input rate, in CNY/second. */
+    @Column(name = "input_price", precision = 20, scale = 8)
+    private BigDecimal inputPrice;
 
     /** 逻辑删除标记：true=已删除（不参与计费），false=有效 */
     @Column(name = "deleted")

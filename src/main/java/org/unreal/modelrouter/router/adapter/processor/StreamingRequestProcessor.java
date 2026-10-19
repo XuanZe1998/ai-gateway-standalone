@@ -251,7 +251,7 @@ public class StreamingRequestProcessor {
                     if (billingRecorded.compareAndSet(false, true)) {
                         recordStreamingTokenUsage(serviceType, adapterType, instanceName,
                                 selectedInstance, requestStartTime, capturedUsage.get(), identity, null,
-                                capturedRawUsage.get(), snapshotBody.get());
+                                capturedRawUsage.get(), snapshotBody.get(), objectMapper.valueToTree(requestWithStreamOptions));
                     }
                 })
                 .doOnError(throwable -> {
@@ -262,7 +262,7 @@ public class StreamingRequestProcessor {
                     if (billingRecorded.compareAndSet(false, true)) {
                         recordStreamingTokenUsage(serviceType, adapterType, instanceName,
                                 selectedInstance, requestStartTime, capturedUsage.get(), identity, throwable,
-                                capturedRawUsage.get(), snapshotBody.get());
+                                capturedRawUsage.get(), snapshotBody.get(), objectMapper.valueToTree(requestWithStreamOptions));
                     }
                 })
                 .onErrorResume(throwable -> {
@@ -380,8 +380,8 @@ public class StreamingRequestProcessor {
             final ModelRouterProperties.ModelInstance instance) {
         try {
             String jsonPart = chunk.trim();
-            if (jsonPart.startsWith("data: ")) {
-                jsonPart = jsonPart.substring(6).trim();
+            if (jsonPart.startsWith("data:")) {
+                jsonPart = jsonPart.substring(5).trim();
             }
             if ("[DONE]".equals(jsonPart) || jsonPart.isEmpty()) {
                 return;
@@ -422,7 +422,7 @@ public class StreamingRequestProcessor {
             final String adapterType, final String instanceName,
             final ModelRouterProperties.ModelInstance instance,
             final long startTime,             final org.unreal.modelrouter.billing.usage.TokenUsage usage, final UserIdentity identity,
-            final Throwable throwable, final JsonNode rawUsage, final String snapshotBody) {
+            final Throwable throwable, final JsonNode rawUsage, final String snapshotBody, final JsonNode billingRequest) {
         long promptTokens = usage != null ? usage.legacyPromptTokens() : 0;
         long completionTokens = usage != null ? usage.legacyCompletionTokens() : 0;
         long totalTokens = usage != null
@@ -453,7 +453,7 @@ public class StreamingRequestProcessor {
                     && freeQuotaService.getRemainingQuota(identity.userId(), serviceType.name()) > 0) {
                 freeQuotaResult = freeQuotaService.deductStreamingQuota(
                         identity.userId(), serviceType.name(),
-                        usage != null ? usage.billableTotal() : totalTokens);
+                        usage != null ? usage.billableTotal() : totalTokens,identity.usageSnapshot());
             }
         } catch (Exception e) {
             // 免费额度扣减失败不应中断主流程，记录日志后继续保存计费记录（不带免费额度标记）
@@ -494,6 +494,7 @@ public class StreamingRequestProcessor {
                             errorCode, errorMessage, rawUsage, snapshotBody)
                     : null;
             var ctx = org.unreal.modelrouter.billing.BillingService.BillingContext.create()
+                    .usageSnapshot(identity!=null?identity.usageSnapshot():null)
                     .userId(identity.userId())
                     .userAccount(identity.userAccount())
                     .apiKeyId(identity.apiKeyId())
@@ -524,6 +525,11 @@ public class StreamingRequestProcessor {
                     .accountType(resolveAccountType(identity))
                     .isFreeQuota(freeQuotaResult != null && freeQuotaResult.hitFreeQuota())
                     .freeQuotaConsumed(freeQuotaResult != null ? freeQuotaResult.deductedTokens() : 0L);
+            JsonNode actualResponse = null;
+            try { if (snapshotBody != null) actualResponse = objectMapper.readTree(snapshotBody); } catch (Exception ignored) { }
+            ctx.fastMode(org.unreal.modelrouter.billing.usage.RequestBillingMetadata.fastMode(billingRequest, actualResponse))
+                    .audioInputRequested(org.unreal.modelrouter.billing.usage.RequestBillingMetadata.hasAudioInput(billingRequest))
+                    .startedAt(java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(startTime), java.time.ZoneId.of("Asia/Shanghai")));
             billingService.recordBilling(ctx);
         } catch (Exception e) {
             logger.error("流式计费记录异常, model={}, user={}, enterpriseId={}: {}",

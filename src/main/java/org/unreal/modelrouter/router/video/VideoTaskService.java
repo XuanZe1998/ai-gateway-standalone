@@ -128,9 +128,10 @@ public class VideoTaskService {
 
         return Mono.deferContextual(ctx -> {
             UserIdentity identity = ctx.getOrDefault(UserIdentity.CONTEXT_KEY, UserIdentity.SYSTEM);
-            return balanceCheckService.checkBalance(identity, ModelServiceRegistry.ServiceType.vidGen.name())
-                    .then(Mono.defer(() -> doSubmit(taskNo, requestNode, model, instance, path,
-                            identity, clientIp, traceId)));
+            return balanceCheckService.prepare(identity,ModelServiceRegistry.ServiceType.vidGen.name(),instance.getName(),instance.getChannelId(),requestNode)
+                    .flatMap(prepared -> doSubmit(taskNo, requestNode, model, instance, path,prepared,clientIp,traceId)
+                            .onErrorResume(error->balanceCheckService.uncertain(prepared,"视频提交结果尚未确认："+error.getMessage()).then(Mono.error(error)))
+                            .doOnCancel(()->balanceCheckService.uncertain(prepared,"视频提交期间连接取消，需核对上游任务").subscribe()));
         }).onErrorResume(t -> Mono.just(errorEntity(t)));
     }
 
@@ -152,6 +153,7 @@ public class VideoTaskService {
         return spec.bodyValue(requestNode)
                 .exchangeToMono(resp -> resp.bodyToMono(String.class)
                         .defaultIfEmpty("")
+                        .publishOn(reactor.core.scheduler.Schedulers.boundedElastic())
                         .<ResponseEntity<?>>map(body -> {
                             int status = resp.statusCode().value();
                             if (resp.statusCode().is2xxSuccessful()) {
@@ -294,21 +296,21 @@ public class VideoTaskService {
 
         if (pricing.getPriceMode() == 2) {
             // 按条件定价：上传视频 → 命中 has_video_input=true 规则；未上传 → 命中 false 规则
-            final Boolean hasVideoInput = VideoTaskArchiver.hasVideoInput(request.getContent());
+            final Boolean hasVideoInput = VideoTaskArchiver.hasVideoInputInRequest(objectMapper.valueToTree(request));
             if (hasVideoInput == null) {
                 return null;
             }
             final boolean exactMatched = rules.stream().anyMatch(r ->
-                    Objects.equals(r.outputResolution(), resolution)
+                    (Objects.equals(r.outputResolution(), resolution) || "OTHER".equals(r.outputResolution()))
                             && Boolean.valueOf(hasVideoInput).equals(r.hasVideoInput()));
             if (exactMatched) {
                 return null;
             }
             // 组合缺失：按该分辨率下已配置的另一方向规则给出精确约束文案
             final boolean trueRuleExists = rules.stream().anyMatch(r ->
-                    Objects.equals(r.outputResolution(), resolution) && Boolean.TRUE.equals(r.hasVideoInput()));
+                    (Objects.equals(r.outputResolution(), resolution) || "OTHER".equals(r.outputResolution())) && Boolean.TRUE.equals(r.hasVideoInput()));
             final boolean falseRuleExists = rules.stream().anyMatch(r ->
-                    Objects.equals(r.outputResolution(), resolution) && Boolean.FALSE.equals(r.hasVideoInput()));
+                    (Objects.equals(r.outputResolution(), resolution) || "OTHER".equals(r.outputResolution())) && Boolean.FALSE.equals(r.hasVideoInput()));
             if (hasVideoInput && !trueRuleExists && falseRuleExists) {
                 return "模型 " + model + " 在 " + resolution + " 分辨率下仅支持无视频输入，不能上传视频";
             }
@@ -320,7 +322,7 @@ public class VideoTaskService {
         }
         // 统一价格（price_mode=1）：不区分视频输入，仅校验该分辨率是否有启用规则
         final boolean resolutionMatched = rules.stream()
-                .anyMatch(r -> Objects.equals(r.outputResolution(), resolution));
+                .anyMatch(r -> (Objects.equals(r.outputResolution(), resolution) || "OTHER".equals(r.outputResolution())));
         return resolutionMatched ? null : "模型 " + model + " 不支持 " + resolution + " 分辨率";
     }
 

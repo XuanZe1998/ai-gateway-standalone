@@ -27,12 +27,21 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("余额校验服务测试")
 class BalanceCheckServiceTest {
+    @Test void missingCurrentBillingAccountCannotFallBackToAnOldSessionCompany() {
+        var snapshot=new DepartmentUsageSnapshot("request","code:D1","学院","PERSONAL",false,"PLATFORM",0,null,1,DepartmentBudgetService.month(),null,null,null,null);
+        var identity=new UserIdentity("u1","u1",null,null,null,null,"old-company",true,1,1L,4,true).withUsageSnapshot(snapshot);
+        StepVerifier.create(balanceCheckService.checkBalance(identity,"chat"))
+                .expectErrorMatches(error->error instanceof ResponseStatusException r && r.getStatusCode()==HttpStatus.FORBIDDEN).verify();
+        org.mockito.Mockito.verifyNoInteractions(enterpriseLookupService);
+    }
 
     @Mock
     private EnterpriseLookupService enterpriseLookupService;
 
     @Mock
     private FreeQuotaService freeQuotaService;
+
+    @Mock private org.unreal.modelrouter.billing.UserUsagePolicyService usagePolicyService;
 
     @InjectMocks
     private BalanceCheckService balanceCheckService;
@@ -45,7 +54,6 @@ class BalanceCheckServiceTest {
         UserIdentity identity = new UserIdentity(
                 "u1", "u1@example.com", "1", "key",
                 1L, "ent", "c1", true, 1, 100L, 4);
-        when(freeQuotaService.isEnabledFor("u1", "chat")).thenReturn(false);
         when(enterpriseLookupService.lookupByAccount("c1", 1))
                 .thenReturn(Optional.of(infoWithBalance(BigDecimal.TEN)));
 
@@ -54,18 +62,18 @@ class BalanceCheckServiceTest {
     }
 
     @Test
-    @DisplayName("平台用户个人已实名无企业 -> 有免费额度时放行")
+    @DisplayName("平台用户个人已实名无企业 -> 有免费额度仍校验余额")
     void personalRealNameAuthenticated_withFreeQuota_shouldPass() {
         UserIdentity identity = new UserIdentity(
                 "u1", "u1@example.com", "1", "key",
                 null, null, null, true, 2, 100L, 2);
-        when(freeQuotaService.isEnabledFor("u1", "chat")).thenReturn(true);
-        when(freeQuotaService.getRemainingQuota("u1", "chat")).thenReturn(100L);
 
+        when(enterpriseLookupService.lookupByAccount("u1", 2)).thenReturn(Optional.of(infoWithBalance(BigDecimal.TEN)));
         StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
                 .verifyComplete();
 
-        verify(enterpriseLookupService, never()).lookupByAccount(anyString(), anyInt());
+        verify(enterpriseLookupService).lookupByAccount("u1", 2);
+        org.mockito.Mockito.verifyNoInteractions(freeQuotaService);
     }
 
     @Test
@@ -74,8 +82,6 @@ class BalanceCheckServiceTest {
         UserIdentity identity = new UserIdentity(
                 "u1", "u1@example.com", "1", "key",
                 null, null, null, true, 2, 100L, 2);
-        when(freeQuotaService.isEnabledFor("u1", "chat")).thenReturn(true);
-        when(freeQuotaService.getRemainingQuota("u1", "chat")).thenReturn(0L);
         when(enterpriseLookupService.lookupByAccount("u1", 2))
                 .thenReturn(Optional.of(infoWithBalance(BigDecimal.TEN)));
 
@@ -89,8 +95,6 @@ class BalanceCheckServiceTest {
         UserIdentity identity = new UserIdentity(
                 "u1", "u1@example.com", "1", "key",
                 null, null, null, true, 2, 100L, 2);
-        when(freeQuotaService.isEnabledFor("u1", "chat")).thenReturn(true);
-        when(freeQuotaService.getRemainingQuota("u1", "chat")).thenReturn(0L);
         when(enterpriseLookupService.lookupByAccount("u1", 2))
                 .thenReturn(Optional.of(infoWithBalance(new BigDecimal("-1.00"))));
 
@@ -154,18 +158,18 @@ class BalanceCheckServiceTest {
     // ========== 免费额度测试 ==========
 
     @Test
-    @DisplayName("企业用户有免费额度 -> 直接放行，不查余额")
+    @DisplayName("企业用户有免费额度 -> 仍校验余额")
     void enterpriseUserWithFreeQuota_shouldPass() {
         UserIdentity identity = new UserIdentity(
                 "u1", "u1@example.com", "1", "key",
                 1L, "ent", "c1", true, 1, 100L, 4);
-        when(freeQuotaService.isEnabledFor("u1", "chat")).thenReturn(true);
-        when(freeQuotaService.getRemainingQuota("u1", "chat")).thenReturn(100L);
 
+        when(enterpriseLookupService.lookupByAccount("c1", 1)).thenReturn(Optional.of(infoWithBalance(BigDecimal.TEN)));
         StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
                 .verifyComplete();
 
-        verify(enterpriseLookupService, never()).lookupByAccount(anyString(), anyInt());
+        verify(enterpriseLookupService).lookupByAccount("c1", 1);
+        org.mockito.Mockito.verifyNoInteractions(freeQuotaService);
     }
 
     // ========== 余额检查测试 ==========
@@ -181,7 +185,6 @@ class BalanceCheckServiceTest {
         info.setEnterpriseId(1L);
         info.setBalance(new BigDecimal("-1.00"));
 
-        when(freeQuotaService.isEnabledFor("user-1", "chat")).thenReturn(false);
         when(enterpriseLookupService.lookupByAccount("company-1", 1)).thenReturn(Optional.of(info));
 
         StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
@@ -204,7 +207,6 @@ class BalanceCheckServiceTest {
         info.setEnterpriseId(1L);
         info.setBalance(BigDecimal.ZERO);
 
-        when(freeQuotaService.isEnabledFor("user-1", "chat")).thenReturn(false);
         when(enterpriseLookupService.lookupByAccount("company-1", 1)).thenReturn(Optional.of(info));
 
         StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
@@ -223,7 +225,6 @@ class BalanceCheckServiceTest {
                 "user-1", "account-1", "key-1", "测试Key",
                 1L, "企业A", "company-1", true, 1, 100L, 4);
 
-        when(freeQuotaService.isEnabledFor("user-1", "chat")).thenReturn(false);
         when(enterpriseLookupService.lookupByAccount("company-1", 1)).thenReturn(Optional.empty());
 
         StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
@@ -259,10 +260,77 @@ class BalanceCheckServiceTest {
         verify(enterpriseLookupService, never()).lookupByAccount(anyString(), anyInt());
     }
 
+    @Test
+    void nullBalanceDoesNotAllowCalling() {
+        UserIdentity identity = new UserIdentity("u1", "account", "k1", "key", null, null, null, true, 2, 100L, 2);
+        when(enterpriseLookupService.lookupByAccount("u1", 2)).thenReturn(Optional.of(infoWithBalance(null)));
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
+                .expectErrorSatisfies(e -> org.junit.jupiter.api.Assertions.assertEquals(HttpStatus.PAYMENT_REQUIRED, ((ResponseStatusException)e).getStatusCode())).verify();
+        org.mockito.Mockito.verifyNoInteractions(freeQuotaService);
+    }
+
+    @Test
+    void legacyUnrestrictedCampusSessionCannotSkipBalance() {
+        var identity = new UserIdentity("u1", "account", null, null, null, null, null, false, null, 100L, 0);
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
+                .expectError(ResponseStatusException.class).verify();
+    }
+
     private EnterpriseLookupService.EnterpriseInfo infoWithBalance(BigDecimal balance) {
         EnterpriseLookupService.EnterpriseInfo info = new EnterpriseLookupService.EnterpriseInfo();
         info.setEnterpriseId(1L);
         info.setBalance(balance);
         return info;
+    }
+
+    @Test
+    void campusLoginWithPositiveBalancePassesWithoutRealNameVerification() {
+        var identity = new UserIdentity("cas:owner", "campus-user", "key", "app",
+                null, null, null, true, 2, 100L, 0, true);
+        when(enterpriseLookupService.lookupByAccount("cas:owner", 2))
+                .thenReturn(Optional.of(infoWithBalance(new BigDecimal("100"))));
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "chat")).verifyComplete();
+        verify(enterpriseLookupService).lookupByAccount("cas:owner", 2);
+    }
+
+    @Test
+    void campusLoginStillRejectsZeroNegativeAndMissingBalances() {
+        var identity = new UserIdentity("cas:owner", "campus-user", "key", "app",
+                null, null, null, true, 2, 100L, 0, true);
+        for (var balance : java.util.List.of(BigDecimal.ZERO, BigDecimal.ONE.negate())) {
+            when(enterpriseLookupService.lookupByAccount("cas:owner", 2))
+                    .thenReturn(Optional.of(infoWithBalance(balance)));
+            StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
+                    .expectErrorSatisfies(error -> org.junit.jupiter.api.Assertions.assertEquals(
+                            HttpStatus.PAYMENT_REQUIRED, ((ResponseStatusException) error).getStatusCode())).verify();
+        }
+        when(enterpriseLookupService.lookupByAccount("cas:owner", 2)).thenReturn(Optional.empty());
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
+                .expectErrorSatisfies(error -> org.junit.jupiter.api.Assertions.assertEquals(
+                        HttpStatus.PAYMENT_REQUIRED, ((ResponseStatusException) error).getStatusCode())).verify();
+    }
+    @Test void administratorFreeCampusUserNeedsNoBalanceButRevocationIsImmediate() {
+        var identity = new UserIdentity("u1", "campus", "key", "app", null, null, null, true, 2, 88L, 0, true);
+        when(usagePolicyService.isFreeUsage("u1")).thenReturn(true, false);
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "chat")).verifyComplete();
+        org.mockito.Mockito.verifyNoInteractions(enterpriseLookupService);
+        when(enterpriseLookupService.lookupByAccount("u1", 2)).thenReturn(Optional.empty());
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "imgGen"))
+                .expectErrorMatches(e -> e instanceof ResponseStatusException r && r.getStatusCode() == HttpStatus.PAYMENT_REQUIRED)
+                .verify();
+    }
+
+    @Test void freePolicyDoesNotBypassExternalIdentityVerification() {
+        var identity = new UserIdentity("u1", "external", "key", "app", null, null, null, true, 2, 88L, 0, false);
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "chat"))
+                .expectErrorMatches(e -> e instanceof ResponseStatusException r && r.getStatusCode() == HttpStatus.FORBIDDEN).verify();
+        org.mockito.Mockito.verifyNoInteractions(usagePolicyService, enterpriseLookupService);
+    }
+
+    @Test void freePolicyDatabaseFailureDoesNotGrantFreeAccess() {
+        var identity = new UserIdentity("u1", "campus", "key", "app", null, null, null, true, 2, 88L, 0, true);
+        when(usagePolicyService.isFreeUsage("u1")).thenThrow(new IllegalStateException("database unavailable"));
+        StepVerifier.create(balanceCheckService.checkBalance(identity, "chat")).expectError(IllegalStateException.class).verify();
+        org.mockito.Mockito.verifyNoInteractions(enterpriseLookupService);
     }
 }

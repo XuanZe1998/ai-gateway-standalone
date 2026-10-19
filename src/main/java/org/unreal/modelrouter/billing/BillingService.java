@@ -34,6 +34,10 @@ public class BillingService {
     private final DiscountCalculationService discountCalculationService;
     private final PricingRuleEngine ruleEngine;
     private final ObjectMapper objectMapper;
+    private final UserUsagePolicyService usagePolicyService;
+    private DepartmentBudgetService departmentBudgets;
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setDepartmentBudgets(DepartmentBudgetService service){this.departmentBudgets=service;}
 
     public BillingService(ModelPricingService pricingService,
                           BillingRecordRepository billingRepository,
@@ -42,7 +46,7 @@ public class BillingService {
                           org.unreal.modelrouter.persistence.jpa.repository.platform.PlatformSystemUserRepository systemUserRepository,
                           DiscountCalculationService discountCalculationService,
                           PricingRuleEngine ruleEngine,
-                          ObjectMapper objectMapper) {
+                          ObjectMapper objectMapper, UserUsagePolicyService usagePolicyService) {
         this.pricingService = pricingService;
         this.billingRepository = billingRepository;
         this.balanceDeductionService = balanceDeductionService;
@@ -51,6 +55,7 @@ public class BillingService {
         this.discountCalculationService = discountCalculationService;
         this.ruleEngine = ruleEngine;
         this.objectMapper = objectMapper;
+        this.usagePolicyService = usagePolicyService;
     }
 
     @Async("billingTaskExecutor")
@@ -58,6 +63,7 @@ public class BillingService {
         try {
             doRecordBilling(ctx);
         } catch (Exception e) {
+            if(departmentBudgets!=null)departmentBudgets.unconfirmed(ctx.usageSnapshot,null,e.getMessage());
             LOGGER.error("Failed to record billing for model={}, user={}: {}",
                     ctx.getModelName(), ctx.getUserId(), e.getMessage(), e);
         }
@@ -79,6 +85,7 @@ public class BillingService {
             BillingRecordEntity record = doRecordBilling(ctx);
             return record != null ? record.getId() : null;
         } catch (Exception e) {
+            if(departmentBudgets!=null)departmentBudgets.unconfirmed(ctx.usageSnapshot,null,e.getMessage());
             LOGGER.error("Failed to record billing (sync) for model={}, user={}: {}",
                     ctx.getModelName(), ctx.getUserId(), e.getMessage(), e);
             return null;
@@ -87,8 +94,39 @@ public class BillingService {
 
     /** recordBilling / recordBillingSync 共享主体：落账 + 扣减 + 预警 */
     private BillingRecordEntity doRecordBilling(BillingContext ctx) {
-        BillingRecordEntity record = buildRecord(ctx);
+        // Evaluate per user at settlement, including delayed image/video billing.
+        ctx.adminFreeUsage = ctx.usageSnapshot!=null?ctx.usageSnapshot.freeUsage():
+                Boolean.TRUE.equals(ctx.getPlatformUser()) && usagePolicyService.isFreeUsage(ctx.getUserId());
+        BillingRecordEntity record = ctx.usageSnapshot==null?null:billingRepository.findByBillingRequestId(ctx.usageSnapshot.requestId()).orElse(null);
+        if(record==null)record = newRecord(ctx);
+        final BillingRecordEntity settledRecord=record;
+        if(ctx.usageSnapshot!=null&&departmentBudgets!=null) {
+            if(java.util.Set.of("chat","embedding","rerank").contains(ctx.getServiceType()) && (record.getTotalTokens()==null||record.getTotalTokens()==0)
+                    && (Boolean.TRUE.equals(ctx.getIsSuccess())||ctx.getErrorCode()==null)) {
+                departmentBudgets.unconfirmed(ctx.usageSnapshot,record.getId(),"上游未返回可确认的 Token 用量，预占保留待核对");
+                return record;
+            }
+            departmentBudgets.settle(record,ctx.usageSnapshot);
+            if(ctx.usageSnapshot.departmentFunded())return record;
+        }
+        return deductPersonal(ctx,settledRecord);
+    }
+
+    private BillingRecordEntity newRecord(BillingContext ctx) {
+        BillingRecordEntity record=buildRecord(ctx);
+        record.setIsAdminFreeUsage(ctx.adminFreeUsage);
+        if(ctx.usageSnapshot!=null) {
+            var snapshot=ctx.usageSnapshot;
+            record.setDepartmentId(snapshot.departmentId());record.setDepartmentName(snapshot.departmentName());
+            record.setFundingSource(snapshot.fundingSource());record.setBillingRequestId(snapshot.requestId());
+            record.setPolicySnapshot(departmentBudgets.encode(snapshot));
+        }
+        record.setSettlementStatus(record.getTotalCost().signum()==0?"EXEMPT":"PENDING");
+        if(record.getTotalCost().signum()==0)record.setActualDeducted(BigDecimal.ZERO);
         billingRepository.save(record);
+        return record;
+    }
+    private BillingRecordEntity deductPersonal(BillingContext ctx,BillingRecordEntity record) {
         LOGGER.info("计费记录已保存: model={}, user={}, enterpriseId={}, promptTokens={}, completionTokens={}, cost={}",
                 ctx.getModelName(), ctx.getUserId(), ctx.getEnterpriseId(),
                 ctx.getPromptTokens(), ctx.getCompletionTokens(), record.getTotalCost());
@@ -100,8 +138,8 @@ public class BillingService {
             LOGGER.info("跳过余额扣减: isFreeQuota={}, cost={}", ctx.getIsFreeQuota(), record.getTotalCost());
             return record;
         }
-        String accountId = ctx.getAccountId();
-        Integer accountType = ctx.getAccountType();
+        String accountId = ctx.usageSnapshot!=null?ctx.usageSnapshot.accountId():ctx.getAccountId();
+        Integer accountType = ctx.usageSnapshot!=null?ctx.usageSnapshot.accountType():ctx.getAccountType();
         if (accountId == null || accountId.isBlank() || accountType == null) {
             LOGGER.warn("跳过余额扣减: 账户标识为空, user={}, enterpriseId={}",
                     ctx.getUserId(), ctx.getEnterpriseId());
@@ -115,7 +153,7 @@ public class BillingService {
                             info.setUserId(ctx.getUserId());
                             systemUserRepository.findByUserId(ctx.getUserId())
                                     .ifPresent(u -> info.setMobile(u.getMobile()));
-                            balanceDeductionService.deductAndAlert(
+                            balanceDeductionService.deductBillingAndAlert(record.getId(),
                                     accountId, accountType, record.getTotalCost(), info);
                         } catch (Exception e) {
                             LOGGER.error("余额扣减失败, accountId={}, accountType={}: {}",
@@ -152,6 +190,8 @@ public class BillingService {
             return buildVideoRecord(ctx, pricing);
         }
 
+        if (ctx.getImageCount() != null) return buildImageRecord(ctx, pricing);
+
         org.unreal.modelrouter.billing.usage.TokenUsage usage = ctx.getTokenUsage();
         long promptTokens;
         long completionTokens;
@@ -163,6 +203,8 @@ public class BillingService {
         long cacheHitExplicit;
         long normalOutput;
         long thinking;
+        long audioInput = usage != null ? usage.audioInput() : 0;
+        long audioCacheHit = usage != null ? usage.audioCacheHit() : 0;
         if (usage != null) {
             normalInput = usage.normalInput();
             cacheHit = usage.cacheHit();
@@ -172,7 +214,7 @@ public class BillingService {
             thinking = usage.thinking();
             promptTokens = usage.legacyPromptTokens();
             completionTokens = usage.legacyCompletionTokens();
-            totalTokens = usage.rawTotalTokens() > 0 ? usage.rawTotalTokens() : promptTokens + completionTokens;
+            totalTokens = usage.billableTotal();
         } else {
             promptTokens = ctx.getPromptTokens() != null ? ctx.getPromptTokens() : 0L;
             completionTokens = ctx.getCompletionTokens() != null ? ctx.getCompletionTokens() : 0L;
@@ -195,15 +237,17 @@ public class BillingService {
         BigDecimal cacheCreateInputPrice = BigDecimal.ZERO;
         BigDecimal cacheHitExplicitInputPrice = BigDecimal.ZERO;
         BigDecimal thinkingPrice = pricing != null ? pricing.getThinkingPrice() : BigDecimal.ZERO;
+        BigDecimal audioInputPrice = null;
+        BigDecimal audioCacheHitPrice = null;
         if (pricing != null) {
             if (Integer.valueOf(3).equals(pricing.getBillingMode())) {
                 // ===== 规则计费（billingMode=3，数据驱动条件树）：价格单位 元/M token → 元/token =====
                 UsageContext usageCtx = new UsageContext(
                         promptTokens, completionTokens,
                         false, false, promptTokens,
-                        ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now(),
+                        ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")),
                         ctx.getServiceType(), ctx.getVendor(),
-                        cacheHit > 0, thinkingMode != 1);
+                        cacheHit + audioCacheHit > 0, thinkingMode != 1).fastMode(ctx.isFastMode());
                 PricingRuleEngine.MatchedPricing matched = ruleEngine.match(pricing.getRules(), usageCtx);
                 if (matched == null) {
                     // 资损兜底：未命中任何规则拒计费，绝不按 0 元落账（与视频拒计费同策略）
@@ -215,6 +259,8 @@ public class BillingService {
                 cacheHitInputPrice = perToken(matched.prices().getOrDefault("cacheHit", BigDecimal.ZERO));
                 cacheCreateInputPrice = perToken(matched.prices().getOrDefault("cacheCreate", BigDecimal.ZERO));
                 cacheHitExplicitInputPrice = perToken(matched.prices().getOrDefault("cacheHitExplicit", BigDecimal.ZERO));
+                if (matched.prices().containsKey("audioInput")) audioInputPrice = perToken(matched.prices().get("audioInput"));
+                if (matched.prices().containsKey("audioCacheHit")) audioCacheHitPrice = perToken(matched.prices().get("audioCacheHit"));
                 // 思考单独计费（thinkingMode=2）时取命中规则的价格，其余模式置 0 由下方思考合并逻辑处理
                 if (thinkingMode == 2) {
                     thinkingPrice = perToken(matched.prices().getOrDefault("thinking", BigDecimal.ZERO));
@@ -243,6 +289,27 @@ public class BillingService {
             }
         }
 
+        boolean separateAudio = audioInputPrice != null || audioCacheHitPrice != null;
+        if (separateAudio) {
+            if (audioInputPrice == null || audioCacheHitPrice == null
+                    || audioInputPrice.signum() < 0 || audioCacheHitPrice.signum() < 0) {
+                throw new IllegalStateException("音频输入/缓存价格必须同时配置且非负: model=" + ctx.getModelName());
+            }
+            if ((usage != null && !usage.audioUsageValid())
+                    || (ctx.isAudioInputRequested() && !Boolean.FALSE.equals(ctx.getIsSuccess())
+                        && (usage == null || !usage.audioDetailsPresent()))) {
+                throw new IllegalStateException("上游音频用量缺失或不一致，拒绝按文字价格结算: model=" + ctx.getModelName());
+            }
+        } else {
+            // 未配置单独音频价格的模型保留原有通用输入口径。
+            normalInput += audioInput;
+            cacheHit += audioCacheHit;
+            audioInput = 0;
+            audioCacheHit = 0;
+            audioInputPrice = BigDecimal.ZERO;
+            audioCacheHitPrice = BigDecimal.ZERO;
+        }
+
         // ===== enable 标志位：未启用的维度 token 归并到已启用的同类维度（防资损）=====
         // 原则：上游返回了 token 就必须计费，未启用的维度归并到已启用的维度，不直接置 0
         if (pricing != null) {
@@ -250,6 +317,8 @@ public class BillingService {
             if (!pricing.isEnableCacheHitInput()) {
                 normalInput += cacheHit;
                 cacheHit = 0;
+                audioInput += audioCacheHit;
+                audioCacheHit = 0;
             }
             if (!pricing.isEnableCacheCreateInput()) {
                 normalInput += cacheCreateExplicit;
@@ -265,6 +334,8 @@ public class BillingService {
                 cacheHit = 0;
                 cacheCreateExplicit = 0;
                 cacheHitExplicit = 0;
+                audioInput = 0;
+                audioCacheHit = 0;
             }
             // 输出侧：输出总开关关闭时 normalOutput + thinking 一起置 0
             // thinkingMode=1 已在下方把 thinking 并入 normalOutput，此处只需处理 enableOutputToken=false 的情况
@@ -297,32 +368,37 @@ public class BillingService {
         // ⚠ 不能写成 1−finalRate——那会把「无折扣(1.0)」误算成全免（历史资损：qwen3.8-max 0.22 元实收 0 元）
         BigDecimal payRatio = discounts.finalDiscountRate();
 
-        // ===== 先算各维度账单：token × 单价 × 支付比例，向上取整保留2位小数 =====
-        BigDecimal inputBill = new BigDecimal(normalInput).multiply(inputPrice).multiply(payRatio).setScale(2, RoundingMode.CEILING);
-        BigDecimal cacheHitBill = new BigDecimal(cacheHit).multiply(cacheHitInputPrice).multiply(payRatio).setScale(2, RoundingMode.CEILING);
-        BigDecimal cacheCreateBill = new BigDecimal(cacheCreateExplicit).multiply(cacheCreateInputPrice).multiply(payRatio).setScale(2, RoundingMode.CEILING);
-        BigDecimal cacheHitExplicitBill = new BigDecimal(cacheHitExplicit).multiply(cacheHitExplicitInputPrice).multiply(payRatio).setScale(2, RoundingMode.CEILING);
-        BigDecimal outputBill = new BigDecimal(normalOutput).multiply(outputPrice).multiply(payRatio).setScale(2, RoundingMode.CEILING);
-        BigDecimal thinkingBill = new BigDecimal(thinking).multiply(thinkingPrice).multiply(payRatio).setScale(2, RoundingMode.CEILING);
+        // ===== 先算各维度账单：token × 单价 × 支付比例，四舍五入保留8位小数 =====
+        BigDecimal inputBill = new BigDecimal(normalInput).multiply(discounts.adjustedUnitPrice(inputPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal cacheHitBill = new BigDecimal(cacheHit).multiply(discounts.adjustedUnitPrice(cacheHitInputPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal cacheCreateBill = new BigDecimal(cacheCreateExplicit).multiply(discounts.adjustedUnitPrice(cacheCreateInputPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal cacheHitExplicitBill = new BigDecimal(cacheHitExplicit).multiply(discounts.adjustedUnitPrice(cacheHitExplicitInputPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal outputBill = new BigDecimal(normalOutput).multiply(discounts.adjustedUnitPrice(outputPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal thinkingBill = new BigDecimal(thinking).multiply(discounts.adjustedUnitPrice(thinkingPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal audioInputBill = BigDecimal.valueOf(audioInput).multiply(discounts.adjustedUnitPrice(audioInputPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal audioCacheHitBill = BigDecimal.valueOf(audioCacheHit).multiply(discounts.adjustedUnitPrice(audioCacheHitPrice, MILLION)).multiply(payRatio).setScale(8, RoundingMode.HALF_UP);
         // 总账单 = 各维度账单之和
         BigDecimal totalCost = inputBill.add(cacheHitBill).add(cacheCreateBill)
-                .add(cacheHitExplicitBill).add(outputBill).add(thinkingBill);
+                .add(cacheHitExplicitBill).add(outputBill).add(thinkingBill).add(audioInputBill).add(audioCacheHitBill);
 
-        // ===== 再算各维度费用：token × 单价，向上取整保留2位小数 =====
-        BigDecimal inputCost = new BigDecimal(normalInput).multiply(inputPrice).setScale(2, RoundingMode.CEILING);
-        BigDecimal cacheHitCost = new BigDecimal(cacheHit).multiply(cacheHitInputPrice).setScale(2, RoundingMode.CEILING);
-        BigDecimal cacheCreateCost = new BigDecimal(cacheCreateExplicit).multiply(cacheCreateInputPrice).setScale(2, RoundingMode.CEILING);
-        BigDecimal cacheHitExplicitCost = new BigDecimal(cacheHitExplicit).multiply(cacheHitExplicitInputPrice).setScale(2, RoundingMode.CEILING);
-        BigDecimal outputCost = new BigDecimal(normalOutput).multiply(outputPrice).setScale(2, RoundingMode.CEILING);
-        BigDecimal thinkingCost = new BigDecimal(thinking).multiply(thinkingPrice).setScale(2, RoundingMode.CEILING);
+        // ===== 再算各维度费用：token × 单价，四舍五入保留8位小数 =====
+        BigDecimal inputCost = new BigDecimal(normalInput).multiply(inputPrice).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal cacheHitCost = new BigDecimal(cacheHit).multiply(cacheHitInputPrice).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal cacheCreateCost = new BigDecimal(cacheCreateExplicit).multiply(cacheCreateInputPrice).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal cacheHitExplicitCost = new BigDecimal(cacheHitExplicit).multiply(cacheHitExplicitInputPrice).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal outputCost = new BigDecimal(normalOutput).multiply(outputPrice).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal thinkingCost = new BigDecimal(thinking).multiply(thinkingPrice).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal audioInputCost = BigDecimal.valueOf(audioInput).multiply(audioInputPrice).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal audioCacheHitCost = BigDecimal.valueOf(audioCacheHit).multiply(audioCacheHitPrice).setScale(8, RoundingMode.HALF_UP);
         // 总费用 = 各维度费用之和
         BigDecimal originalCost = inputCost.add(cacheHitCost).add(cacheCreateCost)
-                .add(cacheHitExplicitCost).add(outputCost).add(thinkingCost);
+                .add(cacheHitExplicitCost).add(outputCost).add(thinkingCost).add(audioInputCost).add(audioCacheHitCost);
 
         // 总折扣 = 总费用 - 总账单
         BigDecimal discountAmount = originalCost.subtract(totalCost);
 
-        if (Boolean.TRUE.equals(ctx.getIsFreeQuota())) {
+        BigDecimal usageValue=DepartmentBudgetService.usablePricing(pricing)?totalCost.max(BigDecimal.ZERO):null;
+        if (ctx.adminFreeUsage || Boolean.TRUE.equals(ctx.getIsFreeQuota())) {
             originalCost = BigDecimal.ZERO;
             discountAmount = BigDecimal.ZERO;
             totalCost = BigDecimal.ZERO;
@@ -332,6 +408,8 @@ public class BillingService {
             cacheHitExplicitBill = BigDecimal.ZERO;
             outputBill = BigDecimal.ZERO;
             thinkingBill = BigDecimal.ZERO;
+            audioInputBill = BigDecimal.ZERO;
+            audioCacheHitBill = BigDecimal.ZERO;
         }
 
         return BillingRecordEntity.builder()
@@ -355,6 +433,8 @@ public class BillingService {
                 .cacheHitExplicitTokens(cacheHitExplicit)
                 .normalOutputTokens(normalOutput)
                 .thinkingTokens(thinking)
+                .audioInputTokens(audioInput)
+                .audioCacheHitTokens(audioCacheHit)
                 // 价格快照（阶梯计费时为命中档位的价格）
                 .inputUnitPrice(inputPrice)
                 .outputUnitPrice(outputPrice)
@@ -362,8 +442,11 @@ public class BillingService {
                 .cacheCreateInputUnitPrice(cacheCreateInputPrice)
                 .cacheHitExplicitInputUnitPrice(cacheHitExplicitInputPrice)
                 .thinkingUnitPrice(thinkingPrice)
+                .audioInputUnitPrice(audioInputPrice)
+                .audioCacheHitUnitPrice(audioCacheHitPrice)
                 // 计费元数据快照
                 .billingMode(pricing != null ? pricing.getBillingMode() : null)
+                .usageDetail(ctx.isFastMode() ? "{\"billingUnit\":\"token\",\"fastMode\":true}" : null)
                 .thinkingBillingMode(thinkingMode)
                 .vendor(ctx.getVendor())
                 .responseSnapshot(ctx.getResponseSnapshot())
@@ -374,6 +457,8 @@ public class BillingService {
                 .cacheHitExplicitCost(cacheHitExplicitCost)
                 .outputCost(outputCost)
                 .thinkingCost(thinkingCost)
+                .audioInputCost(audioInputCost)
+                .audioCacheHitCost(audioCacheHitCost)
                 // 分项账单（折扣后，用于导出）
                 .inputBill(inputBill)
                 .cacheHitBill(cacheHitBill)
@@ -381,6 +466,9 @@ public class BillingService {
                 .cacheHitExplicitBill(cacheHitExplicitBill)
                 .outputBill(outputBill)
                 .thinkingBill(thinkingBill)
+                .audioInputBill(audioInputBill)
+                .audioCacheHitBill(audioCacheHitBill)
+                .fixedAdjustment(discounts.fixedAdjustment())
                 .discountRate(discounts.modelDiscountRate())
                 .userDiscountRate(discounts.userDiscountRate())
                 .enterpriseDiscountRate(discounts.enterpriseDiscountRate())
@@ -389,6 +477,7 @@ public class BillingService {
                 .originalCost(originalCost)
                 .discountAmount(discountAmount)
                 .totalCost(totalCost)
+                .usageValue(usageValue)
                 .isFreeQuota(ctx.getIsFreeQuota())
                 .freeQuotaConsumed(ctx.getFreeQuotaConsumed())
                 .isSuccess(ctx.getIsSuccess())
@@ -397,8 +486,8 @@ public class BillingService {
                 .responseTimeMs(ctx.getResponseTimeMs())
                 .traceId(ctx.getTraceId())
                 .clientIp(ctx.getClientIp())
-                .startedAt(ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now())
-                .completedAt(LocalDateTime.now())
+                .startedAt(ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")))
+                .completedAt(LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")))
                 .createdBy(ctx.getUserId())
                 .updatedBy(ctx.getUserId())
                 .build();
@@ -423,7 +512,7 @@ public class BillingService {
     /** 规则计费单价换算：元/M token → 元/token（规则 price_json 为管理员填写口径） */
     private BigDecimal perToken(BigDecimal pricePerMillion) {
         return pricePerMillion != null
-                ? pricePerMillion.divide(MILLION, 10, RoundingMode.HALF_UP)
+                ? pricePerMillion.divide(MILLION, 14, RoundingMode.HALF_UP)
                 : BigDecimal.ZERO;
     }
 
@@ -480,6 +569,16 @@ public class BillingService {
                 break;
             }
         }
+        if (matched == null && resolution != null) {
+            for (var rule : rules) {
+                if ("OTHER".equals(rule.outputResolution())
+                        && (priceMode != 2 || (rule.hasVideoInput() != null
+                            && Objects.equals(rule.hasVideoInput(), vu.hasVideoInput())))) {
+                    matched = rule;
+                    break;
+                }
+            }
+        }
         if (matched == null) {
             LOGGER.error("视频计费规则匹配失败，拒计费（配置缺失或未启用）: model={}, channelId={}, priceMode={}, "
                             + "resolution={}, hasVideoInput={}, billingUnit={}",
@@ -488,9 +587,8 @@ public class BillingService {
             throw new IllegalStateException("视频计费规则匹配失败: model=" + ctx.getModelName()
                     + ", resolution=" + resolution + ", hasVideoInput=" + vu.hasVideoInput());
         }
-        // 计费侧兜底：命中规则行价格为空或非正数（平台配置疏忽）时拒计费，
-        // 防止按 0 元落账且回写 billing_record_id 导致对账口径无法发现漏计费
-        if (matched.price() == null || matched.price().compareTo(BigDecimal.ZERO) <= 0) {
+        // 空/负数价格拒计费；0 元必须来自明确启用的规则，缺失配置不能视为免费。
+        if (matched.price() == null || matched.price().signum() < 0) {
             LOGGER.error("视频计费规则价格无效，拒计费: model={}, resolution={}, hasVideoInput={}, price={}",
                     ctx.getModelName(), resolution, vu.hasVideoInput(), matched.price());
             throw new IllegalStateException("视频计费规则价格无效: model=" + ctx.getModelName()
@@ -518,6 +616,21 @@ public class BillingService {
             cost = seconds.multiply(matched.price());
         }
 
+        BigDecimal inputCost = BigDecimal.ZERO;
+        if (matched.inputPrice() != null) {
+            if (matched.inputPrice().signum() < 0 || !"second".equals(billingUnit))
+                throw new IllegalStateException("无效的视频输入单价");
+            if (Boolean.TRUE.equals(vu.hasVideoInput())) {
+                if (vu.inputSeconds() == null || vu.inputSeconds().signum() <= 0)
+                    throw new IllegalStateException("缺少上游视频输入时长: model=" + ctx.getModelName());
+                inputCost = vu.inputSeconds().multiply(matched.inputPrice());
+            } else if (vu.hasVideoInput() == null) {
+                throw new IllegalStateException("缺少视频输入类型: model=" + ctx.getModelName());
+            }
+        }
+        BigDecimal outputCost = cost;
+        cost = cost.add(inputCost);
+
         // 多级折扣：模型折扣 × 用户折扣 × 企业补贴折扣
         UserIdentity identity = new UserIdentity(
                 ctx.getUserId(), ctx.getUserAccount(),
@@ -528,16 +641,28 @@ public class BillingService {
         DiscountBreakdown discounts = discountCalculationService.calculate(
                 identity, ctx.getModelName(), ctx.getChannelId());
 
-        BigDecimal originalCost = cost.setScale(2, RoundingMode.CEILING);
-        BigDecimal discountAmount = cost
-                .multiply(BigDecimal.ONE.subtract(discounts.finalDiscountRate()))
-                .setScale(2, RoundingMode.CEILING);
-        BigDecimal totalCost = originalCost.subtract(discountAmount);
+        BigDecimal videoInputCost = inputCost.setScale(8, RoundingMode.HALF_UP);
+        BigDecimal videoOutputCost = outputCost.setScale(8, RoundingMode.HALF_UP);
+        BigDecimal adjustedInputCost = matched.inputPrice() == null ? BigDecimal.ZERO
+                : !Boolean.TRUE.equals(vu.hasVideoInput()) ? BigDecimal.ZERO : vu.inputSeconds().multiply(discounts.adjustedUnitPrice(matched.inputPrice(), BigDecimal.ONE));
+        BigDecimal adjustedOutputCost = "token".equals(billingUnit)
+                ? BigDecimal.valueOf(vu.tokens()).multiply(discounts.adjustedUnitPrice(matched.price(), MILLION))
+                : vu.seconds().multiply(discounts.adjustedUnitPrice(matched.price(), BigDecimal.ONE));
+        BigDecimal inputBill = adjustedInputCost.multiply(discounts.finalDiscountRate()).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal outputBill = adjustedOutputCost.multiply(discounts.finalDiscountRate()).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal originalCost = videoInputCost.add(videoOutputCost);
+        BigDecimal totalCost = inputBill.add(outputBill);
+        BigDecimal discountAmount = originalCost.subtract(totalCost);
 
-        if (Boolean.TRUE.equals(ctx.getIsFreeQuota())) {
+        BigDecimal usageValue=totalCost.max(BigDecimal.ZERO);
+        if (ctx.adminFreeUsage || Boolean.TRUE.equals(ctx.getIsFreeQuota())) {
             originalCost = BigDecimal.ZERO;
             discountAmount = BigDecimal.ZERO;
             totalCost = BigDecimal.ZERO;
+            videoInputCost = BigDecimal.ZERO;
+            videoOutputCost = BigDecimal.ZERO;
+            inputBill = BigDecimal.ZERO;
+            outputBill = BigDecimal.ZERO;
         }
 
         long completionTokens = vu.tokens() != null ? vu.tokens() : 0L;
@@ -565,10 +690,12 @@ public class BillingService {
                 .completionTokens(billedCompletionTokens)
                 .totalTokens(billedCompletionTokens)
                 // 分项费用：视频唯一分项记 output_cost（折扣前），保持 original_cost = 分项和口径
-                .outputCost(originalCost)
+                .inputCost(videoInputCost).inputBill(inputBill)
+                .outputCost(videoOutputCost).outputBill(outputBill)
                 // 计费元数据快照：vendor 留痕；billingMode（token 阶梯口径）不适用于视频，置 null
                 .vendor(ctx.getVendor())
                 .responseSnapshot(ctx.getResponseSnapshot())
+                .fixedAdjustment(discounts.fixedAdjustment())
                 .discountRate(discounts.modelDiscountRate())
                 .userDiscountRate(discounts.userDiscountRate())
                 .enterpriseDiscountRate(discounts.enterpriseDiscountRate())
@@ -577,6 +704,7 @@ public class BillingService {
                 .originalCost(originalCost)
                 .discountAmount(discountAmount)
                 .totalCost(totalCost)
+                .usageValue(usageValue)
                 .isFreeQuota(ctx.getIsFreeQuota())
                 .freeQuotaConsumed(ctx.getFreeQuotaConsumed())
                 .isSuccess(ctx.getIsSuccess())
@@ -585,8 +713,8 @@ public class BillingService {
                 .responseTimeMs(ctx.getResponseTimeMs())
                 .traceId(ctx.getTraceId())
                 .clientIp(ctx.getClientIp())
-                .startedAt(ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now())
-                .completedAt(LocalDateTime.now())
+                .startedAt(ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")))
+                .completedAt(LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")))
                 .createdBy(ctx.getUserId())
                 .updatedBy(ctx.getUserId())
                 .usageDetail(buildVideoUsageDetail(billingUnit, vu, matched,
@@ -618,6 +746,9 @@ public class BillingService {
         item.put("cost", cost);
         item.put("discountAmount", discountAmount);
         item.put("amount", amount);
+        item.put("unitPrice", matched.price());
+        item.put("inputUnitPrice", matched.inputPrice());
+        item.put("inputSeconds", vu.inputSeconds());
         try {
             return objectMapper.writeValueAsString(root);
         } catch (Exception e) {
@@ -634,7 +765,53 @@ public class BillingService {
      * @param seconds       视频时长（秒，可小数）；duration/frames 折算后的计量值
      * @param tokens        上游 usage.completion_tokens（对账留痕；billing_unit=token 时参与计量）
      */
-    public record VideoUsage(String resolution, Boolean hasVideoInput, BigDecimal seconds, Long tokens) {
+    private BillingRecordEntity buildImageRecord(BillingContext ctx, ModelPricingService.ModelPricing pricing) {
+        if (pricing == null || !Integer.valueOf(3).equals(pricing.getBillingMode()))
+            throw new IllegalStateException("图片按张计费未配置: " + ctx.getModelName());
+        var usage = new UsageContext(0, 0, false, false, 0,
+                ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")),
+                ctx.getServiceType(), ctx.getVendor(), false, false);
+        var match = ruleEngine.match(pricing.getRules(), usage);
+        BigDecimal rate = match == null ? null : match.prices().get("imagePrice");
+        if (rate == null || rate.signum() < 0)
+            throw new IllegalStateException("图片单价未配置: " + ctx.getModelName());
+        long count = Boolean.TRUE.equals(ctx.getIsSuccess()) ? ctx.getImageCount() : 0;
+        if (Boolean.TRUE.equals(ctx.getIsSuccess()) && count <= 0)
+            throw new IllegalStateException("成功响应缺少实际图片张数: " + ctx.getModelName());
+        UserIdentity identity = new UserIdentity(ctx.getUserId(), ctx.getUserAccount(), ctx.getApiKeyId(),
+                ctx.getApiKeyName(), ctx.getEnterpriseId(), ctx.getEnterpriseName(), ctx.getCompanyId(),
+                Boolean.TRUE.equals(ctx.getPlatformUser()), ctx.getUserType(), ctx.getSystemUserId(), null);
+        var discounts = discountCalculationService.calculate(identity, ctx.getModelName(), ctx.getChannelId());
+        BigDecimal raw = rate.multiply(BigDecimal.valueOf(count));
+        BigDecimal cost = raw.setScale(8, RoundingMode.HALF_UP);
+        BigDecimal bill = discounts.adjustedUnitPrice(rate, BigDecimal.ONE).multiply(BigDecimal.valueOf(count)).multiply(discounts.finalDiscountRate()).setScale(8, RoundingMode.HALF_UP);
+        BigDecimal usageValue=bill.max(BigDecimal.ZERO);
+        if (ctx.adminFreeUsage || Boolean.TRUE.equals(ctx.getIsFreeQuota())) { cost = BigDecimal.ZERO; bill = BigDecimal.ZERO; }
+        ObjectNode detail = objectMapper.createObjectNode().put("billingUnit", "image");
+        detail.putArray("items").addObject().put("count", count).put("unitPrice", rate)
+                .put("cost", cost).put("amount", bill);
+        return BillingRecordEntity.builder()
+                .userId(ctx.getUserId()).userAccount(ctx.getUserAccount()).apiKeyId(ctx.getApiKeyId())
+                .apiKeyName(ctx.getApiKeyName()).modelName(ctx.getModelName()).modelId(pricing.getModelId())
+                .serviceType(ctx.getServiceType()).channelId(ctx.getChannelId()).channelName(ctx.getChannelName())
+                .provider(ctx.getProvider()).vendor(ctx.getVendor()).billingMode(3)
+                .responseSnapshot(ctx.getResponseSnapshot()).usageDetail(detail.toString())
+                .outputCost(cost).outputBill(bill).originalCost(cost).totalCost(bill).usageValue(usageValue).discountAmount(cost.subtract(bill))
+                .fixedAdjustment(discounts.fixedAdjustment())
+                .discountRate(discounts.modelDiscountRate()).userDiscountRate(discounts.userDiscountRate())
+                .enterpriseDiscountRate(discounts.enterpriseDiscountRate()).finalDiscountRate(discounts.finalDiscountRate())
+                .userType(ctx.getUserType()).isFreeQuota(ctx.getIsFreeQuota()).freeQuotaConsumed(ctx.getFreeQuotaConsumed())
+                .isSuccess(ctx.getIsSuccess()).errorCode(ctx.getErrorCode()).errorMessage(ctx.getErrorMessage())
+                .responseTimeMs(ctx.getResponseTimeMs()).traceId(ctx.getTraceId()).clientIp(ctx.getClientIp())
+                .startedAt(ctx.getStartedAt() != null ? ctx.getStartedAt() : LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")))
+                .completedAt(LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai"))).createdBy(ctx.getUserId()).updatedBy(ctx.getUserId()).build();
+    }
+
+    public record VideoUsage(String resolution, Boolean hasVideoInput, BigDecimal seconds, Long tokens,
+                             BigDecimal inputSeconds) {
+        public VideoUsage(String resolution, Boolean hasVideoInput, BigDecimal seconds, Long tokens) {
+            this(resolution, hasVideoInput, seconds, tokens, null);
+        }
     }
 
     public static class BillingContext {
@@ -665,6 +842,8 @@ public class BillingService {
         private Long systemUserId;
         private Boolean platformUser;
         private Boolean isFreeQuota = false;
+        private boolean adminFreeUsage;
+        private DepartmentUsageSnapshot usageSnapshot;
         private Long freeQuotaConsumed = 0L;
         // 账户信息（用于从 ai_account_balance 扣减余额）
         private String accountId;
@@ -675,6 +854,9 @@ public class BillingService {
         private String baseUrl;  // 实例 baseUrl（用于计费日志/快照）
         // ===== 视频计费扩展（serviceType=vidGen，非 null 时走视频计费分支）=====
         private VideoUsage videoUsage; // 视频实际用量（分辨率/有无视频输入/秒数/token）
+        private Long imageCount;
+        private boolean fastMode;
+        private boolean audioInputRequested;
         // 任务创建时快照的计费规则（V7：提交时刻锁价，优先于实时定价；null 时回退实时定价）
         private ModelPricingService.VideoPricingSnapshot videoPricingSnapshot;
         // ===== 模型返回响应快照（V5；截断至 8KB、base64 脱敏；构建失败为 null）=====
@@ -683,6 +865,7 @@ public class BillingService {
         public static BillingContext create() { return new BillingContext(); }
 
         public BillingContext userId(String v) { this.userId = v; return this; }
+        public BillingContext usageSnapshot(DepartmentUsageSnapshot v) { this.usageSnapshot=v; return this; }
         public BillingContext userAccount(String v) { this.userAccount = v; return this; }
         public BillingContext apiKeyId(String v) { this.apiKeyId = v; return this; }
         public BillingContext apiKeyName(String v) { this.apiKeyName = v; return this; }
@@ -715,6 +898,9 @@ public class BillingService {
         public BillingContext vendor(String v) { this.vendor = v; return this; }
         public BillingContext baseUrl(String v) { this.baseUrl = v; return this; }
         public BillingContext videoUsage(VideoUsage v) { this.videoUsage = v; return this; }
+        public BillingContext imageCount(Long v) { this.imageCount = v; return this; }
+        public BillingContext fastMode(boolean v) { this.fastMode = v; return this; }
+        public BillingContext audioInputRequested(boolean v) { this.audioInputRequested = v; return this; }
         public BillingContext videoPricingSnapshot(ModelPricingService.VideoPricingSnapshot v) { this.videoPricingSnapshot = v; return this; }
         public BillingContext responseSnapshot(String v) { this.responseSnapshot = v; return this; }
 
@@ -743,6 +929,7 @@ public class BillingService {
         public Integer getUserType() { return userType; }
         public Long getSystemUserId() { return systemUserId; }
         public Boolean getPlatformUser() { return platformUser; }
+        public DepartmentUsageSnapshot getUsageSnapshot() { return usageSnapshot; }
         public Boolean getIsFreeQuota() { return isFreeQuota; }
         public Long getFreeQuotaConsumed() { return freeQuotaConsumed; }
         public String getAccountId() { return accountId; }
@@ -751,6 +938,9 @@ public class BillingService {
         public String getVendor() { return vendor; }
         public String getBaseUrl() { return baseUrl; }
         public VideoUsage getVideoUsage() { return videoUsage; }
+        public Long getImageCount() { return imageCount; }
+        public boolean isFastMode() { return fastMode; }
+        public boolean isAudioInputRequested() { return audioInputRequested; }
         public ModelPricingService.VideoPricingSnapshot getVideoPricingSnapshot() { return videoPricingSnapshot; }
         public String getResponseSnapshot() { return responseSnapshot; }
     }

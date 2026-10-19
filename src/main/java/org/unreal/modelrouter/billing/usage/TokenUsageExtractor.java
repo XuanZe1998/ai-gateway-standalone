@@ -50,7 +50,9 @@ public class TokenUsageExtractor {
         if (usage == null || usage.isMissingNode() || !usage.isObject()) {
             return TokenUsage.empty();
         }
-        final UsageStyle style = styleResolver.resolve(vendor, baseUrl);
+        final UsageStyle style = usage.has("input_tokens") && !usage.has("prompt_tokens")
+                && (usage.has("cache_creation_input_tokens") || usage.has("cache_read_input_tokens"))
+                ? UsageStyle.ANTHROPIC : styleResolver.resolve(vendor, baseUrl);
         return doExtract(usage, style);
     }
 
@@ -86,21 +88,21 @@ public class TokenUsageExtractor {
         final long rawTotal = usage.path("total_tokens").asLong(rawTotalFallback);
 
         // 缓存/思考字段提取（按风格）
-        final long cacheHit;
+        long cacheHit;
         final long cacheCreateExplicit;
         final long cacheHitExplicit;
         final long thinking;
         switch (style) {
             case DEEPSEEK -> {
-                cacheHit = usage.path("prompt_cache_hit_tokens").asLong(0);
-                cacheCreateExplicit = 0;
-                cacheHitExplicit = 0;
+                cacheCreateExplicit = usage.path("cache_creation_input_tokens").asLong(0);
+                cacheHitExplicit = usage.path("cache_read_input_tokens").asLong(0);
+                cacheHit = Math.max(0, usage.path("prompt_cache_hit_tokens").asLong(0) - cacheHitExplicit);
                 thinking = extractThinking(usage);
             }
             case OPENAI -> {
-                cacheHit = usage.path("prompt_tokens_details").path("cached_tokens").asLong(0);
-                cacheCreateExplicit = 0;
-                cacheHitExplicit = 0;
+                cacheCreateExplicit = usage.path("cache_creation_input_tokens").asLong(0);
+                cacheHitExplicit = usage.path("cache_read_input_tokens").asLong(0);
+                cacheHit = Math.max(0, usage.path("prompt_tokens_details").path("cached_tokens").asLong(0) - cacheHitExplicit);
                 thinking = extractThinking(usage);
             }
             case ANTHROPIC -> {
@@ -118,21 +120,41 @@ public class TokenUsageExtractor {
                 if (ch == 0) {
                     ch = usage.path("prompt_cache_hit_tokens").asLong(0);
                 }
-                cacheHit = ch;
-                cacheCreateExplicit = 0;
-                cacheHitExplicit = 0;
+                cacheCreateExplicit = usage.path("cache_creation_input_tokens").asLong(0);
+                cacheHitExplicit = usage.path("cache_read_input_tokens").asLong(0);
+                cacheHit = Math.max(0, ch - cacheHitExplicit);
                 thinking = extractThinking(usage);
             }
         }
 
-        // ===== 归一化：确保 normalInput 始终是净量 =====
+        // Ark/Responses 使用标准 details 字段，即使经第三方 DeepSeek 风格实例转发也优先读明细。
+        final JsonNode details = usage.has("prompt_tokens_details")
+                ? usage.path("prompt_tokens_details") : usage.path("input_tokens_details");
+        if (style != UsageStyle.ANTHROPIC && details.has("cached_tokens")) {
+            cacheHit = max0(details.path("cached_tokens").asLong(0) - cacheHitExplicit);
+        }
+        final long audioTotal = max0(details.path("audio_tokens").asLong(0));
+        final long audioCached = max0(details.path("audio_cached_tokens").asLong(0));
+        final boolean audioPresent = tokenNumber(details.path("audio_tokens"));
+        final long audioInput = max0(audioTotal - audioCached);
+        final boolean audioValid = (!details.has("audio_tokens") || audioPresent)
+                && (!details.has("audio_cached_tokens") || tokenNumber(details.path("audio_cached_tokens")))
+                && (!audioPresent || !details.has("cached_tokens") || tokenNumber(details.path("cached_tokens")))
+                && audioCached <= audioTotal && audioCached <= cacheHit
+                && (audioTotal == 0 || (style != UsageStyle.ANTHROPIC
+                    && cacheCreateExplicit == 0 && cacheHitExplicit == 0))
+                && audioTotal <= rawPrompt && rawPrompt - cacheHit - audioInput >= 0;
+        // cached_tokens 包含音频缓存，audio_tokens 也包含音频缓存；交集只记一次。
+        cacheHit = max0(cacheHit - audioCached);
+
+        // ===== 归一化：确保 normalInput 始终是文字净量 =====
         final long normalInput;
         if (style == UsageStyle.ANTHROPIC) {
             // Anthropic: input_tokens 已是净量，直接用
             normalInput = rawPrompt;
         } else {
             // DeepSeek/OpenAI/UNKNOWN: rawPrompt 含缓存命中，需扣除
-            normalInput = rawPrompt - cacheHit - cacheHitExplicit - cacheCreateExplicit;
+            normalInput = rawPrompt - cacheHit - cacheHitExplicit - cacheCreateExplicit - audioInput - audioCached;
         }
         // 普通输出 = 输出 − 思考
         final long normalOutput = rawCompletion - thinking;
@@ -148,8 +170,12 @@ public class TokenUsageExtractor {
         return new TokenUsage(
                 max0(normalInput), max0(cacheHit), max0(cacheCreateExplicit), max0(cacheHitExplicit),
                 max0(normalOutput), max0(thinking),
-                rawPrompt, rawCompletion, rawTotal
+                rawPrompt, rawCompletion, rawTotal, audioInput, audioCached, audioPresent, audioValid
         );
+    }
+
+    private static boolean tokenNumber(final JsonNode value) {
+        return value.isIntegralNumber() && value.canConvertToLong() && value.longValue() >= 0;
     }
 
     /**

@@ -40,22 +40,22 @@ public class PlatformModelPriceTierEntity {
     @Column(name = "is_unlimited")
     private Boolean isUnlimited;
 
-    @Column(name = "input_price")
+    @Column(name = "input_price", precision = 20, scale = 8)
     private BigDecimal inputPrice;
 
-    @Column(name = "cache_hit_input_price")
+    @Column(name = "cache_hit_input_price", precision = 20, scale = 8)
     private BigDecimal cacheHitInputPrice;
 
-    @Column(name = "output_price")
+    @Column(name = "output_price", precision = 20, scale = 8)
     private BigDecimal outputPrice;
 
-    @Column(name = "cache_create_input_price")
+    @Column(name = "cache_create_input_price", precision = 20, scale = 8)
     private BigDecimal cacheCreateInputPrice;
 
-    @Column(name = "cache_hit_explicit_input_price")
+    @Column(name = "cache_hit_explicit_input_price", precision = 20, scale = 8)
     private BigDecimal cacheHitExplicitInputPrice;
 
     /** 思考token单价（元/M token），仅当主表 thinking_billing_mode=2 时有效 */
-    @Column(name = "thinking_price")
+    @Column(name = "thinking_price", precision = 20, scale = 8)
     private BigDecimal thinkingPrice;
 }

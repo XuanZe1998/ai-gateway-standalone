@@ -6,6 +6,7 @@ import { title } from 'process'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/system/users', component: () => import('../views/Layout.vue'), meta: { requiresAuth: true, roles: ['ADMIN'] }, children: [{ path: '', component: () => import('../views/security/UserManagement.vue'), meta: { title: '部门与用量管理' } }] },
     {
       path: '/login',
       name: 'login',

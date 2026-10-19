@@ -24,6 +24,21 @@ public class BalanceDeductionService {
 
     private final PlatformAccountBalanceRepository accountBalanceRepository;
     private final NotificationService notificationService;
+    private org.springframework.jdbc.core.JdbcTemplate billingJdbc;
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setBillingJdbc(org.springframework.jdbc.core.JdbcTemplate jdbc){this.billingJdbc=jdbc;}
+
+    /** Receipt and debit use the same transaction, including concurrent retry protection. */
+    @Transactional
+    public void deductBillingAndAlert(Long billingId,String accountId,Integer accountType,BigDecimal cost,
+                                      EnterpriseLookupService.EnterpriseInfo info) {
+        if(billingJdbc==null){deductAndAlert(accountId,accountType,cost,info);return;}
+        var rows=billingJdbc.queryForList("SELECT settlement_status FROM ai_billing_record WHERE id=? FOR UPDATE",billingId);
+        if(rows.isEmpty())throw new IllegalStateException("账单不存在");
+        if("SETTLED".equals(rows.get(0).get("settlement_status")))return;
+        deductAndAlert(accountId,accountType,cost,info);
+        billingJdbc.update("UPDATE ai_billing_record SET settlement_status='SETTLED',actual_deducted=? WHERE id=?",cost,billingId);
+    }
 
     /**
      * 扣减余额并检查是否需要预警。

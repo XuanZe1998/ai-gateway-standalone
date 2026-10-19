@@ -16,20 +16,32 @@ import java.math.RoundingMode;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @org.springframework.beans.factory.annotation.Autowired)
 public class DiscountCalculationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscountCalculationService.class);
     private static final BigDecimal NO_DISCOUNT = BigDecimal.ONE;
-    private static final int SCALE = 6;
+    private static final int SCALE = 8;
 
     private final ModelPricingService modelPricingService;
     private final UserModelDiscountRepository userModelDiscountRepository;
     private final PlatformEnterpriseRepository enterpriseRepository;
+    private final org.unreal.modelrouter.billing.pricing.PricingAdjustmentService adjustmentService;
+
+    public DiscountCalculationService(ModelPricingService pricingService, UserModelDiscountRepository userDiscounts,
+                                      PlatformEnterpriseRepository enterprises) {
+        this(pricingService, userDiscounts, enterprises, null);
+    }
 
     public DiscountBreakdown calculate(UserIdentity identity, String modelName, String channelId) {
         ModelPricingService.ModelPricing pricing = tryGetPricing(modelName, channelId);
         BigDecimal modelRate = resolveModelDiscountRate(pricing);
+        BigDecimal fixedAdjustment = BigDecimal.ZERO;
+        if (adjustmentService != null) {
+            var adjustment = adjustmentService.resolve(modelName);
+            modelRate = adjustment.rate();
+            fixedAdjustment = adjustment.fixedAmount();
+        }
         Long modelId = pricing != null ? pricing.getModelId() : null;
         BigDecimal userRate = resolveUserDiscountRate(identity, modelId);
         BigDecimal enterpriseRate = resolveEnterpriseDiscountRate(identity);
@@ -38,7 +50,7 @@ public class DiscountCalculationService {
                 .multiply(enterpriseRate)
                 .setScale(SCALE, RoundingMode.HALF_UP);
 
-        return new DiscountBreakdown(modelRate, userRate, enterpriseRate, finalRate);
+        return new DiscountBreakdown(modelRate, userRate, enterpriseRate, finalRate, fixedAdjustment);
     }
 
     private ModelPricingService.ModelPricing tryGetPricing(String modelName, String channelId) {

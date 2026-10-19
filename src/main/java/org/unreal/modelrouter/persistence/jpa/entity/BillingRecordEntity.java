@@ -37,6 +37,13 @@ import java.time.LocalDateTime;
     @Index(name = "idx_billing_api_key", columnList = "api_key_id")
 })
 public class BillingRecordEntity {
+    @Column(name="department_id",length=512) private String departmentId;
+    @Column(name="department_name") private String departmentName;
+    @Column(name="funding_source") private String fundingSource;
+    @Column(name="policy_snapshot",columnDefinition="TEXT") private String policySnapshot;
+    @Column(name="billing_request_id") private String billingRequestId;
+    @Column(name="settlement_status") @Builder.Default private String settlementStatus="UNKNOWN";
+    @Column(name="actual_deducted",precision=26,scale=8) private BigDecimal actualDeducted;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,7 +95,7 @@ public class BillingRecordEntity {
     @Column(name = "total_tokens")
     private Long totalTokens;
 
-    // ========== 6 维 Token 用量（归一化后，新列可空向后兼容） ==========
+    // ========== Token 用量（文字与音频互斥，新列可空向后兼容） ==========
     @Column(name = "normal_input_tokens")
     private Long normalInputTokens;
 
@@ -107,24 +114,36 @@ public class BillingRecordEntity {
     @Column(name = "thinking_tokens")
     private Long thinkingTokens;
 
+    @Column(name = "audio_input_tokens")
+    private Long audioInputTokens;
+
+    @Column(name = "audio_cache_hit_tokens")
+    private Long audioCacheHitTokens;
+
     // ========== 价格快照 ==========
-    @Column(name = "input_unit_price", precision = 20, scale = 10)
+    @Column(name = "input_unit_price", precision = 26, scale = 14)
     private BigDecimal inputUnitPrice;
 
-    @Column(name = "output_unit_price", precision = 20, scale = 10)
+    @Column(name = "output_unit_price", precision = 26, scale = 14)
     private BigDecimal outputUnitPrice;
 
-    @Column(name = "cache_hit_input_unit_price", precision = 20, scale = 10)
+    @Column(name = "cache_hit_input_unit_price", precision = 26, scale = 14)
     private BigDecimal cacheHitInputUnitPrice;
 
-    @Column(name = "cache_create_input_unit_price", precision = 20, scale = 10)
+    @Column(name = "cache_create_input_unit_price", precision = 26, scale = 14)
     private BigDecimal cacheCreateInputUnitPrice;
 
-    @Column(name = "cache_hit_explicit_input_unit_price", precision = 20, scale = 10)
+    @Column(name = "cache_hit_explicit_input_unit_price", precision = 26, scale = 14)
     private BigDecimal cacheHitExplicitInputUnitPrice;
 
-    @Column(name = "thinking_unit_price", precision = 20, scale = 10)
+    @Column(name = "thinking_unit_price", precision = 26, scale = 14)
     private BigDecimal thinkingUnitPrice;
+
+    @Column(name = "audio_input_unit_price", precision = 26, scale = 14)
+    private BigDecimal audioInputUnitPrice;
+
+    @Column(name = "audio_cache_hit_unit_price", precision = 26, scale = 14)
+    private BigDecimal audioCacheHitUnitPrice;
 
     // ========== 用量明细快照（JSONB） ==========
     /**
@@ -159,43 +178,59 @@ public class BillingRecordEntity {
     @Column(name = "vendor", length = 50)
     private String vendor;
 
-    // ========== 分项费用（Java侧已按向上取整保留2位小数） ==========
-    @Column(name = "input_cost", precision = 20, scale = 6)
+    /** Fixed adjustment per quoted unit at settlement time. */
+    @Column(name = "fixed_adjustment", precision = 20, scale = 8)
+    private BigDecimal fixedAdjustment;
+
+    // ========== 分项费用（Java侧已按四舍五入保留8位小数） ==========
+    @Column(name = "input_cost", precision = 20, scale = 8)
     private BigDecimal inputCost;
 
-    @Column(name = "cache_hit_cost", precision = 20, scale = 6)
+    @Column(name = "cache_hit_cost", precision = 20, scale = 8)
     private BigDecimal cacheHitCost;
 
-    @Column(name = "cache_create_cost", precision = 20, scale = 6)
+    @Column(name = "cache_create_cost", precision = 20, scale = 8)
     private BigDecimal cacheCreateCost;
 
-    @Column(name = "cache_hit_explicit_cost", precision = 20, scale = 6)
+    @Column(name = "cache_hit_explicit_cost", precision = 20, scale = 8)
     private BigDecimal cacheHitExplicitCost;
 
-    @Column(name = "output_cost", precision = 20, scale = 6)
+    @Column(name = "output_cost", precision = 20, scale = 8)
     private BigDecimal outputCost;
 
-    @Column(name = "thinking_cost", precision = 20, scale = 6)
+    @Column(name = "thinking_cost", precision = 20, scale = 8)
     private BigDecimal thinkingCost;
 
-    // ========== 分项账单（折扣后，向上取整保留2位小数，用于导出） ==========
-    @Column(name = "input_bill", precision = 20, scale = 2)
+    @Column(name = "audio_input_cost", precision = 20, scale = 8)
+    private BigDecimal audioInputCost;
+
+    @Column(name = "audio_cache_hit_cost", precision = 20, scale = 8)
+    private BigDecimal audioCacheHitCost;
+
+    // ========== 分项账单（折扣后，四舍五入保留8位小数，用于导出） ==========
+    @Column(name = "input_bill", precision = 20, scale = 8)
     private BigDecimal inputBill;
 
-    @Column(name = "cache_hit_bill", precision = 20, scale = 2)
+    @Column(name = "cache_hit_bill", precision = 20, scale = 8)
     private BigDecimal cacheHitBill;
 
-    @Column(name = "cache_create_bill", precision = 20, scale = 2)
+    @Column(name = "cache_create_bill", precision = 20, scale = 8)
     private BigDecimal cacheCreateBill;
 
-    @Column(name = "cache_hit_explicit_bill", precision = 20, scale = 2)
+    @Column(name = "cache_hit_explicit_bill", precision = 20, scale = 8)
     private BigDecimal cacheHitExplicitBill;
 
-    @Column(name = "output_bill", precision = 20, scale = 2)
+    @Column(name = "output_bill", precision = 20, scale = 8)
     private BigDecimal outputBill;
 
-    @Column(name = "thinking_bill", precision = 20, scale = 2)
+    @Column(name = "thinking_bill", precision = 20, scale = 8)
     private BigDecimal thinkingBill;
+
+    @Column(name = "audio_input_bill", precision = 20, scale = 8)
+    private BigDecimal audioInputBill;
+
+    @Column(name = "audio_cache_hit_bill", precision = 20, scale = 8)
+    private BigDecimal audioCacheHitBill;
 
     // ========== 折扣 ==========
     /**
@@ -203,35 +238,43 @@ public class BillingRecordEntity {
      * <p>
      * 与算力平台 ai_model.discount（百分比整数，如 80 = 8折）的区别：
      * PlatformDataSyncService 负责将百分比转换为小数后存入此处。
-     * 数据库列 DECIMAL(5,2) 可精确存储 0.00 ~ 999.99 范围内的小数。
+     * 数据库列 NUMERIC(12,8) 保留八位小数。
      */
-    @Column(name = "discount_rate", precision = 5, scale = 2)
+    @Column(name = "discount_rate", precision = 12, scale = 8)
     private BigDecimal discountRate;
 
     /** 用户×模型折扣率，小数格式：1.00 = 无折扣，0.90 = 9折。 */
-    @Column(name = "user_discount_rate", precision = 10, scale = 6)
+    @Column(name = "user_discount_rate", precision = 12, scale = 8)
     private BigDecimal userDiscountRate;
 
     /** 企业补贴折扣率，小数格式：1.00 = 无折扣，0.80 = 8折。 */
-    @Column(name = "enterprise_discount_rate", precision = 10, scale = 6)
+    @Column(name = "enterprise_discount_rate", precision = 12, scale = 8)
     private BigDecimal enterpriseDiscountRate;
 
     /** 最终折扣率 = 模型折扣 × 用户折扣 × 企业补贴折扣，小数格式。 */
-    @Column(name = "final_discount_rate", precision = 10, scale = 6)
+    @Column(name = "final_discount_rate", precision = 12, scale = 8)
     private BigDecimal finalDiscountRate;
 
-    // ========== 费用（Java侧已按向上取整保留2位小数） ==========
-    @Column(name = "original_cost", precision = 20, scale = 6)
+    // ========== 费用（Java侧已按四舍五入保留8位小数） ==========
+    @Column(name = "original_cost", precision = 20, scale = 8)
     private BigDecimal originalCost;
 
-    @Column(name = "discount_amount", precision = 20, scale = 6)
+    @Column(name = "discount_amount", precision = 20, scale = 8)
     private BigDecimal discountAmount;
 
-    @Column(name = "total_cost", precision = 20, scale = 6)
+    @Column(name = "total_cost", precision = 20, scale = 8)
     private BigDecimal totalCost;
+
+    /** Normally priced usage before free exemptions; never used as a debit. NULL means unknown. */
+    @Column(name = "usage_value", precision = 26, scale = 8)
+    private BigDecimal usageValue;
 
     @Column(name = "is_free_quota", nullable = false)
     private Boolean isFreeQuota = false;
+
+    @lombok.Builder.Default
+    @Column(name = "is_admin_free_usage", nullable = false)
+    private Boolean isAdminFreeUsage = false;
 
     @Column(name = "free_quota_consumed", nullable = false)
     private Long freeQuotaConsumed = 0L;

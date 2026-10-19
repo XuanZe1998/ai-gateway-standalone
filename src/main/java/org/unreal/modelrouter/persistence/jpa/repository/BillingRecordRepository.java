@@ -14,6 +14,7 @@ import java.util.List;
 
 @Repository
 public interface BillingRecordRepository extends JpaRepository<BillingRecordEntity, Long> {
+    java.util.Optional<BillingRecordEntity> findByBillingRequestId(String billingRequestId);
 
     List<BillingRecordEntity> findByUserId(String userId);
 

@@ -35,6 +35,8 @@ class BillingServiceTest {
     @Mock private DiscountCalculationService discountCalculationService;
     @Spy private ObjectMapper objectMapper = new ObjectMapper();
 
+    @Mock private org.unreal.modelrouter.billing.UserUsagePolicyService usagePolicyService;
+
     @InjectMocks
     private BillingService billingService;
 
@@ -42,6 +44,43 @@ class BillingServiceTest {
     void setUp() {
         lenient().when(discountCalculationService.calculate(any(UserIdentity.class), any(), any()))
                 .thenReturn(new DiscountBreakdown(BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE));
+    }
+
+    @Test
+    void tinyTokenBillsRetainEightDecimalsAndFixedAdjustmentUsesPerMillionQuote() {
+        when(enterpriseLookupService.lookupByAccount("tiny-account", 2))
+                .thenReturn(Optional.of(new EnterpriseLookupService.EnterpriseInfo()));
+        when(pricingService.getPrice("tiny", null)).thenReturn(new ModelPricingService.ModelPricing(
+                "tiny", null, new BigDecimal("0.00000123456789"), BigDecimal.ZERO, BigDecimal.ONE));
+        when(discountCalculationService.calculate(any(), eq("tiny"), isNull())).thenReturn(
+                new DiscountBreakdown(BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,
+                        new BigDecimal("0.12345678")));
+        billingService.recordBilling(BillingService.BillingContext.create().userId("u1").modelName("tiny")
+                .serviceType("chat").promptTokens(3L).completionTokens(0L).totalTokens(3L)
+                .accountId("tiny-account").accountType(2));
+        var captor = ArgumentCaptor.forClass(BillingRecordEntity.class);
+        verify(billingRepository).save(captor.capture());
+        var bill = captor.getValue();
+        assertThat(bill.getOriginalCost()).isEqualByComparingTo("0.00000370");
+        assertThat(bill.getTotalCost()).isEqualByComparingTo("0.00000407");
+        assertThat(bill.getTotalCost().scale()).isEqualTo(8);
+        assertThat(bill.getFixedAdjustment()).isEqualByComparingTo("0.12345678");
+        verify(balanceDeductionService).deductBillingAndAlert(isNull(), eq("tiny-account"), eq(2), eq(new BigDecimal("0.00000407")), any());
+    }
+
+    @Test
+    void fixedReductionClampsEachUnitPriceToZero() {
+        when(pricingService.getPrice("tiny", null)).thenReturn(new ModelPricingService.ModelPricing(
+                "tiny", null, new BigDecimal("0.000001"), new BigDecimal("0.000002"), BigDecimal.ONE));
+        when(discountCalculationService.calculate(any(), eq("tiny"), isNull())).thenReturn(
+                new DiscountBreakdown(BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,
+                        new BigDecimal("-10")));
+        billingService.recordBilling(BillingService.BillingContext.create().userId("u1").modelName("tiny")
+                .serviceType("chat").promptTokens(1L).completionTokens(1L).totalTokens(2L));
+        var captor = ArgumentCaptor.forClass(BillingRecordEntity.class);
+        verify(billingRepository).save(captor.capture());
+        assertThat(captor.getValue().getTotalCost()).isZero();
+        verifyNoInteractions(balanceDeductionService);
     }
 
     @Test
@@ -69,7 +108,7 @@ class BillingServiceTest {
         assertThat(record.getIsFreeQuota()).isTrue();
         assertThat(record.getFreeQuotaConsumed()).isEqualTo(100L);
         assertThat(record.getTotalCost()).isEqualByComparingTo(BigDecimal.ZERO);
-        verify(balanceDeductionService, never()).deductAndAlert(any(), any(), any(), any());
+        verify(balanceDeductionService, never()).deductBillingAndAlert(isNull(), any(), any(), any(), any());
     }
 
     @Test
@@ -113,8 +152,8 @@ class BillingServiceTest {
         assertThat(record.getIsFreeQuota()).isFalse();
         assertThat(record.getTotalCost()).isGreaterThan(BigDecimal.ZERO);
 
-        verify(balanceDeductionService).deductAndAlert(
-                eq("C001"), eq(1), eq(new BigDecimal("0.15")), any(EnterpriseLookupService.EnterpriseInfo.class));
+        verify(balanceDeductionService).deductBillingAndAlert(isNull(),
+                eq("C001"), eq(1), eq(new BigDecimal("0.15000000")), any(EnterpriseLookupService.EnterpriseInfo.class));
     }
 
     @Test
@@ -171,12 +210,12 @@ class BillingServiceTest {
         assertThat(record.getUserDiscountRate()).isEqualByComparingTo(new BigDecimal("0.850000"));
         assertThat(record.getEnterpriseDiscountRate()).isEqualByComparingTo(new BigDecimal("0.800000"));
         assertThat(record.getFinalDiscountRate()).isEqualByComparingTo(new BigDecimal("0.612000"));
-        // 原价 2.00（1.0+1.0），应付比例 0.612 → 分项账单 0.62+0.62=1.24，折扣额 0.76
-        assertThat(record.getDiscountAmount()).isEqualByComparingTo(new BigDecimal("0.760000"));
-        assertThat(record.getTotalCost()).isEqualByComparingTo(new BigDecimal("1.240000"));
+        // 原价 2.00（1.0+1.0），应付比例 0.612 → 分项账单 0.612+0.612=1.224，折扣额 0.776
+        assertThat(record.getDiscountAmount()).isEqualByComparingTo(new BigDecimal("0.77600000"));
+        assertThat(record.getTotalCost()).isEqualByComparingTo(new BigDecimal("1.22400000"));
 
-        verify(balanceDeductionService).deductAndAlert(
-                eq("C001"), eq(1), eq(new BigDecimal("1.24")), any(EnterpriseLookupService.EnterpriseInfo.class));
+        verify(balanceDeductionService).deductBillingAndAlert(isNull(),
+                eq("C001"), eq(1), eq(new BigDecimal("1.22400000")), any(EnterpriseLookupService.EnterpriseInfo.class));
     }
 
     @Test
@@ -234,9 +273,9 @@ class BillingServiceTest {
         assertThat(record.getUserDiscountRate()).isEqualByComparingTo(new BigDecimal("0.850000"));
         assertThat(record.getEnterpriseDiscountRate()).isEqualByComparingTo(BigDecimal.ONE);
         assertThat(record.getFinalDiscountRate()).isEqualByComparingTo(new BigDecimal("0.765000"));
-        // 原价 2.00，应付比例 0.765 → 分项账单 0.77+0.77=1.54，折扣额 0.46
-        assertThat(record.getDiscountAmount()).isEqualByComparingTo(new BigDecimal("0.460000"));
-        assertThat(record.getTotalCost()).isEqualByComparingTo(new BigDecimal("1.540000"));
+        // 原价 2.00，应付比例 0.765 → 分项账单 0.765+0.765=1.53，折扣额 0.47
+        assertThat(record.getDiscountAmount()).isEqualByComparingTo(new BigDecimal("0.47000000"));
+        assertThat(record.getTotalCost()).isEqualByComparingTo(new BigDecimal("1.53000000"));
 
         // 验证传入 DiscountCalculationService 的 UserIdentity 正确携带 platformUser=true
         verify(discountCalculationService).calculate(
@@ -245,8 +284,8 @@ class BillingServiceTest {
                 eq("gpt-4"), eq(null));
 
         // 个人用户也走余额扣减
-        verify(balanceDeductionService).deductAndAlert(
-                eq("u1"), eq(2), eq(new BigDecimal("1.54")), any(EnterpriseLookupService.EnterpriseInfo.class));
+        verify(balanceDeductionService).deductBillingAndAlert(isNull(),
+                eq("u1"), eq(2), eq(new BigDecimal("1.53000000")), any(EnterpriseLookupService.EnterpriseInfo.class));
     }
 
     /**
@@ -305,12 +344,12 @@ class BillingServiceTest {
         assertThat(record.getNormalOutputTokens()).isEqualTo(162L); // 27 + 135(thinking并入)
         assertThat(record.getThinkingTokens()).isEqualTo(0L);
 
-        // 费用按分向上取整（防资损口径）：86×0.00001=0.00086→0.01，162×0.00002=0.00324→0.01
-        assertThat(record.getInputCost()).isEqualByComparingTo(new BigDecimal("0.010000"));
+        // 费用保留八位小数：86×0.00001=0.00086，162×0.00002=0.00324
+        assertThat(record.getInputCost()).isEqualByComparingTo(new BigDecimal("0.00086000"));
         assertThat(record.getCacheHitCost()).isEqualByComparingTo(BigDecimal.ZERO);
-        assertThat(record.getOutputCost()).isEqualByComparingTo(new BigDecimal("0.010000"));
+        assertThat(record.getOutputCost()).isEqualByComparingTo(new BigDecimal("0.00324000"));
         assertThat(record.getThinkingCost()).isEqualByComparingTo(BigDecimal.ZERO);
-        assertThat(record.getOriginalCost()).isEqualByComparingTo(new BigDecimal("0.020000"));
+        assertThat(record.getOriginalCost()).isEqualByComparingTo(new BigDecimal("0.00410000"));
     }
 
     @Test
@@ -341,7 +380,7 @@ class BillingServiceTest {
 
         // Then
         verify(enterpriseLookupService, never()).lookupByAccount(any(), any());
-        verify(balanceDeductionService, never()).deductAndAlert(any(), any(), any(), any());
+        verify(balanceDeductionService, never()).deductBillingAndAlert(isNull(), any(), any(), any(), any());
     }
 
     // ==================== 视频模型计费（价格模式 + 计费单位 + 分辨率规则） ====================
@@ -436,7 +475,7 @@ class BillingServiceTest {
                 .contains("\"seconds\":5")
                 .contains("\"tokens\":null")
                 .contains("\"cost\":1.00")
-                .contains("\"discountAmount\":0.00")
+                .contains("\"discountAmount\":0E-8")
                 .contains("\"amount\":1.00");
     }
 
@@ -475,7 +514,7 @@ class BillingServiceTest {
 
         assertThat(id).isNull();
         verify(billingRepository, never()).save(any());
-        verify(balanceDeductionService, never()).deductAndAlert(any(), any(), any(), any());
+        verify(balanceDeductionService, never()).deductBillingAndAlert(isNull(), any(), any(), any(), any());
     }
 
     @Test
@@ -500,14 +539,14 @@ class BillingServiceTest {
 
         assertThat(id).isNull();
         verify(billingRepository, never()).save(any());
-        verify(balanceDeductionService, never()).deductAndAlert(any(), any(), any(), any());
+        verify(balanceDeductionService, never()).deductBillingAndAlert(isNull(), any(), any(), any(), any());
     }
 
     @Test
     void shouldRejectBilling_whenVideoRulePriceInvalid() {
         // 资损兜底：命中规则行价格非正数（平台配置疏忽）→ 拒计费，防止按 0 元落账
         ModelPricingService.ModelPricing pricing = videoPricing(1, "second",
-                List.of(new ModelPricingService.ModelPricing.VideoPriceRule("720P", null, BigDecimal.ZERO)));
+                List.of(new ModelPricingService.ModelPricing.VideoPriceRule("720P", null, new BigDecimal("-1"))));
         when(pricingService.getPrice("doubao-seedance-2-0", null)).thenReturn(pricing);
 
         Long id = billingService.recordBillingSync(videoCtx("720P", false, new BigDecimal("5"), 100L));
@@ -684,5 +723,21 @@ class BillingServiceTest {
         ArgumentCaptor<BillingRecordEntity> captor = ArgumentCaptor.forClass(BillingRecordEntity.class);
         verify(billingRepository).save(captor.capture());
         assertThat(captor.getValue().getResponseSnapshot()).isNull();
+    }
+    @Test void administratorFreeUsageStillRecordsTokensWithoutDeductingSharedBalance() {
+        when(usagePolicyService.isFreeUsage("free-user")).thenReturn(true);
+        when(pricingService.getPrice("free-model", null)).thenReturn(new ModelPricingService.ModelPricing(
+                "free-model", null, new BigDecimal("0.001"), new BigDecimal("0.002"), BigDecimal.ONE));
+        billingService.recordBilling(BillingService.BillingContext.create().userId("free-user").platformUser(true)
+                .modelName("free-model").serviceType("chat").promptTokens(40L).completionTokens(60L).totalTokens(100L)
+                .accountId("shared-company").accountType(1));
+        var captor = ArgumentCaptor.forClass(BillingRecordEntity.class);
+        verify(billingRepository).save(captor.capture());
+        assertThat(captor.getValue().getTotalTokens()).isEqualTo(100L);
+        assertThat(captor.getValue().getTotalCost()).isZero();
+        assertThat(captor.getValue().getIsAdminFreeUsage()).isTrue();
+        assertThat(captor.getValue().getIsFreeQuota()).isFalse();
+        assertThat(captor.getValue().getFreeQuotaConsumed()).isZero();
+        verifyNoInteractions(balanceDeductionService);
     }
 }
