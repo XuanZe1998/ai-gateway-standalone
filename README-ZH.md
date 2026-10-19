@@ -1,11 +1,12 @@
 # JAiRouter
 
 <!-- 版本信息 -->
-> **文档版本**: 1.0.6  
-> **最后更新**: 2026-09-29  
-> **Git 提交**: 57a80611  
-> **作者**: GitHub Action
+> **文档版本**: 1.0.8  
+> **最后更新**: 2026-10-19  
+> **Git 提交**: 9e418449  
+> **作者**: XuanZe1998
 <!-- /版本信息 -->
+
 
 <p align="center">
   <img src="logo/JAiRouterLogo.png" alt="JAiRouter Logo" width="400">
