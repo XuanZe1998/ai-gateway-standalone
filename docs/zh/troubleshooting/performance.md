@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档提供 JAiRouter 性能问题的诊断方法和优化策略。
 
 ## 性能监控指标
@@ -46,13 +44,15 @@ curl -s http://localhost:8080/actuator/metrics/system.cpu.usage | jq
 ### 1. 响应时间过长
 
 #### 症状识别
+
 - API 响应时间超过 5 秒
 - 用户反馈系统响应缓慢
 - P95 响应时间持续上升
 
 #### 诊断步骤
 
-**1. 确定瓶颈位置**
+##### 1. 确定瓶颈位置
+
 ```bash
 # 检查各组件响应时间
 curl -w "@curl-format.txt" -o /dev/null -s http://localhost:8080/v1/chat/completions
@@ -68,7 +68,8 @@ curl -w "@curl-format.txt" -o /dev/null -s http://localhost:8080/v1/chat/complet
 #          time_total:  %{time_total}\n
 ```
 
-**2. 分析请求链路**
+##### 2. 分析请求链路
+
 ```bash
 # 启用请求追踪
 java -Dlogging.level.org.unreal.modelrouter=DEBUG \
@@ -78,7 +79,8 @@ java -Dlogging.level.org.unreal.modelrouter=DEBUG \
 grep "Processing request" logs/jairouter-debug.log | tail -10
 ```
 
-**3. 检查后端服务性能**
+##### 3. 检查后端服务性能
+
 ```bash
 # 直接测试后端服务
 time curl -X POST http://backend:9090/v1/chat/completions \
@@ -88,7 +90,8 @@ time curl -X POST http://backend:9090/v1/chat/completions \
 
 #### 优化策略
 
-**连接池优化**
+##### 连接池优化
+
 ```yaml
 spring:
   webflux:
@@ -101,7 +104,8 @@ spring:
       response-timeout: 30s        # 响应超时
 ```
 
-**负载均衡优化**
+##### 负载均衡优化
+
 ```yaml
 model:
   services:
@@ -111,7 +115,8 @@ model:
       timeout: 30s                 # 设置合理超时
 ```
 
-**缓存策略**
+##### 缓存策略
+
 ```yaml
 model:
   cache:
@@ -123,13 +128,15 @@ model:
 ### 2. 吞吐量不足
 
 #### 症状识别
+
 - RPS 低于预期
 - 系统无法处理高并发请求
 - 请求队列积压
 
 #### 诊断步骤
 
-**1. 压力测试**
+##### 1. 压力测试
+
 ```bash
 # 使用 Apache Bench 进行压力测试
 ab -n 1000 -c 50 -H "Content-Type: application/json" \
@@ -139,7 +146,8 @@ ab -n 1000 -c 50 -H "Content-Type: application/json" \
 wrk -t12 -c400 -d30s --script=post.lua http://localhost:8080/v1/chat/completions
 ```
 
-**2. 线程池分析**
+##### 2. 线程池分析
+
 ```bash
 # 获取线程池状态
 curl -s http://localhost:8080/actuator/metrics/executor.active | jq
@@ -149,7 +157,8 @@ curl -s http://localhost:8080/actuator/metrics/executor.queue.remaining | jq
 jstack <pid> > threads.dump
 ```
 
-**3. 资源使用分析**
+##### 3. 资源使用分析
+
 ```bash
 # CPU 使用情况
 top -p <pid>
@@ -163,7 +172,8 @@ iotop -p <pid>
 
 #### 优化策略
 
-**线程池调优**
+##### 线程池调优
+
 ```yaml
 spring:
   task:
@@ -175,7 +185,8 @@ spring:
         keep-alive: 60s           # 线程保活时间
 ```
 
-**Reactor 调优**
+##### Reactor 调优
+
 ```yaml
 spring:
   webflux:
@@ -185,7 +196,8 @@ spring:
       max-buffer-size: 1024       # 最大缓冲区大小
 ```
 
-**异步处理**
+##### 异步处理
+
 ```yaml
 model:
   async:
@@ -197,13 +209,15 @@ model:
 ### 3. 内存使用过高
 
 #### 症状识别
+
 - JVM 堆内存持续增长
 - 频繁的 Full GC
 - OutOfMemoryError 异常
 
 #### 诊断步骤
 
-**1. 内存使用分析**
+##### 1. 内存使用分析
+
 ```bash
 # 查看内存使用情况
 curl -s http://localhost:8080/actuator/metrics/jvm.memory.used | jq
@@ -214,7 +228,8 @@ curl -s http://localhost:8080/actuator/metrics/jvm.gc.pause | jq
 curl -s http://localhost:8080/actuator/metrics/jvm.gc.memory.allocated | jq
 ```
 
-**2. 堆转储分析**
+##### 2. 堆转储分析
+
 ```bash
 # 生成堆转储
 jcmd <pid> GC.run_finalization
@@ -223,7 +238,8 @@ jmap -dump:format=b,file=heap.hprof <pid>
 # 使用 Eclipse MAT 或 VisualVM 分析堆转储
 ```
 
-**3. 内存泄漏检测**
+##### 3. 内存泄漏检测
+
 ```bash
 # 启用内存泄漏检测
 java -XX:+HeapDumpOnOutOfMemoryError \
@@ -233,7 +249,8 @@ java -XX:+HeapDumpOnOutOfMemoryError \
 
 #### 优化策略
 
-**JVM 参数调优**
+##### JVM 参数调优
+
 ```bash
 # G1GC 配置
 java -Xms2g -Xmx4g \
@@ -246,7 +263,8 @@ java -Xms2g -Xmx4g \
      -jar target/model-router-*.jar
 ```
 
-**内存管理优化**
+##### 内存管理优化
+
 ```yaml
 model:
   memory:
@@ -263,7 +281,8 @@ model:
       expire-after-access: 5m
 ```
 
-**对象池化**
+##### 对象池化
+
 ```yaml
 spring:
   webflux:
@@ -277,13 +296,15 @@ spring:
 ### 4. CPU 使用率过高
 
 #### 症状识别
+
 - CPU 使用率持续超过 85%
 - 系统负载过高
 - 响应时间增加
 
 #### 诊断步骤
 
-**1. CPU 热点分析**
+##### 1. CPU 热点分析
+
 ```bash
 # 查看 CPU 使用情况
 top -H -p <pid>
@@ -297,7 +318,8 @@ java -XX:+FlightRecorder \
 jfr print --events CPULoad cpu-profile.jfr
 ```
 
-**2. 线程分析**
+##### 2. 线程分析
+
 ```bash
 # 生成线程转储
 jstack <pid> > threads.dump
@@ -308,7 +330,8 @@ printf "%x\n" <thread-id>  # 转换为十六进制
 grep <hex-thread-id> threads.dump  # 在转储中查找
 ```
 
-**3. 代码热点分析**
+##### 3. 代码热点分析
+
 ```bash
 # 启用编译日志
 java -XX:+PrintCompilation \
@@ -319,7 +342,8 @@ java -XX:+PrintCompilation \
 
 #### 优化策略
 
-**算法优化**
+##### 算法优化
+
 ```java
 // 优化负载均衡算法
 @Component
@@ -339,7 +363,8 @@ public class OptimizedRoundRobinLoadBalancer implements LoadBalancer {
 }
 ```
 
-**并发优化**
+##### 并发优化
+
 ```yaml
 model:
   concurrency:
@@ -356,7 +381,8 @@ model:
       timeout: 100ms
 ```
 
-**缓存优化**
+##### 缓存优化
+
 ```java
 // 使用 Caffeine 高性能缓存
 @Configuration
@@ -378,6 +404,7 @@ public class CacheConfiguration {
 ### 1. JVM 调优
 
 #### 堆内存配置
+
 ```bash
 # 生产环境推荐配置
 java -Xms4g -Xmx4g \                    # 固定堆大小，避免动态调整
@@ -393,6 +420,7 @@ java -Xms4g -Xmx4g \                    # 固定堆大小，避免动态调整
 ```
 
 #### GC 日志配置
+
 ```bash
 # GC 日志配置
 -Xlog:gc*:gc.log:time,tags \
@@ -404,6 +432,7 @@ java -Xms4g -Xmx4g \                    # 固定堆大小，避免动态调整
 ### 2. 应用层调优
 
 #### 连接池配置
+
 ```yaml
 spring:
   webflux:
@@ -417,6 +446,7 @@ spring:
 ```
 
 #### 响应式配置
+
 ```yaml
 spring:
   webflux:
@@ -430,6 +460,7 @@ spring:
 ### 3. 监控和告警
 
 #### 性能监控配置
+
 ```yaml
 management:
   metrics:
@@ -445,6 +476,7 @@ management:
 ```
 
 #### 告警规则
+
 ```yaml
 # prometheus-alerts.yml
 groups:
@@ -481,6 +513,7 @@ groups:
 ### 4. 容量规划
 
 #### 性能基准测试
+
 ```bash
 #!/bin/bash
 # performance-benchmark.sh
@@ -515,6 +548,7 @@ echo "=== 性能测试完成 ==="
 ```
 
 #### 容量评估
+
 ```bash
 # 计算理论最大 RPS
 # RPS = 1000ms / 平均响应时间(ms) * 并发连接数
@@ -531,6 +565,7 @@ echo "=== 性能测试完成 ==="
 ## 性能优化检查清单
 
 ### 部署前检查
+
 - [ ] JVM 参数已优化
 - [ ] 连接池配置合理
 - [ ] 缓存策略已配置
@@ -538,6 +573,7 @@ echo "=== 性能测试完成 ==="
 - [ ] 告警规则已设置
 
 ### 运行时监控
+
 - [ ] 响应时间在正常范围
 - [ ] CPU 使用率 < 80%
 - [ ] 内存使用率 < 85%
@@ -545,6 +581,7 @@ echo "=== 性能测试完成 ==="
 - [ ] 错误率 < 1%
 
 ### 定期优化
+
 - [ ] 分析性能趋势
 - [ ] 识别性能瓶颈
 - [ ] 调整配置参数
@@ -554,6 +591,7 @@ echo "=== 性能测试完成 ==="
 ## 性能测试工具
 
 ### 1. Apache Bench (ab)
+
 ```bash
 # 基本测试
 ab -n 1000 -c 50 http://localhost:8080/v1/chat/completions
@@ -563,6 +601,7 @@ ab -n 1000 -c 50 -p request.json -T application/json http://localhost:8080/v1/ch
 ```
 
 ### 2. wrk
+
 ```bash
 # 安装 wrk
 # Ubuntu: sudo apt-get install wrk
@@ -576,6 +615,7 @@ wrk -t12 -c400 -d30s --script=post.lua http://localhost:8080/v1/chat/completions
 ```
 
 ### 3. JMeter
+
 ```xml
 <!-- JMeter 测试计划示例 -->
 <?xml version="1.0" encoding="UTF-8"?>

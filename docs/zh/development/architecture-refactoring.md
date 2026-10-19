@@ -25,6 +25,7 @@
 #### 1. 适配器层重构
 
 **重构前**:
+
 ```java
 public class GPUStackAdapter {
     public Mono<Response> chat(Request request) { ... }
@@ -33,6 +34,7 @@ public class GPUStackAdapter {
 ```
 
 **重构后**:
+
 ```java
 public interface AiServiceAdapter {
     String getServiceType();
@@ -50,6 +52,7 @@ public class GPUStackAdapter extends BaseAiServiceAdapter {
 ```
 
 **优势**:
+
 - 统一接口，易于扩展新服务
 - 公共逻辑复用，减少代码重复
 - 符合开闭原则
@@ -59,6 +62,7 @@ public class GPUStackAdapter extends BaseAiServiceAdapter {
 **重构前**: 硬编码负载均衡策略
 
 **重构后**: 策略模式
+
 ```java
 public interface LoadBalancerStrategy {
     String select(List<String> instances, String serviceKey);
@@ -74,6 +78,7 @@ public class LeastConnectionsStrategy implements LoadBalancerStrategy { ... }
 **重构前**: 单一限流实现
 
 **重构后**: 限流器工厂模式
+
 ```java
 public interface RateLimiter {
     Mono<Boolean> tryAcquire(String key);
@@ -121,6 +126,7 @@ public class RateLimiterFactory {
 ### 配置持久化重构
 
 **变更**:
+
 - 移除配置合并功能，简化逻辑
 - 优化版本管理，支持快速回滚
 - 增加配置变更审计
@@ -132,11 +138,13 @@ public class RateLimiterFactory {
 ### WebFlux 全面改造
 
 **改造内容**:
+
 - 所有控制器改为响应式
 - 数据库访问使用 R2DBC
 - HTTP 调用使用 WebClient
 
 **性能提升**:
+
 - 并发能力提升 50%
 - 响应时间降低 30%
 

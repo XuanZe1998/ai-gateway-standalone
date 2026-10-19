@@ -7,12 +7,10 @@
 > **作者**: GitHub Action
 <!-- /版本信息 -->
 
-
-
-
 ## 项目概览
 
 JAiRouter（ModelRouter）：Spring Boot 3.5.5 + WebFlux + JDK17 的 **LLM API 聚合网关**，兼容 OpenAI API。
+
 - 单 JAR 部署，PostgreSQL 持久化，与算力平台共用 PG（作为中转代理独立部署）
 - 核心：接收 OpenAI/Anthropic 格式请求 → 选实例 → 代理转发（支持 SSE 流式）→ 计费
 
@@ -72,6 +70,7 @@ HTTP POST → CorsWebFilter → SpringSecurityAuthenticationFilter（API Key/JWT
 ### 流式计费可靠性（重要）
 
 两条链路（StreamingRequestProcessor / ProtocolPassthroughService.doStreaming）均采用 **Sinks.Many 桥接**模式：
+
 - 上游 `bodyToFlux` 独立 `.subscribe()`（fire-and-forget），客户端断连不反传杀上游
 - 上游始终读完整条流 → 末尾 usage chunk 不丢 → 计费不漏单
 - `doOnError` 仅处理上游真实错误；客户端断开按已捕获 usage 正常计费，无 usage 则记失败账单

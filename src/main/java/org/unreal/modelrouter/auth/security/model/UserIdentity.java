@@ -17,8 +17,32 @@ public record UserIdentity(
         boolean platformUser,
         Integer userType,
         Long systemUserId,
-        Integer verifyStatus
+        Integer verifyStatus,
+        boolean campusAuthenticated,
+        org.unreal.modelrouter.billing.DepartmentUsageSnapshot usageSnapshot
 ) implements Serializable {
+    public UserIdentity(String userId, String userAccount, String apiKeyId, String apiKeyName,
+                        Long enterpriseId, String enterpriseName, String companyId, boolean platformUser,
+                        Integer userType, Long systemUserId, Integer verifyStatus, boolean campusAuthenticated) {
+        this(userId, userAccount, apiKeyId, apiKeyName, enterpriseId, enterpriseName, companyId,
+                platformUser, userType, systemUserId, verifyStatus, campusAuthenticated, null);
+    }
+    public UserIdentity(String userId, String userAccount, String apiKeyId, String apiKeyName,
+                        Long enterpriseId, String enterpriseName, String companyId, boolean platformUser,
+                        Integer userType, Long systemUserId, Integer verifyStatus) {
+        this(userId, userAccount, apiKeyId, apiKeyName, enterpriseId, enterpriseName, companyId,
+                platformUser, userType, systemUserId, verifyStatus, false);
+    }
+
+    /** Campus login qualifies for calling; it does not alter legal-name verification or billing. */
+    public UserIdentity withCampusAuthentication() {
+        return new UserIdentity(userId, userAccount, apiKeyId, apiKeyName, enterpriseId, enterpriseName,
+                companyId, platformUser, userType, systemUserId, verifyStatus, true, usageSnapshot);
+    }
+    public UserIdentity withUsageSnapshot(org.unreal.modelrouter.billing.DepartmentUsageSnapshot snapshot) {
+        return new UserIdentity(userId, userAccount, apiKeyId, apiKeyName, enterpriseId, enterpriseName,
+                companyId, platformUser, userType, systemUserId, verifyStatus, campusAuthenticated, snapshot);
+    }
     /** 内部/未认证请求的兜底身份 */
     public static final UserIdentity SYSTEM = new UserIdentity("system", "system", null, null, null, null, null, false, null, null, null);
 

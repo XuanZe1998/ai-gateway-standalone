@@ -14,7 +14,7 @@ JAiRouter provides an optimized Docker image build solution. Through multi-stage
 ### JLink Optimization Note
 
 > **Note**: The JLink solution attempts to use `jlink` tool for custom JRE modules, but due to Spring Boot 3.x module compatibility issues, it ultimately uses Alpine JRE + multi-stage build + JVM parameter optimization.
-> 
+>
 > The JLink image (`Dockerfile.jlink`) has the same size as the optimized version (281MB) and is provided as an experimental option for users with special requirements.
 
 ## Image Comparison
@@ -40,6 +40,7 @@ FROM eclipse-temurin:17-jre
 ```
 
 **Advantages**:
+
 - Alpine image is only 5MB, while Debian base image is about 120MB
 - Smaller attack surface, better security
 - Faster pull speed
@@ -63,6 +64,7 @@ COPY --from=extract-layer /app/extracted/application/ ./
 ```
 
 **Advantages**:
+
 - Final image doesn't contain build tools
 - Fewer security vulnerabilities
 - Smaller image layers
@@ -76,12 +78,14 @@ java -Djarmode=layertools -jar app.jar extract --destination extracted
 ```
 
 **Extracted Layers**:
+
 1. `dependencies/` - Third-party dependencies
 2. `spring-boot-loader/` - Spring Boot loader
 3. `snapshot-dependencies/` - SNAPSHOT dependencies
 4. `application/` - Application code
 
 **Advantages**:
+
 - Leverages Docker caching mechanism
 - Only rebuilds relevant layers when dependencies change
 - Faster build times
@@ -99,6 +103,7 @@ JVM parameters optimized for container environments:
 ```
 
 **Optimization Points**:
+
 - Smaller initial heap memory (128MB vs 512MB)
 - Smaller max heap memory (256MB vs 1024MB)
 - Container awareness enabled (`UseContainerSupport`)
@@ -122,12 +127,14 @@ RUN /opt/java/openjdk/bin/jlink \
 ```
 
 **Technical Notes**:
+
 - ⚠️ Spring Boot 3.x uses module system, requires complete JRE modules
 - ⚠️ Attempting to strip modules causes compatibility issues like `ClassNotFoundException`
 - ✅ Final solution: Alpine JRE + multi-stage build + JVM parameter optimization
 - 📊 Image size: 281MB (same as optimized version)
 
 **JLink Version Use Cases**:
+
 - Advanced users who need to further customize JRE modules
 - Scenarios willing to take compatibility risks for potential optimization
 - Technical reference and experimental purposes
@@ -350,4 +357,3 @@ docker exec jairouter java -XX:+PrintFlagsFinal -version
 - **[Docker Deployment](docker.md)** - Detailed Docker deployment instructions
 - **[Production Deployment](production.md)** - Production environment best practices
 - **[Monitoring Guide](../monitoring/index.md)** - Setup monitoring and alerts
-

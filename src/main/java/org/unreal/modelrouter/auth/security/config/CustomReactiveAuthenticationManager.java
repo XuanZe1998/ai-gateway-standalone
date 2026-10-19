@@ -157,7 +157,7 @@ public class CustomReactiveAuthenticationManager implements ReactiveAuthenticati
                 if (key == null) throw new org.unreal.modelrouter.common.exception.AuthenticationException(
                         "无效或已停用的 Key", "API_KEY_INVALID");
                 // Refresh the platform's verified billing identity; never trust a stale CAS snapshot.
-                var identity = platformDataSyncService.getUserIdentityBySystemUserId(
+                var identity = platformDataSyncService.getCampusUserIdentityBySystemUserId(
                         key.ownerId(), key.platformUserId()).orElseThrow(() ->
                         new org.unreal.modelrouter.common.exception.AuthenticationException(
                                 "校园账户未关联有效计费身份", "BILLING_IDENTITY_MISSING"));
@@ -167,7 +167,7 @@ public class CustomReactiveAuthenticationManager implements ReactiveAuthenticati
                 }
                 var owned = new UserIdentity(identity.userId(), identity.userAccount(), key.keyId(), key.name(),
                         identity.enterpriseId(), identity.enterpriseName(), identity.companyId(),
-                        identity.platformUser(), identity.userType(), identity.systemUserId(), identity.verifyStatus());
+                        identity.platformUser(), identity.userType(), identity.systemUserId(), identity.verifyStatus(), identity.campusAuthenticated());
                 return buildPlatformAuthentication(apiKey, owned);
             }).subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic());
         }

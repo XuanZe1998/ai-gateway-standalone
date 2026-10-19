@@ -7,10 +7,6 @@
 > **作者**: GitHub Action
 <!-- /版本信息 -->
 
-
-
-
-
 JAiRouter is a Spring Boot-based AI model service routing and load balancing gateway that provides unified access to various AI model services through OpenAI-compatible APIs.
 
 ## Core Features

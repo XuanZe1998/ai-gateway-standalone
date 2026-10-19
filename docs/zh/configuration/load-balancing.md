@@ -13,10 +13,10 @@ JAiRouter 提供四种负载均衡策略，支持全局、服务级别和实例�
 
 从 v1.0.0 版本开始，JAiRouter 采用模块化配置结构，负载均衡相关配置已移至独立的配置文件中：
 
-- 主配置文件: [application.yml](file://D:/IdeaProjects/model-router/src/main/resources/application.yml)
-- 负载均衡基础配置: [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml)
+- 主配置文件: [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- 负载均衡基础配置: [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml)
 
-您可以在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中找到所有负载均衡相关配置，包括全局配置、各服务类型配置和实例配置。
+您可以在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中找到所有负载均衡相关配置，包括全局配置、各服务类型配置和实例配置。
 
 ## 负载均衡概述
 
@@ -49,7 +49,7 @@ graph TB
 
 ### 基础配置
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置全局负载均衡策略：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置全局负载均衡策略：
 
 ```yaml
 # config/base/model-services-base.yml
@@ -108,7 +108,7 @@ model:
 
 ### YAML 配置方式
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置各服务类型的负载均衡策略：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置各服务类型的负载均衡策略：
 
 ```yaml
 model:
@@ -220,23 +220,27 @@ model:
 #### 特点和适用场景
 
 **特点**：
+
 - 算法简单，性能开销最小
 - 支持权重配置
 - 长期来看请求分布均匀
 - 无状态，易于扩展
 
 **适用场景**：
+
 - 实例性能相近
 - 请求处理时间相对稳定
 - 高并发场景
 - 无状态服务
 
 **权重计算**：
+
 ```
 实例被选中概率 = 实例权重 / 总权重
 ```
 
 示例中各实例被选中的概率：
+
 - model-1: 1/4 = 25%
 - model-2: 2/4 = 50%
 - model-3: 1/4 = 25%
@@ -266,12 +270,14 @@ model:
 #### 特点和适用场景
 
 **特点**：
+
 - 保证每个实例都能获得请求
 - 支持加权轮询
 - 请求分布可预测
 - 适合批量处理场景
 
 **适用场景**：
+
 - 实例性能相近
 - 需要均匀分布请求
 - 批量数据处理
@@ -308,18 +314,21 @@ model:
 #### 特点和适用场景
 
 **特点**：
+
 - 自动平衡负载
 - 适应实例性能差异
 - 需要维护连接状态
 - 动态调整请求分配
 
 **适用场景**：
+
 - 实例性能差异较大
 - 请求处理时间变化大
 - 长连接服务
 - 需要精确负载平衡
 
 **选择算法**：
+
 ```
 选择实例 = min(当前连接数 / 权重)
 ```
@@ -363,12 +372,14 @@ model:
 #### 特点和适用场景
 
 **特点**：
+
 - 同一客户端总是路由到同一实例
 - 支持会话保持
 - 实例变化时会影响路由
 - 可能导致负载不均衡
 
 **适用场景**：
+
 - 需要会话保持
 - 有状态服务
 - 缓存本地化

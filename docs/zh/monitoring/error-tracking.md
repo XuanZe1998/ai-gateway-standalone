@@ -8,9 +8,9 @@ JAiRouter 的错误追踪功能是一个完整的错误监控和分析系统，�
 
 JAiRouter 使用模块化的配置管理方式，错误追踪配置位于独立的配置文件中：
 
-- **主配置文件**: [src/main/resources/application.yml](file://d:/IdeaProjects/model-router/src/main/resources/application.yml)
-- **错误追踪配置文件**: [src/main/resources/config/monitoring/error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml)
-- **环境配置文件**: [src/main/resources/application-{profile}.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-dev.yml)
+- **主配置文件**: [src/main/resources/application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- **错误追踪配置文件**: [src/main/resources/config/monitoring/error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml)
+- **环境配置文件**: [src/main/resources/application-{profile}.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-dev.yml)
 
 ## 模块化配置说明
 
@@ -27,21 +27,25 @@ spring:
 ## 功能特性
 
 ### 📊 错误收集与聚合
+
 - 自动收集系统中的异常信息
 - 按错误类型、操作等维度聚合错误信息
 - 智能去重和聚合算法
 
 ### 🔍 堆栈脱敏与保护
+
 - 自动脱敏敏感信息（密码、密钥等）
 - 过滤敏感包路径
 - 控制堆栈深度以保护系统信息
 
 ### 📈 指标监控
+
 - 错误计数器和分布统计
 - 错误持续时间监控
 - 按错误类型和操作分组的指标
 
 ### 🚨 告警通知
+
 - 集成 Prometheus 指标导出
 - 结构化日志输出
 - 可配置的告警阈值
@@ -50,7 +54,7 @@ spring:
 
 ### 1. 启用错误追踪
 
-在 [error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml) 中配置：
+在 [error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml) 中配置：
 
 ```yaml
 jairouter:
@@ -266,7 +270,7 @@ jairouter:
 
 ### 配置管理
 
-1. **基础配置**：在 [error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml) 中定义通用配置
+1. **基础配置**：在 [error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml) 中定义通用配置
 2. **环境差异**：在对应的环境配置文件中覆盖特定配置
 3. **敏感信息保护**：合理配置堆栈脱敏规则以保护系统安全
 

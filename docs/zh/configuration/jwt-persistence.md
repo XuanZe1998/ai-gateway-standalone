@@ -565,35 +565,39 @@ echo "配置验证完成"
 ### 在现有系统上启用持久化
 
 1. **备份当前配置**
-```bash
-cp application.yml application.yml.backup
-```
+
+   ```bash
+   cp application.yml application.yml.backup
+   ```
 
 2. **逐步更新配置**
-```yaml
-# 从内存持久化开始
-jairouter:
-  security:
-    jwt:
-      persistence:
-        enabled: true
-        primary-storage: memory
-        fallback-storage: memory
-```
+
+   ```yaml
+   # 从内存持久化开始
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           enabled: true
+           primary-storage: memory
+           fallback-storage: memory
+   ```
 
 3. **测试后启用 Redis**
-```yaml
-# 升级到 Redis，保留内存作为备选
-jairouter:
-  security:
-    jwt:
-      persistence:
-        enabled: true
-        primary-storage: redis
-        fallback-storage: memory
-```
+
+   ```yaml
+   # 升级到 Redis，保留内存作为备选
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           enabled: true
+           primary-storage: redis
+           fallback-storage: memory
+   ```
 
 4. **启用完整审计**
+
 ```yaml
 # 启用全面审计
 jairouter:
@@ -611,25 +615,28 @@ jairouter:
 ### 安全最佳实践
 
 1. **永不记录敏感数据**
-```yaml
-jairouter:
-  security:
-    audit:
-      jwt-operations:
-        log-token-details: false  # 永不记录完整令牌
-      api-key-operations:
-        log-key-details: false   # 永不记录完整密钥
-```
+
+   ```yaml
+   jairouter:
+     security:
+       audit:
+         jwt-operations:
+           log-token-details: false  # 永不记录完整令牌
+         api-key-operations:
+           log-key-details: false   # 永不记录完整密钥
+   ```
 
 2. **使用强 Redis 安全**
-```yaml
-spring:
-  redis:
-    password: ${REDIS_PASSWORD}  # 总是使用密码
-    ssl: true                   # 生产环境使用SSL
-```
+
+   ```yaml
+   spring:
+     redis:
+       password: ${REDIS_PASSWORD}  # 总是使用密码
+       ssl: true                   # 生产环境使用SSL
+   ```
 
 3. **限制内存使用**
+
 ```yaml
 jairouter:
   security:
@@ -643,27 +650,30 @@ jairouter:
 ### 性能最佳实践
 
 1. **优化清理计划**
-```yaml
-jairouter:
-  security:
-    jwt:
-      persistence:
-        cleanup:
-          schedule: "0 0 2 * * ?"  # 低流量时段运行
-          batch-size: 1000         # 平衡内存和性能
-```
+
+   ```yaml
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           cleanup:
+             schedule: "0 0 2 * * ?"  # 低流量时段运行
+             batch-size: 1000         # 平衡内存和性能
+   ```
 
 2. **使用合适的 TTL**
-```yaml
-jairouter:
-  security:
-    jwt:
-      persistence:
-        redis:
-          default-ttl: 3600  # 匹配或超过令牌过期时间
-```
+
+   ```yaml
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           redis:
+             default-ttl: 3600  # 匹配或超过令牌过期时间
+   ```
 
 3. **监控性能**
+
 ```yaml
 jairouter:
   monitoring:

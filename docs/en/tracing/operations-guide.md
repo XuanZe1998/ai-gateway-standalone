@@ -7,12 +7,14 @@ This document provides a complete guide for operating the JAiRouter distributed 
 ### Environment Preparation
 
 #### System Requirements
+
 - **JVM**: OpenJDK 17 or higher
 - **Memory**: Minimum 4GB, recommended 8GB+
 - **CPU**: 4 cores or more
 - **Disk**: SSD storage, at least 50GB available space
 
 #### Dependency Services
+
 ```yaml
 # docker-compose.yml example
 version: '3.8'
@@ -36,6 +38,7 @@ services:
 ### Production Configuration
 
 #### Basic Configuration
+
 ```yaml
 jairouter:
   tracing:
@@ -76,6 +79,7 @@ jairouter:
 ```
 
 #### JVM Tuning
+
 ```bash
 # Production JVM parameters
 -Xmx8g -Xms8g
@@ -94,6 +98,7 @@ jairouter:
 ### Prometheus Metrics Configuration
 
 #### Metric Collection
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -105,6 +110,7 @@ scrape_configs:
 ```
 
 #### Key Metrics
+
 ```promql
 # Tracing export success rate
 rate(jairouter_tracing_spans_exported_total[5m]) / 
@@ -159,6 +165,7 @@ groups:
 ### Grafana Dashboard
 
 #### Core Panel Configuration
+
 ```json
 {
   "dashboard": {
@@ -198,6 +205,7 @@ groups:
 ### Memory Planning
 
 #### Span Memory Estimation
+
 ```bash
 # Each Span occupies approximately 2KB of memory
 # 1000 requests per second, 10% sampling rate, 5-minute Span TTL
@@ -212,6 +220,7 @@ jairouter:
 ```
 
 #### Dynamic Adjustment Strategy
+
 ```yaml
 jairouter:
   tracing:
@@ -229,6 +238,7 @@ jairouter:
 ### Storage Planning
 
 #### Log Storage
+
 ```yaml
 # logback-spring.xml
 <configuration>
@@ -421,6 +431,7 @@ esac
 ### Common Emergency Scenarios
 
 #### 1. Tracing System Overload
+
 ```bash
 # Emergency sampling rate reduction
 curl -X PUT http://localhost:8080/api/admin/tracing/emergency-config \
@@ -432,6 +443,7 @@ curl -X POST http://localhost:8080/api/admin/tracing/disable \
 ```
 
 #### 2. Exporter Failure
+
 ```yaml
 # Switch to backup exporter
 jairouter:
@@ -443,6 +455,7 @@ jairouter:
 ```
 
 #### 3. Memory Leak
+
 ```bash
 # Force GC and memory cleanup
 curl -X POST http://localhost:8080/actuator/gc
@@ -452,6 +465,7 @@ curl -X POST http://localhost:8080/api/admin/tracing/force-cleanup
 ### Emergency Contact
 
 Establish emergency response procedures:
+
 1. **Monitoring Alerts** → Automatic notification to operations team
 2. **Issue Classification** → Determine impact scope and priority  
 3. **Emergency Handling** → Execute predefined emergency scripts
@@ -460,21 +474,25 @@ Establish emergency response procedures:
 ## Best Practices Summary
 
 ### 1. Monitoring Strategy
+
 - Set multi-level alerts (warning, critical, emergency)
 - Regularly check tracing data integrity
 - Monitor system resource usage trends
 
 ### 2. Performance Optimization
+
 - Adjust sampling rate based on business needs
 - Regularly clean up expired data
 - Properly configure batch processing size
 
 ### 3. Security Control
+
 - Regularly review sensitive data filtering rules
 - Enable configuration change audit logs
 - Implement principle of least privilege
 
 ### 4. Disaster Recovery
+
 - Establish backup and recovery procedures
 - Prepare emergency response plans
 - Regularly conduct failure drills

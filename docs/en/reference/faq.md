@@ -7,19 +7,18 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document collects the most common questions and answers encountered by users when using JAiRouter.
 
 ## Basic Questions
 
-### Q1: What is JAiRouter?
+### Q1: What is JAiRouter
 
 **A**: JAiRouter is an AI model service routing and load balancing gateway based on Spring Boot. It provides a unified OpenAI-compatible API interface, supporting multiple backend AI services including GPUStack, Ollama, VLLM, and OpenAI. Key features include load balancing, rate limiting, circuit breaking, health checks, and dynamic configuration management.
 
-### Q2: Which AI services does JAiRouter support?
+### Q2: Which AI services does JAiRouter support
 
 **A**: Currently supported AI services include:
+
 - **GPUStack**: GPU cluster management platform
 - **Ollama**: Local large language model runtime platform
 - **VLLM**: High-performance LLM inference engine
@@ -29,9 +28,10 @@ This document collects the most common questions and answers encountered by user
 
 Future support will include Anthropic Claude, Google Gemini, Cohere, and more services.
 
-### Q3: What distinguishes JAiRouter from other API gateways?
+### Q3: What distinguishes JAiRouter from other API gateways
 
 **A**: JAiRouter is specifically designed for AI model services with the following features:
+
 - **AI-Specific**: Optimized for the special needs of AI model services
 - **OpenAI Compatible**: Provides standard OpenAI API format
 - **Intelligent Routing**: Supports multiple load balancing strategies
@@ -39,22 +39,23 @@ Future support will include Anthropic Claude, Google Gemini, Cohere, and more se
 - **Cost Optimization**: Supports cost-based routing strategies
 - **Easy to Use**: Simple configuration designed specifically for AI developers
 
-### Q4: Is JAiRouter free?
+### Q4: Is JAiRouter free
 
 **A**: Yes, JAiRouter is a completely open-source and free project under the MIT License. You can freely use, modify, and distribute it. We are also considering providing enterprise-level commercial support services.
 
 ## Installation and Deployment
 
-### Q5: What are the system requirements for JAiRouter?
+### Q5: What are the system requirements for JAiRouter
 
 **A**: Minimum system requirements:
+
 - **Java**: Version 17 or higher
 - **Memory**: Minimum 512MB, recommended 2GB+
 - **CPU**: Minimum 1 core, recommended 2 cores+
 - **Storage**: Minimum 1GB available space
 - **Operating System**: Supports Linux, Windows, macOS
 
-### Q6: How to quickly get started with JAiRouter?
+### Q6: How to quickly get started with JAiRouter
 
 **A**: The simplest way is to use Docker:
 
@@ -80,9 +81,9 @@ cd jairouter
 java -jar target/model-router-*.jar
 ```
 
-### Q7: How to configure backend AI services?
+### Q7: How to configure backend AI services
 
-**A**: Configure in [application.yml](file://D:\IdeaProjects\model-router\target\classes\application.yml):
+**A**: Configure in [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/target/classes/application.yml):
 
 ```yaml
 model:
@@ -99,9 +100,10 @@ model:
           weight: 2
 ```
 
-### Q8: What deployment methods are supported?
+### Q8: What deployment methods are supported
 
 **A**: JAiRouter supports multiple deployment methods:
+
 - **Direct Run**: Running Java JAR package directly
 - **Docker Container**: Single container deployment
 - **Docker Compose**: Multi-container orchestration deployment
@@ -110,7 +112,7 @@ model:
 
 ## Feature Usage
 
-### Q9: How to configure load balancing strategies?
+### Q9: How to configure load balancing strategies
 
 **A**: Specify the load balancing type in the configuration file:
 
@@ -123,12 +125,13 @@ model:
 ```
 
 Characteristics of each strategy:
+
 - **random**: Random selection, simple and efficient
 - **round-robin**: Round-robin scheduling, evenly distributed
 - **least-connections**: Least connections, suitable for long connections
 - **ip-hash**: IP hash, session persistence
 
-### Q10: How to set rate limiting?
+### Q10: How to set rate limiting
 
 **A**: Configure rate limiting parameters:
 
@@ -144,12 +147,13 @@ model:
 ```
 
 Supported rate limiting algorithms:
+
 - **token-bucket**: Token bucket, supports burst traffic
 - **leaky-bucket**: Leaky bucket, smooth rate limiting
 - **sliding-window**: Sliding window, precise control
 - **warm-up**: Warm-up rate limiting, gradual increase
 
-### Q11: How does the circuit breaker work?
+### Q11: How does the circuit breaker work
 
 **A**: Circuit breaker configuration example:
 
@@ -164,11 +168,12 @@ model:
 ```
 
 The circuit breaker has three states:
+
 - **CLOSED**: Normal state, requests pass through normally
 - **OPEN**: Circuit breaker state, returns error directly
 - **HALF_OPEN**: Half-open state, attempting recovery
 
-### Q12: How to dynamically update configuration?
+### Q12: How to dynamically update configuration
 
 **A**: Use REST API for dynamic updates:
 
@@ -199,34 +204,39 @@ curl -X PUT http://localhost:8080/api/config/instance/update/chat \
 
 ## Monitoring and Operations
 
-### Q13: How to monitor JAiRouter's running status?
+### Q13: How to monitor JAiRouter's running status
 
 **A**: JAiRouter provides multiple monitoring methods:
 
 **Health Check**:
+
 ```bash
 curl http://localhost:8080/actuator/health
 ```
 
 **Prometheus Metrics**:
+
 ```bash
 curl http://localhost:8080/actuator/prometheus
 ```
 
 **Key Metrics**:
+
 - Total requests and success rate
 - Response time distribution
 - Rate limiting and circuit breaker statistics
 - JVM memory and GC metrics
 - System CPU and memory usage
 
-### Q14: How to view logs?
+### Q14: How to view logs
 
 **A**: Log file locations:
+
 - **Container Deployment**: `/app/logs/jairouter-debug.log`
 - **Direct Run**: `./logs/jairouter-debug.log`
 
 View real-time logs:
+
 ```bash
 # Docker container
 docker logs -f jairouter
@@ -236,13 +246,14 @@ tail -f logs/jairouter-debug.log
 ```
 
 Adjust log level:
+
 ```bash
 curl -X POST http://localhost:8080/actuator/loggers/org.unreal.modelrouter \
   -H "Content-Type: application/json" \
   -d '{"configuredLevel": "DEBUG"}'
 ```
 
-### Q15: How to backup and restore configuration?
+### Q15: How to backup and restore configuration
 
 **A**: Configuration file backup:
 
@@ -255,6 +266,7 @@ curl -X POST http://localhost:8080/api/config/merge/backup
 ```
 
 Restore configuration:
+
 ```bash
 # Restore configuration files
 cp -r config-backup-20250115/ config/
@@ -265,25 +277,28 @@ docker restart jairouter
 
 ## Performance and Optimization
 
-### Q16: How is JAiRouter's performance?
+### Q16: How is JAiRouter's performance
 
 **A**: Performance metrics (based on standard test environment):
+
 - **Throughput**: 1000+ RPS
 - **Latency**: P95 < 100ms
 - **Concurrency**: Supports 1000+ concurrent connections
 - **Memory**: Base runtime approximately 200MB
 
 Actual performance depends on:
+
 - Hardware configuration
 - Backend service performance
 - Network latency
 - Configuration parameters
 
-### Q17: How to optimize performance?
+### Q17: How to optimize performance
 
 **A**: Performance optimization recommendations:
 
 **JVM Tuning**:
+
 ```bash
 java -Xms2g -Xmx4g \
      -XX:+UseG1GC \
@@ -292,6 +307,7 @@ java -Xms2g -Xmx4g \
 ```
 
 **Connection Pool Optimization**:
+
 ```yaml
 spring:
   webflux:
@@ -302,6 +318,7 @@ spring:
 ```
 
 **Cache Configuration**:
+
 ```yaml
 model:
   cache:
@@ -310,7 +327,7 @@ model:
     max-size: 1000
 ```
 
-### Q18: How to handle high-concurrency scenarios?
+### Q18: How to handle high-concurrency scenarios
 
 **A**: High-concurrency optimization strategies:
 
@@ -323,11 +340,12 @@ model:
 
 ## Troubleshooting
 
-### Q19: What to do if service startup fails?
+### Q19: What to do if service startup fails
 
 **A**: Common startup issues and solutions:
 
 **Port Occupied**:
+
 ```bash
 # Check port occupancy
 netstat -tlnp | grep :8080
@@ -335,47 +353,54 @@ netstat -tlnp | grep :8080
 ```
 
 **Configuration File Error**:
+
 ```bash
 # Validate YAML format
 ./mvnw spring-boot:run --debug
 ```
 
 **Java Version Incompatibility**:
+
 ```bash
 # Check Java version
 java -version
 # Ensure using Java 17+
 ```
 
-### Q20: What to do if backend service connection fails?
+### Q20: What to do if backend service connection fails
 
 **A**: Connection issue troubleshooting steps:
 
 1. **Check Service Status**:
-```bash
-curl -v http://backend-server:9090/health
-```
+
+   ```bash
+   curl -v http://backend-server:9090/health
+   ```
 
 2. **Check Network Connectivity**:
-```bash
-telnet backend-server 9090
-```
+
+   ```bash
+   telnet backend-server 9090
+   ```
 
 3. **Check Configuration**:
-```bash
-curl http://localhost:8080/api/config/instance/type/chat
-```
+
+   ```bash
+   curl http://localhost:8080/api/config/instance/type/chat
+   ```
 
 4. **View Logs**:
+
 ```bash
 grep -i "connection\|timeout" logs/jairouter-debug.log
 ```
 
-### Q21: How to troubleshoot performance issues?
+### Q21: How to troubleshoot performance issues
 
 **A**: Performance issue diagnosis:
 
 **Check System Resources**:
+
 ```bash
 # CPU usage
 curl http://localhost:8080/actuator/metrics/system.cpu.usage
@@ -388,6 +413,7 @@ curl http://localhost:8080/actuator/metrics/jvm.gc.pause
 ```
 
 **Analyze Response Time**:
+
 ```bash
 # Response time distribution
 curl http://localhost:8080/actuator/metrics/jairouter.request.duration
@@ -398,11 +424,12 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 
 ## Development and Integration
 
-### Q22: How to integrate into existing projects?
+### Q22: How to integrate into existing projects
 
 **A**: Integration methods:
 
 **As Proxy Service**:
+
 ```python
 # Python example
 import openai
@@ -418,6 +445,7 @@ response = openai.ChatCompletion.create(
 ```
 
 **As Load Balancer**:
+
 ```javascript
 // Node.js example
 const axios = require('axios');
@@ -433,7 +461,7 @@ const response = await axios.post('http://jairouter:8080/v1/chat/completions', {
 });
 ```
 
-### Q23: How to develop custom adapters?
+### Q23: How to develop custom adapters
 
 **A**: Custom adapter development:
 
@@ -463,7 +491,7 @@ public class CustomAdapter extends BaseAdapter {
 }
 ```
 
-### Q24: How to contribute code?
+### Q24: How to contribute code
 
 **A**: Contribution process:
 
@@ -478,26 +506,29 @@ For detailed information, please refer to the [Contribution Guide](../developmen
 
 ## Commercial Use
 
-### Q25: Can it be used commercially?
+### Q25: Can it be used commercially
 
 **A**: Yes, JAiRouter uses the MIT License, allowing commercial use. You can:
+
 - Use in commercial projects
 - Modify and customize features
 - Redistribute (license must be retained)
 - Provide commercial services based on JAiRouter
 
-### Q26: Is technical support provided?
+### Q26: Is technical support provided
 
 **A**: Currently provided support methods:
+
 - **Community Support**: GitHub Issues and Discussions
 - **Documentation Support**: Complete user and API documentation
 - **Sample Code**: Rich usage examples
 
 We are considering providing enterprise-level commercial technical support services.
 
-### Q27: How to obtain enterprise-level features?
+### Q27: How to obtain enterprise-level features
 
 **A**: Enterprise-level feature planning:
+
 - **Multi-tenant Support**: Tenant isolation and management
 - **Advanced Security**: Enterprise-level authentication and authorization
 - **Professional Monitoring**: Advanced monitoring and analysis features
@@ -507,30 +538,33 @@ For enterprise-level requirements, please contact us to discuss custom developme
 
 ## Other Questions
 
-### Q28: What is JAiRouter's future roadmap?
+### Q28: What is JAiRouter's future roadmap
 
 **A**: Please check our [Roadmap](roadmap.md), which mainly includes:
+
 - Security and authentication system improvement
 - Intelligent feature enhancement
 - Cloud-native support
 - Ecosystem construction
 
-### Q29: How to participate in the community?
+### Q29: How to participate in the community
 
 **A**: Participation methods:
+
 - **GitHub**: Submit Issues, PRs, or participate in discussions
 - **Documentation**: Help improve documentation and translation
 - **Testing**: Participate in feature testing and feedback
 - **Promotion**: Share usage experiences and cases
 
-### Q30: How to seek help when encountering problems?
+### Q30: How to seek help when encountering problems
 
 **A**: Help channels:
+
 1. **Check Documentation**: First check relevant documentation and FAQ
 2. **Search Issues**: Search for similar issues in GitHub Issues
 3. **Submit Issue**: Create a new Issue with detailed problem description
 4. **Community Discussion**: Seek help in GitHub Discussions
-5. **Email Contact**: jairouter@example.com
+5. **Email Contact**: <jairouter@example.com>
 
 ---
 
@@ -540,7 +574,7 @@ If your question is not answered in this FAQ, please feel free to provide feedba
 
 - **GitHub Issues**: [Submit Issue](https://github.com/Lincoln-cn/JAiRouter/issues)
 - **GitHub Discussions**: [Participate in Discussion](https://github.com/Lincoln-cn/JAiRouter/discussions)
-- **Email Contact**: jairouter@example.com
+- **Email Contact**: <jairouter@example.com>
 
 We will continuously update the FAQ content to provide better support for users.
 

@@ -37,6 +37,7 @@ public interface FreeQuotaRepository extends JpaRepository<FreeQuotaEntity, Long
             + "THEN COALESCE(exhausted_at, CURRENT_TIMESTAMP) ELSE NULL END, "
             + "update_time = CURRENT_TIMESTAMP, updater = :updater, version = version + 1 "
             + "WHERE user_id = :userId AND deleted = false "
+            + "AND quota_tier <> 'ADMIN' "
             + "AND (quota_tier IS DISTINCT FROM :tier OR total_quota <> :total)",
             nativeQuery = true)
     int updateQuotaPolicy(@Param("userId") String userId,

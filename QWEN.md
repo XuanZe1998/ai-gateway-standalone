@@ -7,9 +7,6 @@
 > **作者**: GitHub Action
 <!-- /版本信息 -->
 
-
-
-
 ## Project Overview
 
 JAiRouter is an AI model service routing and load balancing gateway built with **Spring Boot 3.5.5** (WebFlux). It provides centralized management and routing for various AI model services including Chat, Embedding, Rerank, TTS, and more.
@@ -166,11 +163,11 @@ docker-compose --profile monitoring up -d
 
 | Service | URL |
 |---------|-----|
-| Application | http://localhost:8080 |
-| Admin Console | http://localhost:8080/admin |
-| Swagger UI | http://localhost:8080/swagger-ui/index.html |
-| Health Check | http://localhost:8080/actuator/health |
-| Prometheus | http://localhost:8080/actuator/prometheus |
+| Application | <http://localhost:8080> |
+| Admin Console | <http://localhost:8080/admin> |
+| Swagger UI | <http://localhost:8080/swagger-ui/index.html> |
+| Health Check | <http://localhost:8080/actuator/health> |
+| Prometheus | <http://localhost:8080/actuator/prometheus> |
 
 ### Default Credentials
 
@@ -251,8 +248,8 @@ mvn package -Dcheckstyle.skip=true -Dspotbugs.skip=true
 
 ## Documentation
 
-- Full documentation: https://jairouter.com
-- English docs: https://jairouter.com/en/
+- Full documentation: <https://jairouter.com>
+- English docs: <https://jairouter.com/en/>
 - API docs: Available at `/swagger-ui/index.html` when running
 
 ---
@@ -361,6 +358,7 @@ mvn package -Dcheckstyle.skip=true -Dspotbugs.skip=true
 - `REFACTORING_SUMMARY.md` - Recent refactoring notes
 
 ## Qwen Added Memories
+
 - innerdoc 目录结构规范：根目录只保留《开发计划 -2026.md》和《任务跟踪表.md》两个核心文档。所有其他文档必须按内容归档到对应的子目录中：
 - 01-项目概述：需求文档、开发路线图、子版本计划
 - 03-重构记录：重构方案、设计文档

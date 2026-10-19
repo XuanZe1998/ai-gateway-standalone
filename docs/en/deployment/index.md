@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This guide covers various deployment options for JAiRouter, from simple standalone deployment to production-ready containerized environments.
 
 ## Deployment Options
@@ -165,16 +163,19 @@ logging:
 JAiRouter provides multi-layered security mechanisms to protect your deployment:
 
 ### Authentication and Authorization
+
 - **API Key Authentication**: Simple authentication mechanism suitable for service-to-service communication
 - **JWT Authentication**: Complete solution for user authentication
 - **Role-Based Access Control**: Fine-grained access control based on roles
 
 ### Network Security
+
 - **HTTPS Support**: Protect data transmission through TLS encryption
 - **Firewall Configuration**: Restrict unnecessary port access
 - **Request Filtering**: Prevent malicious requests and attacks
 
 ### Application Security
+
 - **Input Validation**: Prevent injection attacks and malicious input
 - **Sensitive Information Protection**: Configuration encryption and key management
 - **Security Header Settings**: Prevent common web attacks
@@ -184,6 +185,7 @@ JAiRouter provides multi-layered security mechanisms to protect your deployment:
 JAiRouter supports flexible logging configuration, including:
 
 ### Log Levels
+
 - **TRACE**: Most detailed log information for debugging
 - **DEBUG**: Detailed debugging information
 - **INFO**: General informational messages
@@ -191,11 +193,13 @@ JAiRouter supports flexible logging configuration, including:
 - **ERROR**: Error information
 
 ### Log Formats
+
 - **Console Output**: Concise format suitable for development environments
 - **File Logs**: Detailed format suitable for production environments
 - **Structured Logs**: JSON format for easy log analysis and processing
 
 ### Log Management
+
 - **Log Rotation**: Automatic management of log file size and quantity
 - **Log Compression**: Save storage space
 - **Log Archiving**: Long-term storage of important logs
@@ -344,6 +348,7 @@ services:
 ### Common Issues
 
 **Port Already in Use**:
+
 ```bash
 # Check what's using the port
 netstat -tulpn | grep :8080
@@ -352,6 +357,7 @@ lsof -i :8080
 ```
 
 **Permission Issues**:
+
 ```bash
 # Fix file permissions
 chmod -R 755 config/
@@ -359,6 +365,7 @@ chown -R 1000:1000 logs/
 ```
 
 **Memory Issues**:
+
 ```bash
 # Monitor memory usage
 docker stats jairouter

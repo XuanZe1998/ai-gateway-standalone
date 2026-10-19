@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
   JAiRouter 提供完整的 Docker 化部署方案，支持多环境配置和容器编排。本文档详细介绍如何使用 Docker 部署 JAiRouter，包括单机部署、集群部署和监控集成。
 
 ## Docker 部署概述
@@ -36,12 +34,14 @@
 | **中国镜像** | `china`, `v1.7.0-china` | ~440MB | 中国用户优化 | `Dockerfile.china` |
 
 **优化版镜像特点**：
+
 - ✅ 使用 `eclipse-temurin:17-jre-alpine` 基础镜像（比标准 JRE 小约 40%）
 - ✅ 多阶段构建 + Spring Boot layertools 分层提取
 - ✅ 镜像体积从 440MB 降至 **281MB**（减少 36%）
 - ✅ 保持完整功能和非 root 用户安全实践
 
 **JLink 版镜像特点**：
+
 - 🔬 基于 Alpine + 多阶段构建 + JVM 参数优化
 - 🔬 尝试使用 jlink 定制 JRE 模块（因 Spring Boot 3.x 兼容性问题采用 Alpine JRE）
 - 🔬 镜像大小与优化版相同（281MB），作为实验性方案提供
@@ -193,6 +193,7 @@ docker run -d \
   sodlinken/jairouter:latest
 ```
 
+```bash
 docker run  \
   --name jairouter \
   -p 8080:8080 \
@@ -206,12 +207,13 @@ docker run  \
   -e PROD_JWT_SECRET="your-very-strong-jwt-secret-key-at-least-32-characters-long" \
   -e JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0" \
   --restart unless-stopped \
-  --health-cmd="curl -f http://localhost:8080/actuator/health || exit 1" \
+  --health-cmd="curl -f <http://localhost:8080/actuator/health> || exit 1" \
   --health-interval=30s \
   --health-timeout=10s \
   --health-retries=3 \
   --health-start-period=60s \
   sodlinken/jairouter:latest
+```
 
 ### 2. 开发环境运行
 
@@ -246,7 +248,7 @@ docker run -d \
 
 ### 1. 基础 Compose 配置
 
-创建 [docker-compose.yml](file://d:\IdeaProjects\model-router\docker-compose.yml)：
+创建 [docker-compose.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/docker-compose.yml)：
 
 ```
 version: '3.8'
@@ -359,7 +361,7 @@ networks:
 
 ### 3. 开发环境 Compose 配置
 
-创建 [docker-compose.dev.yml](file://d:\IdeaProjects\model-router\docker-compose.dev.yml)：
+创建 [docker-compose.dev.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/docker-compose.dev.yml)：
 
 ```
 version: '3.8'
@@ -1018,11 +1020,9 @@ server:
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
   JAiRouter 提供完整的 Docker 化部署方案，支持多环境配置和容器编排。本文档详细介绍如何使用 Docker 部署 JAiRouter，包括单机部署、集群部署和监控集成。
 
-## Docker 部署概述
+## Docker 部署概述 — HTTPS 配置
 
 ### 核心特性
 
@@ -1043,7 +1043,7 @@ server:
 | **开发镜像** | `dev`, `v1.0.0-dev` | ~220MB | 开发调试 |
 | **中国镜像** | `china`, `v1.0.0-china` | ~200MB | 中国用户优化 |
 
-## 快速开始
+## 快速开始 — HTTPS 配置
 
 ### 1. 拉取镜像
 
@@ -1086,7 +1086,7 @@ docker run -d \
   sodlinken/jairouter:latest
 ```
 
-## 镜像构建
+## 镜像构建 — 挂载配置文件运行
 
 ### 构建方式选择
 
@@ -1148,7 +1148,7 @@ docker build -f Dockerfile -t sodlinken/jairouter:prod .
 docker build -f Dockerfile.china -t sodlinken/jairouter:china .
 ```
 
-## 容器运行
+## 容器运行 — 构建中国优化镜像
 
 ### 1. 生产环境运行
 
@@ -1200,11 +1200,11 @@ docker run -d \
 ./scripts/docker-run.sh dev latest
 ```
 
-## Docker Compose 部署
+## Docker Compose 部署 — 开发环境
 
 ### 1. 基础 Compose 配置
 
-创建 [docker-compose.yml](file://d:\IdeaProjects\model-router\docker-compose.yml)：
+创建 [docker-compose.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/docker-compose.yml)：
 
 ```
 version: '3.8'
@@ -1355,7 +1355,7 @@ docker-compose logs -f jairouter
 docker-compose down
 ```
 
-## 环境配置
+## 环境配置 — 停止服务
 
 ### 1. 环境变量
 
@@ -1392,7 +1392,7 @@ docker-compose down
 | `/app/logs` | `./logs` | 日志文件 | 读写 |
 | `/app/config-dev` | `./config-dev` | 开发环境配置存储 | 读写 |
 
-## 网络配置
+## 网络配置 — 停止服务
 
 ### 1. 端口映射
 
@@ -1428,7 +1428,7 @@ networks:
         - subnet: 172.20.0.0/16
 ```
 
-## 健康检查
+## 健康检查 — 自定义网络
 
 ### 1. 容器健康检查
 
@@ -1467,7 +1467,7 @@ docker inspect jairouter --format='{{json .State.Health}}'
 curl http://localhost:8080/actuator/health
 ```
 
-## 监控集成
+## 监控集成 — 手动健康检查
 
 ### 1. Prometheus 配置
 
@@ -1530,7 +1530,7 @@ docker-compose -f docker-compose.monitoring.yml up -d
 # Grafana: http://localhost:3000 (admin/admin)
 ```
 
-## 日志管理
+## 日志管理 — Grafana: <http://localhost:3000> (admin/admin)
 
 ### 1. 日志配置
 
@@ -1660,7 +1660,7 @@ logging:
 # }
 ```
 
-## 性能优化
+## 性能优化 — }
 
 ### 1. 资源限制
 
@@ -1698,7 +1698,7 @@ networks:
       com.docker.network.driver.mtu: 1500
 ```
 
-## 故障排查
+## 故障排查 — 使用自定义网络
 
 ### 1. 常见问题
 
@@ -1773,7 +1773,7 @@ docker inspect jairouter
 docker history sodlinken/jairouter:latest
 ```
 
-## 安全配置
+## 安全配置 — 查看镜像层信息
 
 ### 1. 容器安全
 
@@ -1915,7 +1915,7 @@ server:
     key-alias: jairouter
 ```
 
-## 最佳实践
+## 最佳实践 — HTTPS 配置
 
 ### 1. 镜像管理
 
@@ -1945,7 +1945,7 @@ server:
 - 配置网络隔离
 - 使用密钥管理工具
 
-## 下一步
+## 下一步 — HTTPS 配置
 
 完成 Docker 部署后，您可以：
 

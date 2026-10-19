@@ -167,6 +167,7 @@ services:
 ```
 
 启动：
+
 ```bash
 docker-compose up -d
 ```
@@ -189,19 +190,21 @@ curl http://localhost:8080/actuator/health
 
 ### 步骤 6: 访问 Web 控制台
 
-打开浏览器访问：http://localhost:8080/admin
+打开浏览器访问：<http://localhost:8080/admin>
 
 **登录凭证**:
+
 - 用户名：`admin`
 - 密码：`$INITIAL_ADMIN_PASSWORD` 环境变量的值
   - **开发环境默认值**：`ChangeMeOnFirstStartup123456`（未设置环境变量时）
   - **生产环境**：必须通过环境变量设置，否则启动时会发出安全警告
   - **推荐做法**：使用密钥生成工具生成强密码：
+
     ```bash
     docker run --rm sodlinken/jairouter:latest java -jar /app/modelrouter.jar --generate-password
     ```
 
-![](../capture/login.png)
+登录后即可进入管理控制台。
 
 ---
 
@@ -278,11 +281,13 @@ v1.8.0+ 版本在启动时会自动验证关键配置：
 ### 问题 1: 容器启动失败
 
 **检查日志**:
+
 ```bash
 docker logs jairouter
 ```
 
 **常见原因**:
+
 - 端口被占用
 - 配置文件路径错误
 - 环境变量未设置
@@ -290,6 +295,7 @@ docker logs jairouter
 ### 问题 2: 无法访问 Web 控制台
 
 **检查防火墙**:
+
 ```bash
 # 检查端口是否监听
 netstat -tlnp | grep 8080
@@ -301,6 +307,7 @@ sudo ufw status
 ### 问题 3: 密钥强度检查失败
 
 **重新生成密钥**:
+
 ```bash
 # 使用 Docker 生成
 docker run --rm sodlinken/jairouter:latest java -jar /app/modelrouter.jar --generate-key
@@ -310,6 +317,7 @@ openssl rand -base64 32
 ```
 
 **设置环境变量**:
+
 ```bash
 export JWT_SECRET="生成的密钥"
 ```

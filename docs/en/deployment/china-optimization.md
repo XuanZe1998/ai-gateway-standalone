@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document provides optimized deployment solutions specifically for the Chinese network environment, including configurations for network acceleration, image optimization, and dependency acceleration, helping Chinese users achieve better deployment and runtime experiences.
 
 ## China Optimization Overview
@@ -224,7 +222,7 @@ echo "Run command: docker run -d -p 8080:8080 sodlinken/jairouter:$TAG"
 
 ### 3. pom.xml China Optimization Configuration
 
-Add China optimization profile in [pom.xml](file://D:\IdeaProjects\model-router\pom.xml):
+Add China optimization profile in [pom.xml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/pom.xml):
 
 ```xml
 <profiles>
@@ -309,7 +307,7 @@ sudo systemctl restart docker
 
 ### 2. China Optimized Dockerfile
 
-[Dockerfile.china](file://D:\IdeaProjects\model-router\Dockerfile.china) has been optimized for the Chinese network environment:
+[Dockerfile.china](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/Dockerfile.china) has been optimized for the Chinese network environment:
 
 ```dockerfile
 # Multi-stage Dockerfile for JAiRouter (China Optimized)
@@ -1457,5 +1455,5 @@ After completing China optimization deployment, you can:
 
 - **[Docker Deployment](docker.md)** - Learn about complete Docker deployment solutions
 - **[Production Environment Deployment](production.md)** - Configure high-availability production environments
-- **[Monitoring Guide](../../monitoring/index.md)** - Set up a complete monitoring system
+- **[Monitoring Guide](../monitoring/index.md)** - Set up a complete monitoring system
 - **[Troubleshooting](../troubleshooting/index.md)** - Learn fault diagnosis and resolution

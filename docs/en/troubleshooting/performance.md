@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document provides diagnostic methods and optimization strategies for JAiRouter performance issues.
 
 ## Performance Monitoring Metrics
@@ -46,13 +44,15 @@ curl -s http://localhost:8080/actuator/metrics/system.cpu.usage | jq
 ### 1. Slow Response Time
 
 #### Symptom Identification
+
 - API response time exceeds 5 seconds
 - User feedback about slow system response
 - P95 response time continuously increasing
 
 #### Diagnostic Steps
 
-**1. Identify Bottleneck Location**
+##### 1. Identify Bottleneck Location
+
 ```bash
 # Check component response times
 curl -w "@curl-format.txt" -o /dev/null -s http://localhost:8080/v1/chat/completions
@@ -68,7 +68,8 @@ curl -w "@curl-format.txt" -o /dev/null -s http://localhost:8080/v1/chat/complet
 #          time_total:  %{time_total}\n
 ```
 
-**2. Analyze Request Chain**
+##### 2. Analyze Request Chain
+
 ```bash
 # Enable request tracing
 java -Dlogging.level.org.unreal.modelrouter=DEBUG \
@@ -78,7 +79,8 @@ java -Dlogging.level.org.unreal.modelrouter=DEBUG \
 grep "Processing request" logs/jairouter-debug.log | tail -10
 ```
 
-**3. Check Backend Service Performance**
+##### 3. Check Backend Service Performance
+
 ```bash
 # Directly test backend service
 time curl -X POST http://backend:9090/v1/chat/completions \
@@ -88,7 +90,8 @@ time curl -X POST http://backend:9090/v1/chat/completions \
 
 #### Optimization Strategies
 
-**Connection Pool Optimization**
+##### Connection Pool Optimization
+
 ```yaml
 spring:
   webflux:
@@ -101,7 +104,8 @@ spring:
       response-timeout: 30s        # Response timeout
 ```
 
-**Load Balancer Optimization**
+##### Load Balancer Optimization
+
 ```yaml
 model:
   services:
@@ -111,7 +115,8 @@ model:
       timeout: 30s                 # Set reasonable timeout
 ```
 
-**Cache Strategy**
+##### Cache Strategy
+
 ```yaml
 model:
   cache:
@@ -123,13 +128,15 @@ model:
 ### 2. Insufficient Throughput
 
 #### Symptom Identification
+
 - RPS below expectations
 - System unable to handle high concurrent requests
 - Request queue backlog
 
 #### Diagnostic Steps
 
-**1. Stress Testing**
+##### 1. Stress Testing
+
 ```bash
 # Use Apache Bench for stress testing
 ab -n 1000 -c 50 -H "Content-Type: application/json" \
@@ -139,7 +146,8 @@ ab -n 1000 -c 50 -H "Content-Type: application/json" \
 wrk -t12 -c400 -d30s --script=post.lua http://localhost:8080/v1/chat/completions
 ```
 
-**2. Thread Pool Analysis**
+##### 2. Thread Pool Analysis
+
 ```bash
 # Get thread pool status
 curl -s http://localhost:8080/actuator/metrics/executor.active | jq
@@ -149,7 +157,8 @@ curl -s http://localhost:8080/actuator/metrics/executor.queue.remaining | jq
 jstack <pid> > threads.dump
 ```
 
-**3. Resource Usage Analysis**
+##### 3. Resource Usage Analysis
+
 ```bash
 # CPU usage
 top -p <pid>
@@ -163,7 +172,8 @@ iotop -p <pid>
 
 #### Optimization Strategies
 
-**Thread Pool Tuning**
+##### Thread Pool Tuning
+
 ```yaml
 spring:
   task:
@@ -175,7 +185,8 @@ spring:
         keep-alive: 60s           # Thread keep-alive time
 ```
 
-**Reactor Tuning**
+##### Reactor Tuning
+
 ```yaml
 spring:
   webflux:
@@ -185,7 +196,8 @@ spring:
       max-buffer-size: 1024       # Maximum buffer size
 ```
 
-**Asynchronous Processing**
+##### Asynchronous Processing
+
 ```yaml
 model:
   async:
@@ -197,13 +209,15 @@ model:
 ### 3. High Memory Usage
 
 #### Symptom Identification
+
 - JVM heap memory continuously growing
 - Frequent Full GC
 - OutOfMemoryError exceptions
 
 #### Diagnostic Steps
 
-**1. Memory Usage Analysis**
+##### 1. Memory Usage Analysis
+
 ```bash
 # Check memory usage
 curl -s http://localhost:8080/actuator/metrics/jvm.memory.used | jq
@@ -214,7 +228,8 @@ curl -s http://localhost:8080/actuator/metrics/jvm.gc.pause | jq
 curl -s http://localhost:8080/actuator/metrics/jvm.gc.memory.allocated | jq
 ```
 
-**2. Heap Dump Analysis**
+##### 2. Heap Dump Analysis
+
 ```bash
 # Generate heap dump
 jcmd <pid> GC.run_finalization
@@ -223,7 +238,8 @@ jmap -dump:format=b,file=heap.hprof <pid>
 # Analyze heap dump using Eclipse MAT or VisualVM
 ```
 
-**3. Memory Leak Detection**
+##### 3. Memory Leak Detection
+
 ```bash
 # Enable memory leak detection
 java -XX:+HeapDumpOnOutOfMemoryError \
@@ -233,7 +249,8 @@ java -XX:+HeapDumpOnOutOfMemoryError \
 
 #### Optimization Strategies
 
-**JVM Parameter Tuning**
+##### JVM Parameter Tuning
+
 ```bash
 # G1GC configuration
 java -Xms2g -Xmx4g \
@@ -246,7 +263,8 @@ java -Xms2g -Xmx4g \
      -jar target/model-router-*.jar
 ```
 
-**Memory Management Optimization**
+##### Memory Management Optimization
+
 ```yaml
 model:
   memory:
@@ -263,7 +281,8 @@ model:
       expire-after-access: 5m
 ```
 
-**Object Pooling**
+##### Object Pooling
+
 ```yaml
 spring:
   webflux:
@@ -277,13 +296,15 @@ spring:
 ### 4. High CPU Usage
 
 #### Symptom Identification
+
 - CPU usage consistently above 85%
 - High system load
 - Increased response time
 
 #### Diagnostic Steps
 
-**1. CPU Hotspot Analysis**
+##### 1. CPU Hotspot Analysis
+
 ```bash
 # Check CPU usage
 top -H -p <pid>
@@ -297,7 +318,8 @@ java -XX:+FlightRecorder \
 jfr print --events CPULoad cpu-profile.jfr
 ```
 
-**2. Thread Analysis**
+##### 2. Thread Analysis
+
 ```bash
 # Generate thread dump
 jstack <pid> > threads.dump
@@ -308,7 +330,8 @@ printf "%x\n" <thread-id>  # Convert to hexadecimal
 grep <hex-thread-id> threads.dump  # Search in dump
 ```
 
-**3. Code Hotspot Analysis**
+##### 3. Code Hotspot Analysis
+
 ```bash
 # Enable compilation logging
 java -XX:+PrintCompilation \
@@ -319,7 +342,8 @@ java -XX:+PrintCompilation \
 
 #### Optimization Strategies
 
-**Algorithm Optimization**
+##### Algorithm Optimization
+
 ```java
 // Optimized load balancing algorithm
 @Component
@@ -339,7 +363,8 @@ public class OptimizedRoundRobinLoadBalancer implements LoadBalancer {
 }
 ```
 
-**Concurrency Optimization**
+##### Concurrency Optimization
+
 ```yaml
 model:
   concurrency:
@@ -356,7 +381,8 @@ model:
       timeout: 100ms
 ```
 
-**Cache Optimization**
+##### Cache Optimization
+
 ```java
 // Use Caffeine high-performance cache
 @Configuration
@@ -378,6 +404,7 @@ public class CacheConfiguration {
 ### 1. JVM Tuning
 
 #### Heap Memory Configuration
+
 ```bash
 # Production environment recommended configuration
 java -Xms4g -Xmx4g \                    # Fixed heap size to avoid dynamic adjustment
@@ -393,6 +420,7 @@ java -Xms4g -Xmx4g \                    # Fixed heap size to avoid dynamic adjus
 ```
 
 #### GC Log Configuration
+
 ```bash
 # GC log configuration
 -Xlog:gc*:gc.log:time,tags \
@@ -404,6 +432,7 @@ java -Xms4g -Xmx4g \                    # Fixed heap size to avoid dynamic adjus
 ### 2. Application Layer Tuning
 
 #### Connection Pool Configuration
+
 ```yaml
 spring:
   webflux:
@@ -417,6 +446,7 @@ spring:
 ```
 
 #### Reactive Configuration
+
 ```yaml
 spring:
   webflux:
@@ -430,6 +460,7 @@ spring:
 ### 3. Monitoring and Alerting
 
 #### Performance Monitoring Configuration
+
 ```yaml
 management:
   metrics:
@@ -445,6 +476,7 @@ management:
 ```
 
 #### Alert Rules
+
 ```yaml
 # prometheus-alerts.yml
 groups:
@@ -481,6 +513,7 @@ groups:
 ### 4. Capacity Planning
 
 #### Performance Benchmark Testing
+
 ```bash
 #!/bin/bash
 # performance-benchmark.sh
@@ -515,6 +548,7 @@ echo "=== Performance testing completed ==="
 ```
 
 #### Capacity Assessment
+
 ```bash
 # Calculate theoretical maximum RPS
 # RPS = 1000ms / average response time(ms) * concurrent connections
@@ -531,6 +565,7 @@ echo "=== Performance testing completed ==="
 ## Performance Optimization Checklist
 
 ### Pre-deployment Checklist
+
 - [ ] JVM parameters optimized
 - [ ] Connection pool configuration reasonable
 - [ ] Cache strategy configured
@@ -538,6 +573,7 @@ echo "=== Performance testing completed ==="
 - [ ] Alert rules set
 
 ### Runtime Monitoring
+
 - [ ] Response time within normal range
 - [ ] CPU usage < 80%
 - [ ] Memory usage < 85%
@@ -545,6 +581,7 @@ echo "=== Performance testing completed ==="
 - [ ] Error rate < 1%
 
 ### Regular Optimization
+
 - [ ] Analyze performance trends
 - [ ] Identify performance bottlenecks
 - [ ] Adjust configuration parameters
@@ -554,6 +591,7 @@ echo "=== Performance testing completed ==="
 ## Performance Testing Tools
 
 ### 1. Apache Bench (ab)
+
 ```bash
 # Basic test
 ab -n 1000 -c 50 http://localhost:8080/v1/chat/completions
@@ -563,6 +601,7 @@ ab -n 1000 -c 50 -p request.json -T application/json http://localhost:8080/v1/ch
 ```
 
 ### 2. wrk
+
 ```bash
 # Install wrk
 # Ubuntu: sudo apt-get install wrk
@@ -576,6 +615,7 @@ wrk -t12 -c400 -d30s --script=post.lua http://localhost:8080/v1/chat/completions
 ```
 
 ### 3. JMeter
+
 ```xml
 <!-- JMeter test plan example -->
 <?xml version="1.0" encoding="UTF-8"?>

@@ -47,6 +47,7 @@
 | `version` | BIGINT | NOT NULL DEFAULT 0 | 乐观锁版本号 |
 
 **说明**：
+
 - 记录不存在视为该用户没有免费额度，直接走余额逻辑。
 - `remaining_quota` 由算力平台维护为 `total_quota - used_quota`，JAiRouter 更新时同步修改 `used_quota` 与 `remaining_quota`。
 - `version` 用于乐观锁，避免并发请求导致额度扣减丢失。
@@ -102,6 +103,7 @@ COMMENT ON COLUMN ai_billing_record.free_quota_consumed IS '本次实际消耗�
 ```
 
 **说明**：
+
 - `ai_user_free_quota` 由算力平台预初始化，`JAiRouter` 仅执行扣减与锁定更新。
 - `deleted` 为逻辑删除字段，查询时默认过滤 `deleted = false`。
 - `version` 用于乐观锁并发控制。
@@ -232,6 +234,7 @@ WHERE user_id = 'u123456'
 | `free_quota_consumed` | BIGINT | NOT NULL DEFAULT 0 | 本次实际消耗的免费 token 数 |
 
 **说明**：
+
 - 命中免费额度时：`is_free_quota=true`、`free_quota_consumed=本次 totalTokens`、`original_cost=0`、`discount_amount=0`、`total_cost=0`。
 - API Key ID / Name 仍正常存储，仅金额字段为 0。
 - 算力平台后台查询时，根据 `is_free_quota=true` 将 API Key、API Key 描述、计费金额、折扣优惠金额、账单金额映射为 “-”。
@@ -304,6 +307,7 @@ else → 放行（本次可能走免费额度）
 ```
 
 **说明**：
+
 - `trialExhausted = true` 后，该用户后续请求不再尝试免费额度，直接切换为余额逻辑。
 - 只要剩余额度 > 0 且未触发超支，请求即放行，不预估本次用量。
 - 余额校验仅在剩余额度 ≤ 0 或已超支锁定时执行。
@@ -338,6 +342,7 @@ else:
 ```
 
 **关键说明**：
+
 - 命中免费额度时，金额字段置 0，不扣余额。
 - 未命中时，`FreeQuotaService` 已原子设置 `trial_exhausted=true`；调用方必须阻止响应返回给客户端，返回 402。
 - 失败账单是否保存可讨论；建议保存，便于后台排查“为什么生成失败”。

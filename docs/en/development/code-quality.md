@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## Overview
 
 The JAiRouter project adopts strict code quality standards, combining automated tools and manual reviews to ensure code readability, maintainability, and security.
@@ -18,18 +16,21 @@ The JAiRouter project adopts strict code quality standards, combining automated 
 ### 1. Checkstyle
 
 #### Configuration Files
-- **Configuration File**: [checkstyle.xml](file://D:\IdeaProjects\model-router\checkstyle.xml)
+
+- **Configuration File**: [checkstyle.xml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/checkstyle.xml)
 - **Rule Set**: Based on Google Java Style Guide, customized for project characteristics
 
 #### Main Rules
 
-**Formatting Standards**
+##### Formatting Standards
+
 - Use 4-space indentation, disable Tab
 - Line length does not exceed 120 characters
 - File length does not exceed 2000 lines
 - Method length does not exceed 150 lines
 
-**Naming Conventions**
+##### Naming Conventions
+
 ```java
 // Class name: PascalCase
 public class LoadBalancerFactory { }
@@ -44,7 +45,8 @@ public static final int DEFAULT_TIMEOUT = 30;
 package org.unreal.modelrouter.adapter;
 ```
 
-**Import Standards**
+##### Import Standards
+
 ```java
 // Correct import order
 import java.util.List;           // Java standard library
@@ -56,6 +58,7 @@ import org.unreal.modelrouter.*; // Project internal packages
 ```
 
 #### Running Checkstyle
+
 ```bash
 # Check code style
 ./mvnw checkstyle:check
@@ -68,28 +71,33 @@ open target/site/checkstyle.html
 ### 2. SpotBugs
 
 #### Configuration Files
+
 - **Include Rules**: `spotbugs-security-include.xml`
 - **Exclude Rules**: `spotbugs-security-exclude.xml`
 
 #### Check Categories
 
-**Security Issues**
+##### Security Issues
+
 - SQL injection risk
 - XSS attack risk
 - Path traversal vulnerability
 - Insecure random number generation
 
-**Performance Issues**
+##### Performance Issues
+
 - Inefficient string operations
 - Unnecessary object creation
 - Resource leak risk
 
-**Concurrency Issues**
+##### Concurrency Issues
+
 - Thread safety issues
 - Deadlock risk
 - Race conditions
 
 #### Running SpotBugs
+
 ```bash
 # Run SpotBugs check
 ./mvnw spotbugs:check
@@ -105,16 +113,19 @@ open target/site/spotbugs.html
 ### 3. JaCoCo
 
 #### Coverage Requirements
+
 - **Minimum Coverage**: 60% (complexity coverage)
 - **Recommended Coverage**: 80%
 - **Core Modules**: Above 90%
 
 #### Coverage Types
+
 - **Line Coverage**: Execution coverage of code lines
 - **Branch Coverage**: Coverage of conditional branches
 - **Complexity Coverage**: Coverage of cyclomatic complexity
 
 #### Generating Coverage Reports
+
 ```bash
 # Run tests and generate coverage report
 ./mvnw clean test jacoco:report
@@ -128,6 +139,7 @@ open target/site/jacoco/index.html
 ### 1. Class Design Principles
 
 #### Single Responsibility Principle
+
 ```java
 // Good example: Single responsibility
 public class TokenBucketRateLimiter implements RateLimiter {
@@ -141,6 +153,7 @@ public class ServiceManager {
 ```
 
 #### Open/Closed Principle
+
 ```java
 // Good example: Open for extension, closed for modification
 public abstract class BaseAdapter {
@@ -156,6 +169,7 @@ public abstract class BaseAdapter {
 ### 2. Method Design
 
 #### Method Length
+
 - Single method should not exceed 50 lines
 - Complex methods should be split into multiple small methods
 - Use meaningful method names
@@ -179,6 +193,7 @@ private ServiceInstance doSelect(List<ServiceInstance> instances, String clientI
 ```
 
 #### Parameter Design
+
 - Method parameters should not exceed 5
 - Use objects to encapsulate multiple related parameters
 - Avoid using boolean parameters
@@ -199,6 +214,7 @@ public LoadBalancer createLoadBalancer(String type, int weight, boolean enabled,
 ### 3. Exception Handling
 
 #### Exception Classification
+
 ```java
 // Business exception: Recoverable errors
 public class ServiceUnavailableException extends RuntimeException {
@@ -216,6 +232,7 @@ public class ConfigurationException extends RuntimeException {
 ```
 
 #### Exception Handling Best Practices
+
 ```java
 // Good example: Specific exception handling
 public Mono<String> processRequest(String requestBody, ServiceInstance instance) {
@@ -239,12 +256,14 @@ public Mono<String> processRequest(String requestBody, ServiceInstance instance)
 ### 4. Logging Standards
 
 #### Log Levels
+
 - **ERROR**: System errors requiring immediate attention
 - **WARN**: Warning information that may affect functionality
 - **INFO**: Important business information
 - **DEBUG**: Debugging information for development environment
 
 #### Log Format
+
 ```java
 // Good example: Structured logging
 log.info("Load balancer selected instance: type={}, instance={}, clientInfo={}", 
@@ -259,6 +278,7 @@ log.error("Error occurred", ex);
 ```
 
 #### Sensitive Information Handling
+
 ```java
 // Good example: Data masking
 log.info("User request: userId={}, requestId={}", 
@@ -275,6 +295,7 @@ private String maskUserId(String userId) {
 ### 5. Comment Standards
 
 #### Class Comments
+
 ```java
 /**
  * Load balancer factory class
@@ -300,6 +321,7 @@ public class LoadBalancerFactory {
 ```
 
 #### Method Comments
+
 ```java
 /**
  * Create load balancer instance based on configuration
@@ -319,6 +341,7 @@ public LoadBalancer createLoadBalancer(LoadBalanceConfig config) {
 ```
 
 #### Complex Logic Comments
+
 ```java
 public ServiceInstance selectByLeastConnections(List<ServiceInstance> instances) {
     // Select instance using least connections algorithm
@@ -347,30 +370,35 @@ public ServiceInstance selectByLeastConnections(List<ServiceInstance> instances)
 ### Review Checklist
 
 #### Functionality
+
 - [ ] Does the code implementation meet requirements
 - [ ] Are boundary conditions handled correctly
 - [ ] Are exception situations properly handled
 - [ ] Is business logic correct
 
 #### Performance
+
 - [ ] Are there performance bottlenecks
 - [ ] Is resource usage reasonable
 - [ ] Is there a risk of memory leaks
 - [ ] Is algorithm complexity reasonable
 
 #### Security
+
 - [ ] Is input validation sufficient
 - [ ] Are there security vulnerabilities
 - [ ] Is sensitive information handled correctly
 - [ ] Is access control in place
 
 #### Maintainability
+
 - [ ] Is code structure clear
 - [ ] Are names meaningful
 - [ ] Are comments sufficient
 - [ ] Are design patterns followed
 
 #### Testing
+
 - [ ] Are unit tests sufficient
 - [ ] Do test cases cover boundary conditions
 - [ ] Is integration testing complete
@@ -388,12 +416,14 @@ public ServiceInstance selectByLeastConnections(List<ServiceInstance> instances)
 ### Quality Metrics Monitoring
 
 #### Code Quality Metrics
+
 - Code coverage trends
 - Code complexity distribution
 - Technical debt statistics
 - Defect density analysis
 
 #### Tool Integration
+
 ```yaml
 # GitHub Actions quality check
 name: Code Quality
@@ -431,16 +461,19 @@ jobs:
 ### Quality Improvement Plan
 
 #### Short-term Goals (1-3 months)
+
 - Increase test coverage to 85%
 - Eliminate all high-priority SpotBugs issues
 - Unify code style, eliminate Checkstyle warnings
 
 #### Medium-term Goals (3-6 months)
+
 - Introduce SonarQube for deep code analysis
 - Establish code quality gate mechanisms
 - Improve code review process
 
 #### Long-term Goals (6-12 months)
+
 - Establish code quality culture
 - Continuous refactoring and optimization
 - Technical debt management
@@ -450,6 +483,7 @@ jobs:
 ### IDE Configuration
 
 #### IntelliJ IDEA
+
 ```xml
 <!-- .idea/codeStyles/Project.xml -->
 <component name="ProjectCodeStyleConfiguration">
@@ -474,6 +508,7 @@ jobs:
 ```
 
 #### VS Code
+
 ```json
 {
   "java.format.settings.url": "checkstyle.xml",
@@ -488,6 +523,7 @@ jobs:
 ### Maven Configuration Optimization
 
 #### Fast Build Configuration
+
 ```xml
 <!-- pom.xml -->
 <profiles>
@@ -504,6 +540,7 @@ jobs:
 ```
 
 #### Quality Check Configuration
+
 ```xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>

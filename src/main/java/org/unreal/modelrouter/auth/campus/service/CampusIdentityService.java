@@ -117,6 +117,7 @@ public class CampusIdentityService {
         // The legacy binding column is NOT NULL, while CAS typeCode is optional.
         binding.setTypeCode(typeCode == null ? "" : typeCode);
         binding.setTypeName(trim(casIdentity.attribute("typeName")));
+        String previousDepartment=departmentKey(binding.getDepartmentCode(),binding.getDepartmentName());
         binding.setDepartmentCode(firstNonBlank(trim(casIdentity.attribute("deptCode")),
                 trim(casIdentity.attribute("departmentCode"))));
         binding.setDepartmentName(firstNonBlank(trim(casIdentity.attribute("deptName")),
@@ -127,7 +128,14 @@ public class CampusIdentityService {
         binding.setEnterpriseId(userIdentity.enterpriseId());
         binding.setEnterpriseName(userIdentity.enterpriseName());
         binding.setCompanyId(userIdentity.companyId());
+        // Use the same department locks as batch administration, including joins and transfers.
+        java.util.stream.Stream.of(previousDepartment,departmentKey(binding.getDepartmentCode(),binding.getDepartmentName()))
+                .distinct().sorted().forEach(department->jdbcTemplate.queryForObject(
+                        "SELECT pg_advisory_xact_lock(hashtextextended(?,0))",Object.class,"department:"+department));
+        jdbcTemplate.queryForObject("SELECT id FROM sldd_system_users WHERE id=? FOR UPDATE",Long.class,systemUser.getId());
         CampusIdentityBindingEntity saved = bindingRepository.save(binding);
+        bindingRepository.flush();
+        new org.unreal.modelrouter.billing.UserUsagePolicyService(jdbcTemplate).membershipChanged(systemUser.getId());
 
         FreeQuotaService quotaService = freeQuotaProvider.getIfAvailable();
         if (quotaService != null && !properties.isUnrestrictedAccess()
@@ -136,12 +144,17 @@ public class CampusIdentityService {
             quotaService.ensureQuota(userIdentity.userId(), new ArrayList<>(roles));
         }
         List<String> portals = portals(roles);
+        userIdentity = userIdentity.withCampusAuthentication();
         return new CampusPrincipal(
                 casIdentity.subject(), account, localAccount, saved.getDisplayName(),
                 saved.getDepartmentCode(), saved.getDepartmentName(), typeCode, saved.getTypeName(),
                 systemUser.getId(), systemUser.getUserId(), userIdentity.verifyStatus(),
                 userIdentity.enterpriseId(), userIdentity.enterpriseName(), userIdentity.companyId(),
                 new ArrayList<>(roles), new ArrayList<>(permissions), portals, userIdentity);
+    }
+
+    private static String departmentKey(String code,String name) {
+        return code!=null&&!code.isBlank()?"code:"+code.trim():name!=null&&!name.isBlank()?"name:"+name.trim():"unassigned";
     }
 
     private String casUserId(final String provider, final String subject) {

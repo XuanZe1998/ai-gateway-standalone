@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document collects the most common issues encountered when using JAiRouter and their solutions.
 
 ## Startup Issues
@@ -16,11 +14,13 @@ This document collects the most common issues encountered when using JAiRouter a
 ### Issue 1: Application Startup Failure
 
 #### Symptoms
+
 ```
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
 ```
 
 #### Possible Causes
+
 1. Port is occupied
 2. Configuration file format error
 3. Dependency conflicts
@@ -28,7 +28,8 @@ Error starting ApplicationContext. To display the conditions report re-run your 
 
 #### Solutions
 
-**Check Port Usage**
+##### Check Port Usage
+
 ```bash
 # Windows
 netstat -ano | findstr :8080
@@ -37,13 +38,15 @@ netstat -ano | findstr :8080
 lsof -i :8080
 ```
 
-**Check Configuration Files**
+##### Check Configuration Files
+
 ```bash
 # Validate YAML format
 ./mvnw spring-boot:run --debug
 ```
 
-**Check Java Version**
+##### Check Java Version
+
 ```bash
 java -version
 # Ensure Java 17 or higher is used
@@ -52,11 +55,13 @@ java -version
 ### Issue 2: Configuration File Loading Failure
 
 #### Symptoms
+
 ```
 Could not resolve placeholder 'model.services.chat.instances[0].name' in value "${model.services.chat.instances[0].name}"
 ```
 
 #### Solutions
+
 ```yaml
 # Ensure application.yml format is correct
 model:
@@ -72,11 +77,13 @@ model:
 ### Issue 3: Insufficient Memory
 
 #### Symptoms
+
 ```
 java.lang.OutOfMemoryError: Java heap space
 ```
 
 #### Solutions
+
 ```bash
 # Increase heap memory size
 java -Xms1g -Xmx2g -jar target/model-router-*.jar
@@ -90,11 +97,13 @@ export JAVA_OPTS="-Xms1g -Xmx2g"
 ### Issue 4: Backend Service Connection Failure
 
 #### Symptoms
+
 ```
 Connection refused: localhost/127.0.0.1:9090
 ```
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check if backend service is running
 curl -v http://localhost:9090/health
@@ -111,6 +120,7 @@ sudo iptables -L
 ```
 
 #### Solutions
+
 1. Ensure backend service is running normally
 2. Check if baseUrl in service configuration is correct
 3. Verify network connectivity and firewall settings
@@ -118,11 +128,13 @@ sudo iptables -L
 ### Issue 5: Request Timeout
 
 #### Symptoms
+
 ```
 Read timeout on GET http://localhost:9090/v1/chat/completions
 ```
 
 #### Solutions
+
 ```yaml
 # Adjust timeout configuration
 spring:
@@ -139,11 +151,13 @@ model:
 ### Issue 6: SSL/TLS Connection Issues
 
 #### Symptoms
+
 ```
 PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException
 ```
 
 #### Solutions
+
 ```bash
 # 1. Trust all certificates (development environment only)
 java -Dcom.sun.net.ssl.checkRevocation=false \
@@ -159,10 +173,12 @@ keytool -import -alias backend-cert -file backend.crt -keystore $JAVA_HOME/lib/s
 ### Issue 7: Long Response Time
 
 #### Symptoms
+
 - API response time exceeds expectations
 - Degraded user experience
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check application performance metrics
 curl http://localhost:8080/actuator/metrics/http.server.requests
@@ -178,7 +194,8 @@ time curl -X POST http://localhost:9090/v1/chat/completions \
 
 #### Solutions
 
-**Optimize Connection Pool Configuration**
+##### Optimize Connection Pool Configuration
+
 ```yaml
 spring:
   webflux:
@@ -188,7 +205,8 @@ spring:
         max-idle-time: 30s
 ```
 
-**Adjust Load Balancing Strategy**
+##### Adjust Load Balancing Strategy
+
 ```yaml
 model:
   services:
@@ -200,10 +218,12 @@ model:
 ### Issue 8: High Memory Usage
 
 #### Symptoms
+
 - JVM heap memory continuously growing
 - Frequent garbage collection
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check memory usage
 curl http://localhost:8080/actuator/metrics/jvm.memory.used
@@ -218,7 +238,8 @@ java -XX:+PrintGC -XX:+PrintGCDetails -Xloggc:gc.log -jar target/model-router-*.
 
 #### Solutions
 
-**Optimize JVM Parameters**
+##### Optimize JVM Parameters
+
 ```bash
 java -Xms2g -Xmx4g \
      -XX:+UseG1GC \
@@ -226,7 +247,8 @@ java -Xms2g -Xmx4g \
      -jar target/model-router-*.jar
 ```
 
-**Enable Rate Limiter Cleanup**
+##### Enable Rate Limiter Cleanup
+
 ```yaml
 model:
   rate-limit:
@@ -239,10 +261,12 @@ model:
 ### Issue 9: High CPU Usage
 
 #### Symptoms
+
 - CPU usage consistently above 80%
 - Slow system response
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check thread status
 jstack <pid> > threads.dump
@@ -258,7 +282,8 @@ java -XX:+FlightRecorder \
 
 #### Solutions
 
-**Optimize Thread Pool Configuration**
+##### Optimize Thread Pool Configuration
+
 ```yaml
 spring:
   task:
@@ -269,7 +294,8 @@ spring:
         queue-capacity: 100
 ```
 
-**Enable Asynchronous Processing**
+##### Enable Asynchronous Processing
+
 ```yaml
 model:
   async:
@@ -282,10 +308,12 @@ model:
 ### Issue 10: Dynamic Configuration Not Taking Effect
 
 #### Symptoms
+
 - Configuration updates via API not taking effect
 - Configuration persistence failure
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check configuration storage status
 curl http://localhost:8080/api/config/store/status
@@ -299,7 +327,8 @@ tail -f logs/jairouter-debug.log | grep -i config
 
 #### Solutions
 
-**Check Storage Configuration**
+##### Check Storage Configuration
+
 ```yaml
 model:
   store:
@@ -308,7 +337,8 @@ model:
     auto-save: true
 ```
 
-**Ensure File Permissions**
+##### Ensure File Permissions
+
 ```bash
 # Ensure application has write permissions
 chmod 755 config/
@@ -318,10 +348,12 @@ chmod 644 config/*.json
 ### Issue 11: Uneven Load Balancing
 
 #### Symptoms
+
 - Some backend instances have high load
 - Other instances are idle
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check instance weight configuration
 curl http://localhost:8080/api/config/instance/type/chat
@@ -335,7 +367,8 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 
 #### Solutions
 
-**Adjust Weight Configuration**
+##### Adjust Weight Configuration
+
 ```yaml
 model:
   services:
@@ -349,7 +382,8 @@ model:
           weight: 1
 ```
 
-**Change Load Balancing Strategy**
+##### Change Load Balancing Strategy
+
 ```yaml
 model:
   services:
@@ -361,10 +395,12 @@ model:
 ### Issue 12: Improper Rate Limiting Configuration
 
 #### Symptoms
+
 - Normal requests being rate limited
 - Or rate limiting not working
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check rate limiting configuration
 curl http://localhost:8080/api/config/rate-limit/status
@@ -380,7 +416,8 @@ done
 
 #### Solutions
 
-**Adjust Rate Limiting Parameters**
+##### Adjust Rate Limiting Parameters
+
 ```yaml
 model:
   services:
@@ -392,7 +429,8 @@ model:
         client-ip-enable: true
 ```
 
-**Check Client IP Retrieval**
+##### Check Client IP Retrieval
+
 ```yaml
 server:
   forward-headers-strategy: framework  # Support proxy headers
@@ -403,10 +441,12 @@ server:
 ### Issue 13: Missing Monitoring Metrics
 
 #### Symptoms
+
 - Prometheus cannot scrape metrics
 - Grafana shows "No data"
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check monitoring endpoint
 curl http://localhost:8080/actuator/prometheus
@@ -420,7 +460,8 @@ telnet localhost 8080
 
 #### Solutions
 
-**Enable Monitoring Endpoints**
+##### Enable Monitoring Endpoints
+
 ```yaml
 management:
   endpoints:
@@ -432,7 +473,8 @@ management:
       enabled: true
 ```
 
-**Check Prometheus Configuration**
+##### Check Prometheus Configuration
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -446,10 +488,12 @@ scrape_configs:
 ### Issue 14: Excessive Log Level
 
 #### Symptoms
+
 - Log files too large
 - Important information buried
 
 #### Solutions
+
 ```yaml
 # application.yml
 logging:
@@ -470,11 +514,13 @@ logging:
 ### Issue 15: Docker Container Startup Failure
 
 #### Symptoms
+
 ```
 docker: Error response from daemon: driver failed programming external connectivity
 ```
 
 #### Solutions
+
 ```bash
 # 1. Check port conflicts
 docker ps -a
@@ -491,10 +537,12 @@ sudo systemctl restart docker
 ### Issue 16: Container Memory Limitations
 
 #### Symptoms
+
 - Container terminated by OOM Killer
 - Application exits abnormally
 
 #### Solutions
+
 ```yaml
 # docker-compose.yml
 services:
@@ -513,6 +561,7 @@ services:
 ## Troubleshooting Tools
 
 ### Health Check Script
+
 ```bash
 #!/bin/bash
 # health-check.sh
@@ -548,6 +597,7 @@ echo "=== Health Check Complete ==="
 ```
 
 ### Log Analysis Script
+
 ```bash
 #!/bin/bash
 # log-analysis.sh
@@ -581,11 +631,13 @@ echo "=== Log Analysis Complete ==="
 ### Issue 17: JWT Token Persistence Not Working
 
 #### Symptoms
+
 - Tokens not being stored persistently
 - Token management APIs returning empty results
 - Blacklist not functioning properly
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check JWT persistence configuration
 curl http://localhost:8080/actuator/configprops | grep jwt.persistence
@@ -602,7 +654,8 @@ tail -f logs/jairouter-debug.log | grep -i "jwt\|persistence\|redis"
 
 #### Solutions
 
-**Enable JWT Persistence**
+##### Enable JWT Persistence
+
 ```yaml
 jairouter:
   security:
@@ -613,7 +666,8 @@ jairouter:
         fallback-storage: memory
 ```
 
-**Check Redis Configuration**
+##### Check Redis Configuration
+
 ```yaml
 spring:
   redis:
@@ -623,7 +677,8 @@ spring:
     timeout: 5000ms
 ```
 
-**Verify Storage Health**
+##### Verify Storage Health
+
 ```bash
 # Test Redis connectivity
 redis-cli -h localhost -p 6379 info replication
@@ -635,11 +690,13 @@ redis-cli -h localhost -p 6379 keys "jwt:*"
 ### Issue 18: High Memory Usage with Token Storage
 
 #### Symptoms
+
 - Memory usage continuously increasing
 - OutOfMemoryError with token persistence enabled
 - Slow token operations
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check token storage metrics
 curl http://localhost:8080/actuator/metrics/jairouter.jwt.tokens.active
@@ -653,7 +710,8 @@ curl http://localhost:8080/api/auth/jwt/blacklist/stats
 
 #### Solutions
 
-**Configure Memory Limits**
+##### Configure Memory Limits
+
 ```yaml
 jairouter:
   security:
@@ -665,7 +723,8 @@ jairouter:
           lru-enabled: true       # Enable LRU eviction
 ```
 
-**Optimize Cleanup Schedule**
+##### Optimize Cleanup Schedule
+
 ```yaml
 jairouter:
   security:
@@ -678,7 +737,8 @@ jairouter:
           batch-size: 2000           # Larger batches
 ```
 
-**Manual Cleanup**
+##### Manual Cleanup
+
 ```bash
 # Trigger manual cleanup
 curl -X POST http://localhost:8080/api/auth/jwt/cleanup \
@@ -690,11 +750,13 @@ curl -X POST http://localhost:8080/api/auth/jwt/cleanup \
 ### Issue 19: Redis Connection Failures
 
 #### Symptoms
+
 - JWT persistence falling back to memory
 - Redis connection timeout errors
 - Token operations failing intermittently
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check Redis server status
 redis-cli -h localhost -p 6379 info server
@@ -711,7 +773,8 @@ curl http://localhost:8080/actuator/metrics/lettuce.command.completion
 
 #### Solutions
 
-**Optimize Redis Configuration**
+##### Optimize Redis Configuration
+
 ```yaml
 spring:
   redis:
@@ -725,7 +788,8 @@ spring:
     connect-timeout: 2000ms
 ```
 
-**Configure Retry Logic**
+##### Configure Retry Logic
+
 ```yaml
 jairouter:
   security:
@@ -736,7 +800,8 @@ jairouter:
           connection-timeout: 3000
 ```
 
-**Enable Fallback Storage**
+##### Enable Fallback Storage
+
 ```yaml
 jairouter:
   security:
@@ -749,11 +814,13 @@ jairouter:
 ### Issue 20: Security Audit Log Issues
 
 #### Symptoms
+
 - Audit logs not being generated
 - Missing security events in logs
 - Audit log files growing too large
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check audit configuration
 curl http://localhost:8080/actuator/configprops | grep security.audit
@@ -772,7 +839,8 @@ grep -i "audit\|security" logs/jairouter.log
 
 #### Solutions
 
-**Enable Security Auditing**
+##### Enable Security Auditing
+
 ```yaml
 jairouter:
   security:
@@ -786,7 +854,8 @@ jairouter:
         enabled: true
 ```
 
-**Configure Log Rotation**
+##### Configure Log Rotation
+
 ```yaml
 jairouter:
   security:
@@ -799,7 +868,8 @@ jairouter:
           max-files: 30
 ```
 
-**Optimize Audit Performance**
+##### Optimize Audit Performance
+
 ```yaml
 jairouter:
   security:
@@ -820,6 +890,7 @@ If the above solutions don't resolve your issue, please:
 4. **Participate in community discussions**: Seek help in the project discussion area
 
 ### Issue Report Template
+
 ```markdown
 ## Issue Description
 Briefly describe the problem encountered
@@ -843,7 +914,9 @@ Describe the actual abnormal behavior
 
 ## Error Logs
 ```
+
 Paste relevant error logs
+
 ```
 
 ## Additional Information

@@ -38,6 +38,9 @@ public class VideoTaskArchiver {
     private final VideoTaskRepository repository;
     private final ObjectMapper objectMapper;
     private final ModelPricingService pricingService;
+    private org.unreal.modelrouter.billing.DepartmentBudgetService departmentBudgets;
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setDepartmentBudgets(org.unreal.modelrouter.billing.DepartmentBudgetService service){this.departmentBudgets=service;}
 
     public VideoTaskArchiver(final VideoTaskRepository repository, final ObjectMapper objectMapper,
                              final ModelPricingService pricingService) {
@@ -100,11 +103,15 @@ public class VideoTaskArchiver {
             entity.setFrames(intOrNull(requestNode.path("frames")));
             entity.setGenerateAudio(boolOrNull(requestNode.path("generate_audio")));
             entity.setDraft(boolOrNull(requestNode.path("draft")));
-            entity.setHasVideoInput(hasVideoInput(requestNode.path("content")));
+            entity.setHasVideoInput(hasVideoInputInRequest(requestNode));
             entity.setRequestSnapshot(sanitizeRequestSnapshot(requestNode));
         }
         // 用户维度
         if (identity != null) {
+            if(identity.usageSnapshot()!=null) {
+                entity.setUsageSnapshot(departmentBudgets.encode(identity.usageSnapshot()));
+                departmentBudgets.bindTask(identity.usageSnapshot(),taskNo);
+            }
             entity.setUserId(identity.userId());
             entity.setUserAccount(identity.userAccount());
             entity.setApiKeyId(identity.apiKeyId());
@@ -118,7 +125,7 @@ public class VideoTaskArchiver {
         }
         entity.setTraceId(traceId);
         entity.setClientIp(clientIp);
-        entity.setSubmittedAt(LocalDateTime.now());
+        entity.setSubmittedAt(LocalDateTime.now(java.time.ZoneId.of("Asia/Shanghai")));
         // 计费规则快照：任务创建时锁定提交时刻的视频计费规则（价格模式/计费单位/模型主键/启用规则行），
         // 结算时优先用快照计价——平台侧后续改价/删规则不影响已提交任务的账单生成（提交时刻锁价）；
         // 创建时定价未命中/非视频模型则快照为 NULL，结算回退实时查询定价（兼容历史数据）
@@ -132,6 +139,15 @@ public class VideoTaskArchiver {
     }
 
     private void saveAsync(final VideoTaskEntity entity, final String taskNo) {
+        if(entity.getUsageSnapshot()!=null) {
+            // Even an immediately completed submission must pass through the terminal-claim settler.
+            if("succeeded".equals(entity.getStatus()))entity.setStatus("submitted");
+            repository.save(entity);
+            if("504".equals(entity.getErrorCode()))departmentBudgets.unconfirmed(departmentBudgets.decode(entity.getUsageSnapshot()),null,"视频提交超时，需核对上游是否已创建任务");
+            else if(java.util.Set.of("failed","expired","cancelled").contains(entity.getStatus()))departmentBudgets.release(departmentBudgets.decode(entity.getUsageSnapshot()));
+            else if(entity.getUpstreamTaskId()==null)departmentBudgets.unconfirmed(departmentBudgets.decode(entity.getUsageSnapshot()),null,"提交响应缺少上游任务 ID，需核对上游");
+            return;
+        }
         Mono.fromRunnable(() -> repository.save(entity))
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe(
@@ -206,6 +222,19 @@ public class VideoTaskArchiver {
             }
         }
         return false;
+    }
+
+    public static Boolean hasVideoInputInRequest(final JsonNode request) {
+        if (request == null || !request.isObject()) return null;
+        for (JsonNode node : new JsonNode[]{request, request.path("input")}) {
+            if (!node.path("video_url").asText("").isBlank()) return true;
+            for (String field : new String[]{"video_urls", "reference_video_urls"}) {
+                if (node.path(field).isArray() && !node.path(field).isEmpty()) return true;
+            }
+        }
+        Boolean contentInput = hasVideoInput(request.path("content"));
+        if (contentInput != null) return contentInput;
+        return request.hasNonNull("prompt") || request.path("input").hasNonNull("prompt") ? false : null;
     }
 
     private static Integer intOrNull(final JsonNode node) {

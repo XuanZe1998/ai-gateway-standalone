@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档收集了用户在使用 JAiRouter 过程中最常遇到的问题和解答。
 
 ## 基础问题
@@ -20,6 +18,7 @@
 ### Q2: JAiRouter 支持哪些 AI 服务？
 
 **A**: 目前支持以下 AI 服务：
+
 - **GPUStack**: GPU 集群管理平台
 - **Ollama**: 本地大语言模型运行平台
 - **VLLM**: 高性能 LLM 推理引擎
@@ -41,6 +40,7 @@
 - **XinferenceAdapter**: 支持最新的 Xinference API 特性
 
 所有适配器都支持：
+
 - 完整的 OpenAI 兼容参数
 - 扩展参数处理（通过 `extra_body`）
 - 标准化的响应格式
@@ -50,6 +50,7 @@
 ### Q3: JAiRouter 与其他 API 网关有什么区别？
 
 **A**: JAiRouter 专门为 AI 模型服务设计，具有以下特色：
+
 - **AI 专用**: 针对 AI 模型服务的特殊需求优化
 - **OpenAI 兼容**: 提供标准的 OpenAI API 格式
 - **智能路由**: 支持多种负载均衡策略
@@ -66,6 +67,7 @@
 ### Q5: JAiRouter 的系统要求是什么？
 
 **A**: 最低系统要求：
+
 - **Java**: 17 或更高版本
 - **内存**: 最少 512MB，推荐 2GB+
 - **CPU**: 最少 1 核，推荐 2 核+
@@ -120,6 +122,7 @@ model:
 ### Q8: 支持哪些部署方式？
 
 **A**: JAiRouter 支持多种部署方式：
+
 - **直接运行**: Java JAR 包直接运行
 - **Docker 容器**: 单容器部署
 - **Docker Compose**: 多容器编排部署
@@ -141,6 +144,7 @@ model:
 ```
 
 各策略特点：
+
 - **random**: 随机选择，简单高效
 - **round-robin**: 轮询调度，分布均匀
 - **least-connections**: 最少连接，适合长连接
@@ -162,6 +166,7 @@ model:
 ```
 
 支持的限流算法：
+
 - **token-bucket**: 令牌桶，支持突发流量
 - **leaky-bucket**: 漏桶，平滑限流
 - **sliding-window**: 滑动窗口，精确控制
@@ -182,6 +187,7 @@ model:
 ```
 
 熔断器有三种状态：
+
 - **CLOSED**: 正常状态，请求正常通过
 - **OPEN**: 熔断状态，直接返回错误
 - **HALF_OPEN**: 半开状态，尝试恢复
@@ -222,16 +228,19 @@ curl -X PUT http://localhost:8080/api/config/instance/update/chat \
 **A**: JAiRouter 提供多种监控方式：
 
 **健康检查**:
+
 ```bash
 curl http://localhost:8080/actuator/health
 ```
 
 **Prometheus 指标**:
+
 ```bash
 curl http://localhost:8080/actuator/prometheus
 ```
 
 **关键指标**:
+
 - 请求总数和成功率
 - 响应时间分布
 - 限流和熔断统计
@@ -241,10 +250,12 @@ curl http://localhost:8080/actuator/prometheus
 ### Q14: 如何查看日志？
 
 **A**: 日志文件位置：
+
 - **容器部署**: `/app/logs/jairouter-debug.log`
 - **直接运行**: `./logs/jairouter-debug.log`
 
 查看实时日志：
+
 ```bash
 # Docker 容器
 docker logs -f jairouter
@@ -254,6 +265,7 @@ tail -f logs/jairouter-debug.log
 ```
 
 调整日志级别：
+
 ```bash
 curl -X POST http://localhost:8080/actuator/loggers/org.unreal.modelrouter \
   -H "Content-Type: application/json" \
@@ -273,6 +285,7 @@ curl -X GET http://localhost:8080/api/config/versions
 ```
 
 恢复配置：
+
 ```bash
 # 恢复配置文件
 cp -r config-backup-20250115/ config/
@@ -289,12 +302,14 @@ docker restart jairouter
 ### Q16: JAiRouter 的性能如何？
 
 **A**: 性能指标（基于标准测试环境）：
+
 - **吞吐量**: 1000+ RPS
 - **延迟**: P95 < 100ms
 - **并发**: 支持 1000+ 并发连接
 - **内存**: 基础运行约 200MB
 
 实际性能取决于：
+
 - 硬件配置
 - 后端服务性能
 - 网络延迟
@@ -305,6 +320,7 @@ docker restart jairouter
 **A**: 性能优化建议：
 
 **JVM 调优**:
+
 ```bash
 java -Xms2g -Xmx4g \
      -XX:+UseG1GC \
@@ -313,6 +329,7 @@ java -Xms2g -Xmx4g \
 ```
 
 **连接池优化**:
+
 ```yaml
 spring:
   webflux:
@@ -323,6 +340,7 @@ spring:
 ```
 
 **缓存配置**:
+
 ```yaml
 model:
   cache:
@@ -349,6 +367,7 @@ model:
 **A**: 常见启动问题和解决方案：
 
 **端口被占用**:
+
 ```bash
 # 检查端口占用
 netstat -tlnp | grep :8080
@@ -356,12 +375,14 @@ netstat -tlnp | grep :8080
 ```
 
 **配置文件错误**:
+
 ```bash
 # 验证 YAML 格式
 ./mvnw spring-boot:run --debug
 ```
 
 **Java 版本不兼容**:
+
 ```bash
 # 检查 Java 版本
 java -version
@@ -373,21 +394,25 @@ java -version
 **A**: 连接问题排查步骤：
 
 1. **检查服务状态**:
-```bash
-curl -v http://backend-server:9090/health
-```
+
+   ```bash
+   curl -v http://backend-server:9090/health
+   ```
 
 2. **检查网络连通性**:
-```bash
-telnet backend-server 9090
-```
+
+   ```bash
+   telnet backend-server 9090
+   ```
 
 3. **检查配置**:
-```bash
-curl http://localhost:8080/api/config/instance/type/chat
-```
+
+   ```bash
+   curl http://localhost:8080/api/config/instance/type/chat
+   ```
 
 4. **查看日志**:
+
 ```bash
 grep -i "connection\|timeout" logs/jairouter-debug.log
 ```
@@ -397,6 +422,7 @@ grep -i "connection\|timeout" logs/jairouter-debug.log
 **A**: 性能问题诊断：
 
 **检查系统资源**:
+
 ```bash
 # CPU 使用率
 curl http://localhost:8080/actuator/metrics/system.cpu.usage
@@ -409,6 +435,7 @@ curl http://localhost:8080/actuator/metrics/jvm.gc.pause
 ```
 
 **分析响应时间**:
+
 ```bash
 # 响应时间分布
 curl http://localhost:8080/actuator/metrics/jairouter.request.duration
@@ -424,6 +451,7 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 **A**: 集成方式：
 
 **作为代理服务**:
+
 ```python
 # Python 示例
 import openai
@@ -439,6 +467,7 @@ response = openai.ChatCompletion.create(
 ```
 
 **作为负载均衡器**:
+
 ```javascript
 // Node.js 示例
 const axios = require('axios');
@@ -502,6 +531,7 @@ public class CustomAdapter extends BaseAdapter {
 ### Q25: 可以商业使用吗？
 
 **A**: 是的，JAiRouter 采用 MIT 许可证，允许商业使用。您可以：
+
 - 在商业项目中使用
 - 修改和定制功能
 - 重新分发（需保留许可证）
@@ -510,6 +540,7 @@ public class CustomAdapter extends BaseAdapter {
 ### Q26: 是否提供技术支持？
 
 **A**: 目前提供的支持方式：
+
 - **社区支持**: GitHub Issues 和 Discussions
 - **文档支持**: 完整的用户文档和 API 文档
 - **示例代码**: 丰富的使用示例
@@ -519,6 +550,7 @@ public class CustomAdapter extends BaseAdapter {
 ### Q27: 如何获得企业级功能？
 
 **A**: 企业级功能规划：
+
 - **多租户支持**: 租户隔离和管理
 - **高级安全**: 企业级认证和授权
 - **专业监控**: 高级监控和分析功能
@@ -531,6 +563,7 @@ public class CustomAdapter extends BaseAdapter {
 ### Q28: JAiRouter 的未来规划是什么？
 
 **A**: 请查看我们的 [发展路线图](roadmap.md)，主要包括：
+
 - 安全和认证体系完善
 - 智能化功能增强
 - 云原生支持
@@ -539,6 +572,7 @@ public class CustomAdapter extends BaseAdapter {
 ### Q29: 如何参与社区？
 
 **A**: 参与方式：
+
 - **GitHub**: 提交 Issue、PR 或参与讨论
 - **文档**: 帮助完善文档和翻译
 - **测试**: 参与功能测试和反馈
@@ -547,11 +581,12 @@ public class CustomAdapter extends BaseAdapter {
 ### Q30: 遇到问题如何求助？
 
 **A**: 求助渠道：
+
 1. **查看文档**: 首先查看相关文档和 FAQ
 2. **搜索 Issues**: 在 GitHub Issues 中搜索类似问题
 3. **提交 Issue**: 创建新的 Issue 详细描述问题
 4. **社区讨论**: 在 GitHub Discussions 中寻求帮助
-5. **邮件联系**: jairouter@example.com
+5. **邮件联系**: <jairouter@example.com>
 
 ---
 
@@ -561,7 +596,7 @@ public class CustomAdapter extends BaseAdapter {
 
 - **GitHub Issues**: [提交问题](https://github.com/Lincoln-cn/JAiRouter/issues)
 - **GitHub Discussions**: [参与讨论](https://github.com/Lincoln-cn/JAiRouter/discussions)
-- **邮件联系**: jairouter@example.com
+- **邮件联系**: <jairouter@example.com>
 
 我们会持续更新 FAQ 内容，为用户提供更好的支持。
 

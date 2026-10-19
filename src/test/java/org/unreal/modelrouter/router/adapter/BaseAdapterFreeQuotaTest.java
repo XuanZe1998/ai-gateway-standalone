@@ -134,7 +134,7 @@ class BaseAdapterFreeQuotaTest {
 
                 when(freeQuotaService.isEnabledFor("user-123", "chat")).thenReturn(true);
                 when(freeQuotaService.getRemainingQuota("user-123", "chat")).thenReturn(500L);
-                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 100L)).thenReturn(hitResult);
+                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 100L, null)).thenReturn(hitResult);
 
                 // When
                 invokeRecordBilling(platformUser, 100L);
@@ -142,7 +142,7 @@ class BaseAdapterFreeQuotaTest {
                 // Then
                 verify(freeQuotaService).isEnabledFor("user-123", "chat");
                 verify(freeQuotaService).getRemainingQuota("user-123", "chat");
-                verify(freeQuotaService).deductStreamingQuota("user-123", "chat", 100L);
+                verify(freeQuotaService).deductStreamingQuota("user-123", "chat", 100L, null);
 
                 // 验证 BillingContext 携带了免费额度标记
                 verify(billingService).recordBilling(argThat(ctx ->
@@ -178,7 +178,7 @@ class BaseAdapterFreeQuotaTest {
 
                 when(freeQuotaService.isEnabledFor("user-456", "embedding")).thenReturn(true);
                 when(freeQuotaService.getRemainingQuota("user-456", "embedding")).thenReturn(200L);
-                when(freeQuotaService.deductStreamingQuota("user-456", "embedding", 50L)).thenReturn(hitResult);
+                when(freeQuotaService.deductStreamingQuota("user-456", "embedding", 50L, null)).thenReturn(hitResult);
 
                 // When
                 invokeRecordBilling(platformUser, ModelServiceRegistry.ServiceType.embedding, 50L);
@@ -224,13 +224,13 @@ class BaseAdapterFreeQuotaTest {
 
                 when(freeQuotaService.isEnabledFor("user-123", "chat")).thenReturn(true);
                 when(freeQuotaService.getRemainingQuota("user-123", "chat")).thenReturn(100L);
-                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 200L)).thenReturn(overageResult);
+                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 200L, null)).thenReturn(overageResult);
 
                 // When
                 invokeRecordBilling(platformUser, 200L);
 
                 // Then - 不应抛异常，且计费记录仍保存，isFreeQuota=true，freeQuotaConsumed=100
-                verify(freeQuotaService).deductStreamingQuota("user-123", "chat", 200L);
+                verify(freeQuotaService).deductStreamingQuota("user-123", "chat", 200L, null);
                 verify(billingService).recordBilling(argThat(ctx ->
                         Boolean.TRUE.equals(ctx.getIsFreeQuota())
                                 && ctx.getFreeQuotaConsumed() != null
@@ -434,7 +434,7 @@ class BaseAdapterFreeQuotaTest {
 
                 when(freeQuotaService.isEnabledFor("user-123", "chat")).thenReturn(true);
                 when(freeQuotaService.getRemainingQuota("user-123", "chat")).thenReturn(500L);
-                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 100L))
+                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 100L, null))
                         .thenThrow(new RuntimeException("Database connection failed"));
 
                 // When - 不应抛出异常
@@ -470,7 +470,7 @@ class BaseAdapterFreeQuotaTest {
 
                 when(freeQuotaService.isEnabledFor("user-123", "chat")).thenReturn(true);
                 when(freeQuotaService.getRemainingQuota("user-123", "chat")).thenReturn(500L);
-                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 100L))
+                when(freeQuotaService.deductStreamingQuota("user-123", "chat", 100L, null))
                         .thenReturn(FreeQuotaResult.hit(100L, 500L, 400L));
                 doThrow(new RuntimeException("Database write failed")).when(billingService).recordBilling(any());
 
@@ -498,14 +498,14 @@ class BaseAdapterFreeQuotaTest {
                 ModelServiceRegistry.ServiceType.class, String.class,
                 long.class, boolean.class, String.class,
                 long.class, long.class, long.class,
-                org.unreal.modelrouter.billing.usage.TokenUsage.class, String.class, UserIdentity.class);
+                org.unreal.modelrouter.billing.usage.TokenUsage.class, String.class, UserIdentity.class,Object.class,long.class,org.springframework.http.ResponseEntity.class);
         method.setAccessible(true);
         method.invoke(testAdapter,
                 "test-adapter", "test-instance", testInstance,
                 serviceType, "gpt-4",
                 1000L, true, null,
                 totalTokens / 2, totalTokens / 2, totalTokens,
-                null, upstreamBody, identity);
+                null, upstreamBody, identity,null,System.currentTimeMillis(),null);
     }
 
     // ========== 计费响应快照 ==========

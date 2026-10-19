@@ -88,12 +88,14 @@ jairouter:
 ### 示例请求
 
 **获取存储层状态**:
+
 ```bash
 curl -X GET http://localhost:8080/api/state-persistence/status \
   -H "Authorization: Bearer {token}"
 ```
 
 **响应示例**:
+
 ```json
 {
   "success": true,

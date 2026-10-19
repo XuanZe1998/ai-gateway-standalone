@@ -7,12 +7,14 @@
 ### 环境准备
 
 #### 系统要求
+
 - **JVM**: OpenJDK 17 或更高版本
 - **内存**: 最小 4GB，推荐 8GB+
 - **CPU**: 4 核心以上
 - **磁盘**: SSD 存储，至少 50GB 可用空间
 
 #### 依赖服务
+
 ```yaml
 # docker-compose.yml 示例
 version: '3.8'
@@ -36,6 +38,7 @@ services:
 ### 生产配置
 
 #### 基础配置
+
 ```yaml
 jairouter:
   tracing:
@@ -76,6 +79,7 @@ jairouter:
 ```
 
 #### JVM 调优
+
 ```bash
 # 生产环境 JVM 参数
 -Xmx8g -Xms8g
@@ -94,6 +98,7 @@ jairouter:
 ### Prometheus 指标配置
 
 #### 指标收集
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -105,6 +110,7 @@ scrape_configs:
 ```
 
 #### 关键指标
+
 ```promql
 # 追踪导出成功率
 rate(jairouter_tracing_spans_exported_total[5m]) / 
@@ -160,6 +166,7 @@ groups:
 ### Grafana 仪表板
 
 #### 核心面板配置
+
 ```json
 {
   "dashboard": {
@@ -199,6 +206,7 @@ groups:
 ### 内存规划
 
 #### Span 内存估算
+
 ```bash
 # 每个 Span 平均占用内存：约 2KB
 # 每秒 1000 个请求，采样率 10%，Span TTL 5分钟
@@ -213,6 +221,7 @@ jairouter:
 ```
 
 #### 动态调整策略
+
 ```yaml
 jairouter:
   tracing:
@@ -230,6 +239,7 @@ jairouter:
 ### 存储规划
 
 #### 日志存储
+
 ```yaml
 # logback-spring.xml
 <configuration>
@@ -422,6 +432,7 @@ esac
 ### 常见应急场景
 
 #### 1. 追踪系统过载
+
 ```bash
 # 紧急降低采样率
 curl -X PUT http://localhost:8080/api/admin/tracing/emergency-config \
@@ -433,6 +444,7 @@ curl -X POST http://localhost:8080/api/admin/tracing/disable \
 ```
 
 #### 2. 导出器故障
+
 ```yaml
 # 切换到备用导出器
 jairouter:
@@ -444,6 +456,7 @@ jairouter:
 ```
 
 #### 3. 内存泄漏
+
 ```bash
 # 强制 GC 和内存清理
 curl -X POST http://localhost:8080/actuator/gc
@@ -453,6 +466,7 @@ curl -X POST http://localhost:8080/api/admin/tracing/force-cleanup
 ### 应急联系方式
 
 建立应急响应流程：
+
 1. **监控告警** → 自动通知运维团队
 2. **问题分类** → 确定影响范围和优先级  
 3. **应急处理** → 执行预定义的应急脚本
@@ -461,21 +475,25 @@ curl -X POST http://localhost:8080/api/admin/tracing/force-cleanup
 ## 最佳实践总结
 
 ### 1. 监控策略
+
 - 设置多层次告警（警告、严重、紧急）
 - 定期检查追踪数据完整性
 - 监控系统资源使用趋势
 
 ### 2. 性能优化
+
 - 根据业务需求调整采样率
 - 定期清理过期数据
 - 合理配置批处理大小
 
 ### 3. 安全管控
+
 - 定期审查敏感数据过滤规则
 - 启用配置变更审计日志
 - 实施最小权限原则
 
 ### 4. 容灾准备
+
 - 建立备份和恢复流程
 - 准备应急响应预案
 - 定期进行故障演练

@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档专门针对中国网络环境提供优化的部署方案，包括网络加速、镜像优化、依赖加速等配置，帮助中国用户获得更好的部署和运行体验。
 
 ## 中国优化概述
@@ -311,17 +309,22 @@ sudo systemctl restart docker
 
 `Dockerfile.china` 已经针对中国网络环境进行了优化：
 
-``dockerfile
+```dockerfile
+
 # 多阶段构建 Dockerfile for JAiRouter (China Optimized)
+
 # 使用阿里云Maven镜像加速构建
+
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 
 # 复制阿里云Maven配置
+
 COPY settings-china.xml /root/.m2/settings.xml
 
 # 复制构建文件
+
 COPY pom.xml .
 COPY src ./src
 COPY checkstyle.xml .
@@ -329,9 +332,11 @@ COPY spotbugs-security-include.xml .
 COPY spotbugs-security-exclude.xml .
 
 # 构建应用程序（使用china profile）
+
 RUN mvn clean package -Pchina -DskipTests
 
 # 运行阶段 - 使用阿里云镜像
+
 FROM registry.cn-hangzhou.aliyuncs.com/acs/openjdk:17-jre-alpine
 
 LABEL maintainer="JAiRouter Team"
@@ -339,19 +344,23 @@ LABEL description="JAiRouter - AI Model Service Routing and Load Balancing Gatew
 LABEL version="1.0-SNAPSHOT"
 
 # 创建应用用户
+
 RUN addgroup -g 1001 jairouter && \
     adduser -D -s /bin/sh -u 1001 -G jairouter jairouter
 
 WORKDIR /app
 
 # 创建必要的目录
+
 RUN mkdir -p /app/logs /app/config /app/config-store && \
     chown -R jairouter:jairouter /app
 
 # 复制JAR文件
+
 COPY --from=builder /app/target/model-router-*.jar app.jar
 
 # 设置环境变量
+
 ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 ENV SPRING_PROFILES_ACTIVE=prod
 ENV SERVER_PORT=8080
@@ -361,9 +370,10 @@ EXPOSE 8080
 USER jairouter
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider <http://localhost:8080/actuator/health> || exit 1
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+
 ```
 
 ## 网络连接优化

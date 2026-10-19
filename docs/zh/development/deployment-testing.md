@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## 概述
 
 本文档介绍如何测试 JAiRouter 文档的自动化部署流程，确保文档能够正确构建和发布到 GitHub Pages。
@@ -26,6 +24,7 @@
 ### Windows 环境
 
 使用 PowerShell：
+
 ```powershell
 # 完整测试
 .\scripts\test-deployment.ps1
@@ -41,6 +40,7 @@
 ```
 
 使用 CMD：
+
 ```cmd
 # 完整测试
 scripts\test-deployment.cmd
@@ -147,6 +147,7 @@ scripts\test-deployment.cmd
 ### 构建失败
 
 1. **依赖问题**
+
    ```bash
    # 重新安装依赖
    pip install --upgrade mkdocs-material
@@ -154,6 +155,7 @@ scripts\test-deployment.cmd
    ```
 
 2. **配置错误**
+
    ```bash
    # 验证配置
    mkdocs config

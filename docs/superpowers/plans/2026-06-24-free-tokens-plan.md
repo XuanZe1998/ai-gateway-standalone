@@ -45,10 +45,12 @@
 ### Task 1: 创建免费额度 JPA 实体与仓库
 
 **Files:**
+
 - Create: `src/main/java/org/unreal/modelrouter/billing/freequota/FreeQuotaEntity.java`
 - Create: `src/main/java/org/unreal/modelrouter/billing/freequota/FreeQuotaRepository.java`
 
 **Interfaces:**
+
 - Produces: `FreeQuotaEntity`（含 `userId`、`totalQuota`、`usedQuota`、`remainingQuota`、`trialExhausted`、`exhaustedAt`、`version`、`createTime`、`updateTime`、`creator`、`updater`、`deleted`）
 - Produces: `FreeQuotaRepository.findByUserIdAndDeletedFalse(String userId)`
 - Produces: `FreeQuotaRepository.deductQuota(...)` / `markExhausted(...)` 更新方法
@@ -190,11 +192,13 @@ git commit -m "feat: 免费额度 JPA 实体与仓库"
 ### Task 2: 创建 FreeQuotaProperties 与 FreeQuotaResult
 
 **Files:**
+
 - Create: `src/main/java/org/unreal/modelrouter/billing/freequota/FreeQuotaProperties.java`
 - Create: `src/main/java/org/unreal/modelrouter/billing/freequota/FreeQuotaResult.java`
 - Create: `src/main/resources/config/billing/free-quota.yml`
 
 **Interfaces:**
+
 - Produces: `FreeQuotaProperties.enabled`、`defaultTotal`、`serviceTypes`
 - Produces: `FreeQuotaResult.hitFreeQuota()`、`deductedTokens()`、`remainingBefore()`、`remainingAfter()`
 
@@ -293,10 +297,12 @@ git commit -m "feat: 免费额度配置属性与结果对象"
 ### Task 3: 创建 FreeQuotaService（核心扣减逻辑）
 
 **Files:**
+
 - Create: `src/main/java/org/unreal/modelrouter/billing/freequota/FreeQuotaService.java`
 - Test: `src/test/java/org/unreal/modelrouter/billing/freequota/FreeQuotaServiceTest.java`
 
 **Interfaces:**
+
 - Consumes: `FreeQuotaRepository`、`FreeQuotaProperties`
 - Produces: `long getRemainingQuota(String userId, String serviceType)`
 - Produces: `FreeQuotaResult deductQuota(String userId, String serviceType, long totalTokens)`
@@ -487,10 +493,12 @@ git commit -m "feat: 免费额度扣减服务与单元测试"
 ### Task 4: 修改 BalanceCheckService
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/billing/BalanceCheckService.java`
 - Test: `src/test/java/org/unreal/modelrouter/billing/BalanceCheckServiceTest.java`
 
 **Interfaces:**
+
 - Consumes: `FreeQuotaService`
 - Produces: `BalanceCheckService` 增加 `freeQuotaService` 依赖
 
@@ -616,10 +624,12 @@ git commit -m "feat: BalanceCheckService 支持免费额度优先校验"
 ### Task 5: 修改 BillingRecordEntity 与 BillingContext
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/persistence/jpa/entity/BillingRecordEntity.java`
 - Modify: `src/main/java/org/unreal/modelrouter/billing/BillingService.java`（内部类 BillingContext）
 
 **Interfaces:**
+
 - Produces: `BillingRecordEntity.isFreeQuota`、`freeQuotaConsumed`
 - Produces: `BillingService.BillingContext.isFreeQuota(Long)`、`freeQuotaConsumed(Long)`
 
@@ -696,9 +706,11 @@ git commit -m "feat: 账单实体与上下文支持免费额度标记"
 ### Task 6: 修改 BaseAdapter（非流式请求同步扣减）
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/router/adapter/BaseAdapter.java`
 
 **Interfaces:**
+
 - Consumes: `FreeQuotaService`、`FreeQuotaResult`
 - Produces: `BaseAdapter` 中构建的 `BillingContext` 携带免费额度结果
 
@@ -765,9 +777,11 @@ git commit -m "feat: 非流式请求同步扣减免费额度并截断超支响�
 ### Task 7: 修改 StreamingRequestProcessor（流式请求同步扣减）
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/router/adapter/processor/StreamingRequestProcessor.java`
 
 **Interfaces:**
+
 - Consumes: `FreeQuotaService`、`FreeQuotaResult`
 - Produces: `recordStreamingTokenUsage` 携带免费额度结果到 `BillingContext`
 
@@ -826,6 +840,7 @@ git commit -m "feat: 流式请求同步扣减免费额度并截断超支响应"
 ### Task 8: 创建 DDL/DML 参考脚本
 
 **Files:**
+
 - Create: `src/main/resources/db/scripts/V1__create_ai_user_free_quota.sql`
 
 - [ ] **Step 1: 创建 SQL 脚本**
@@ -926,9 +941,11 @@ git commit -m "docs: 免费额度 PG DDL/DML 参考脚本"
 ### Task 9: 计费服务集成测试
 
 **Files:**
+
 - Test: `src/test/java/org/unreal/modelrouter/billing/BillingServiceTest.java`
 
 **Interfaces:**
+
 - Consumes: `BillingService`、`FreeQuotaService`、`BalanceDeductionService`、`BillingRecordRepository`
 
 - [ ] **Step 1: 创建 BillingServiceTest**

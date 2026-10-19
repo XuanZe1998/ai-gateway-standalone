@@ -26,6 +26,7 @@ public class FreeQuotaService {
 
     private final FreeQuotaRepository repository;
     private final FreeQuotaProperties properties;
+    private final org.unreal.modelrouter.billing.UserUsagePolicyService usagePolicyService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -103,11 +104,23 @@ public class FreeQuotaService {
         return doDeductQuota(userId, serviceType, totalTokens);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public FreeQuotaResult deductStreamingQuota(String userId,String serviceType,long totalTokens,
+            org.unreal.modelrouter.billing.DepartmentUsageSnapshot snapshot) {
+        if(snapshot!=null&&snapshot.freeUsage())return FreeQuotaResult.miss(0);
+        return doDeductQuota(userId,serviceType,totalTokens,snapshot==null);
+    }
+
     private FreeQuotaResult doDeductQuota(String userId, String serviceType, long totalTokens) {
+        return doDeductQuota(userId,serviceType,totalTokens,true);
+    }
+    private FreeQuotaResult doDeductQuota(String userId, String serviceType, long totalTokens,boolean readLivePolicy) {
         if (!isEnabledFor(userId, serviceType) || totalTokens <= 0) {
             return FreeQuotaResult.miss(0);
         }
 
+        // Administrator-free requests retain their monthly Token allowance.
+        if (readLivePolicy && usagePolicyService.isFreeUsage(userId)) return FreeQuotaResult.miss(0);
         resetExpiredQuota(userId);
 
         int retries = 0;

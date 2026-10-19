@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## 概述
 
 JAiRouter 的 API Key 认证功能为系统提供了安全的访问控制机制。通过 API Key，您可以控制谁可以访问您的 AI 模型服务，并为不同的用户分配不同的权限级别。
@@ -416,12 +414,14 @@ jairouter:
 系统记录以下 API Key 和 JWT 事件：
 
 #### API Key 事件
+
 - **密钥创建**：生成新 API 密钥时
 - **密钥使用**：使用 API 密钥进行认证时
 - **密钥撤销**：撤销 API 密钥时
 - **密钥过期**：API 密钥过期时
 
 #### JWT 令牌事件
+
 - **令牌颁发**：创建新 JWT 令牌时
 - **令牌刷新**：刷新访问令牌时
 - **令牌撤销**：手动撤销令牌时
@@ -429,6 +429,7 @@ jairouter:
 - **令牌过期**：令牌自然过期时
 
 #### 安全事件
+
 - **可疑活动**：异常认证模式
 - **认证失败**：失败的登录尝试
 - **批量操作**：大量令牌/密钥操作
@@ -466,6 +467,7 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 ```
 
 响应包括：
+
 - API Key 和 JWT 操作总数
 - 失败认证统计
 - 可疑活动警报
@@ -508,12 +510,14 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 **问题**：客户端收到 401 Unauthorized 错误
 
 **可能原因**：
+
 - API Key 不正确
 - API Key 已过期
 - API Key 已被禁用
 - 请求头名称不正确
 
 **解决方案**：
+
 1. 检查 API Key 是否正确
 2. 检查 API Key 是否过期
 3. 检查配置中的 `header-name` 设置
@@ -524,10 +528,12 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 **问题**：客户端收到 403 Forbidden 错误
 
 **可能原因**：
+
 - API Key 权限不足
 - 访问了需要更高权限的接口
 
 **解决方案**：
+
 1. 检查 API Key 的权限配置
 2. 为 API Key 添加必要的权限
 3. 使用具有足够权限的 API Key
@@ -537,11 +543,13 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 **问题**：认证响应时间过长
 
 **可能原因**：
+
 - 缓存未启用或配置不当
 - Redis 连接问题
 - API Key 数量过多
 
 **解决方案**：
+
 1. 启用并正确配置缓存
 2. 检查 Redis 连接状态
 3. 优化 API Key 配置
@@ -566,6 +574,7 @@ tail -f logs/security-audit.log | grep authentication
 #### 3. 监控指标
 
 访问 Prometheus 指标端点：
+
 ```
 http://localhost:8080/actuator/prometheus
 ```
@@ -573,6 +582,7 @@ http://localhost:8080/actuator/prometheus
 #### 4. 健康检查
 
 检查系统健康状态：
+
 ```
 http://localhost:8080/actuator/health
 ```
@@ -592,6 +602,7 @@ curl -X GET "http://localhost:8080/api/auth/api-keys/export" \
 ```
 
 响应格式：
+
 ```json
 {
   "keys": [
@@ -641,6 +652,7 @@ curl -X POST "http://localhost:8080/api/auth/api-keys/import" \
 ```
 
 导入结果：
+
 ```json
 {
   "success": true,

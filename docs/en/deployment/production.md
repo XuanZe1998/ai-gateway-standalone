@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document details how to deploy JAiRouter in a production environment, including enterprise-level deployment solutions such as high availability architecture, load balancing configuration, monitoring and alerting, backup and recovery.
 
 ## Production Environment Overview
@@ -23,13 +21,13 @@ This document details how to deploy JAiRouter in a production environment, inclu
 
 ### Deployment Architecture
 
-``mermaid
+```mermaid
 graph TB
     subgraph "External Access Layer"
         A[CDN/WAF]
         B[DNS Load Balancer]
     end
-    
+
     subgraph "Load Balancer Layer"
         C[HAProxy/Nginx]
         D[HAProxy/Nginx Standby]
@@ -82,6 +80,7 @@ graph TB
     P --> Q
     P --> R
     S --> P
+
 ```
 
 ## System Requirements
@@ -1576,7 +1575,7 @@ iostat -x 1
 
 After completing the production environment deployment, you can:
 
-- **[Monitoring Guide](../../monitoring/index.md)** - Deep dive into monitoring configuration
+- **[Monitoring Guide](../monitoring/index.md)** - Deep dive into monitoring configuration
 - **[Troubleshooting](../troubleshooting/index.md)** - Learn fault diagnosis skills
 - **[Performance Tuning](../troubleshooting/performance.md)** - Optimize system performance
 - **[API Reference](../api-reference/index.md)** - Understand management API

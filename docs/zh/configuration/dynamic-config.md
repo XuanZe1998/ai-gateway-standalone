@@ -13,10 +13,10 @@ JAiRouter 提供灵活的配置选项以满足各种部署场景。本指南涵�
 
 从 v1.0.0 版本开始，JAiRouter 采用模块化配置结构：
 
-- 主配置文件: [application.yml](file://D:/IdeaProjects/model-router/src/main/resources/application.yml)
-- 基础配置模块: [config/base/](file://D:/IdeaProjects/model-router/src/main/resources/config/base/) 目录下的文件
-- 功能配置模块: [config/security/](file://D:/IdeaProjects/model-router/src/main/resources/config/security/)、[config/tracing/](file://D:/IdeaProjects/model-router/src/main/resources/config/tracing/) 等目录下的文件
-- 环境配置文件: [application-dev.yml](file://D:/IdeaProjects/model-router/src/main/resources/application-dev.yml)、[application-prod.yml](file://D:/IdeaProjects/model-router/src/main/resources/application-prod.yml) 等
+- 主配置文件: [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- 基础配置模块: [config/base/](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/) 目录下的文件
+- 功能配置模块: [config/security/](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/security/)、[config/tracing/](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/tracing/) 等目录下的文件
+- 环境配置文件: [application-dev.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-dev.yml)、[application-prod.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-prod.yml) 等
 
 虽然配置已模块化，但动态配置 API 仍然可以用于运行时更新实例配置，不影响模块化结构。
 

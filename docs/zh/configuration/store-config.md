@@ -204,6 +204,7 @@ spring:
 访问 `http://localhost:8080/h2-console` 进行管理。
 
 连接信息：
+
 - JDBC URL: `jdbc:h2:file:./data/config`
 - Username: `sa`
 - Password: (留空)
@@ -317,6 +318,7 @@ store:
 ```
 
 启动应用后，系统会自动：
+
 1. 从 `./config/*.json` 迁移配置数据
 2. 从内存/配置文件迁移 API Keys
 3. 从配置文件迁移 JWT 账户
@@ -458,6 +460,7 @@ echo "Backup completed: config_$DATE.mv.db.gz"
 ### 权限问题
 
 如果遇到权限问题，请检查：
+
 - 应用程序运行用户对存储目录的读写权限
 - 父目录的执行权限（进入目录的权限）
 
@@ -468,6 +471,7 @@ echo "Backup completed: config_$DATE.mv.db.gz"
 ### 自动合并功能未生效
 
 如果自动合并功能未生效，请检查：
+
 - `store.auto-merge` 配置是否设置为 true
 - 配置目录是否存在且具有读取权限
 - 配置文件命名是否符合 `model-router-config@<version>.json` 格式
@@ -475,6 +479,7 @@ echo "Backup completed: config_$DATE.mv.db.gz"
 ### 数据库连接失败
 
 如果遇到数据库连接问题，请检查：
+
 - `store.h2.url` 配置是否正确
 - 数据库文件路径是否有写权限
 - 应用日志中的详细错误信息

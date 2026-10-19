@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This guide will help you make your first API call to JAiRouter and understand the basic concepts.
 
 ## Prerequisites
@@ -113,6 +111,7 @@ model:
 ```
 
 With this configuration:
+
 - Server1 will receive ~67% of requests (weight 2)
 - Server2 will receive ~33% of requests (weight 1)
 
@@ -155,6 +154,7 @@ JAiRouter includes built-in rate limiting. If you exceed the configured limits, 
 JAiRouter provides consistent error responses:
 
 ### Service Unavailable (503)
+
 ```json
 {
   "error": {
@@ -166,6 +166,7 @@ JAiRouter provides consistent error responses:
 ```
 
 ### Circuit Breaker Open (503)
+
 ```json
 {
   "error": {
@@ -181,6 +182,7 @@ JAiRouter provides consistent error responses:
 JAiRouter is compatible with OpenAI SDKs. Simply change the base URL:
 
 ### Python
+
 ```python
 from openai import OpenAI
 
@@ -198,6 +200,7 @@ response = client.chat.completions.create(
 ```
 
 ### Node.js
+
 ```javascript
 import OpenAI from 'openai';
 
@@ -223,6 +226,7 @@ Now that you've made your first API calls, learn more about:
 ## Common Use Cases
 
 ### 1. A/B Testing Models
+
 Configure multiple models and use weights to split traffic:
 
 ```yaml
@@ -239,6 +243,7 @@ model:
 ```
 
 ### 2. Fallback Strategy
+
 Configure primary and backup services:
 
 ```yaml
@@ -254,6 +259,7 @@ model:
 ```
 
 ### 3. Geographic Distribution
+
 Route requests to the nearest server based on IP:
 
 ```yaml

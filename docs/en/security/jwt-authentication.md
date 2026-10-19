@@ -3,7 +3,7 @@
 <!-- Version Information -->
 > **Document Version**: 1.0.0  
 > **Last Updated**: 2025-08-19  
-> **Git Commit**:   
+> **Git Commit**:
 > **Author**:
 <!-- /Version Information -->
 
@@ -39,22 +39,25 @@ jairouter:
 
 **Configuration Explanation**  
 To **change the HTTP header used to carry the JWT**, you can add the following when enabling JWT:
+
  ```yaml
  jwt:
    enabled: true
    jwt-header: "Jairouter_Token"
  ```
+
 In this case, JAiRouter will no longer read the default `Authorization` header but will instead read the custom `Jairouter_Token` header to obtain the token. This is suitable for scenarios where the `Authorization` header is shared with existing systems.
 
 ### 2. Set JWT Key
 
 #### Symmetric Key (HS256/HS384/HS512)
+
 ```bash
 # Production Environment JWT Key Configuration
 export PROD_JWT_SECRET="your-very-strong-production-jwt-secret-key-at-least-32-characters-long"
 ```
 
-#### Symmetric Key (HS256/HS384/HS512)
+#### Symmetric Key (HS256/HS384/HS512) — Section
 
 ```bash
 # Production Environment JWT Key Configuration
@@ -163,16 +166,16 @@ curl -X POST http://localhost:8080/api/auth/jwt/login \
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| [enabled](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\config\TraceConfig.java#L12-L12) | boolean | false | Whether to enable JWT authentication |
-| [secret](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityProperties.java#L126-L127) | string | - | JWT signing key (symmetric algorithm) |
+| [enabled](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/config/core/TraceConfig.java) | boolean | false | Whether to enable JWT authentication |
+| [secret](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/SecurityProperties.java) | string | - | JWT signing key (symmetric algorithm) |
 | `public-key` | string | - | JWT public key (asymmetric algorithm) |
 | `private-key` | string | - | JWT private key (asymmetric algorithm) |
-| [algorithm](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityProperties.java#L132-L134) | string | "HS256" | JWT signing algorithm |
+| [algorithm](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/SecurityProperties.java) | string | "HS256" | JWT signing algorithm |
 | `expiration-minutes` | int | 60 | Access token expiration time (minutes) |
 | `refresh-expiration-days` | int | 7 | Refresh token expiration time (days) |
-| [issuer](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityProperties.java#L153-L155) | string | "jairouter" | JWT issuer identifier |
+| [issuer](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/SecurityProperties.java) | string | "jairouter" | JWT issuer identifier |
 | `blacklist-enabled` | boolean | true | Whether to enable blacklist functionality |
-| [accounts](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\JwtUserProperties.java#L14-L14) | array | [] | User account list |
+| [accounts](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/JwtUserProperties.java) | array | [] | User account list |
 
 ### Supported Signing Algorithms
 
@@ -293,7 +296,7 @@ jairouter:
 
 ### Password Encoder Configuration
 
-Configure password encoder in [SecurityConfiguration.java](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityConfiguration.java):
+Configure password encoder in [SecurityConfiguration.java](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/SecurityConfiguration.java):
 
 ```java
 /**
@@ -333,29 +336,33 @@ jairouter:
 ### Refresh Token Flow
 
 1. **Obtain Access Token and Refresh Token**
-```bash
-curl -X POST http://localhost:8080/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{"username": "user", "password": "pass"}'
-```
 
-Response:
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expires_in": 900,
-  "token_type": "Bearer"
-}
-```
+   ```bash
+   curl -X POST http://localhost:8080/auth/login \
+        -H "Content-Type: application/json" \
+        -d '{"username": "user", "password": "pass"}'
+   ```
+
+   Response:
+
+   ```json
+   {
+     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     "expires_in": 900,
+     "token_type": "Bearer"
+   }
+   ```
 
 2. **Use Access Token to Access API**
-```bash
-curl -H "Authorization: Bearer access_token_here" \
-     http://localhost:8080/v1/chat/completions
-```
+
+   ```bash
+   curl -H "Authorization: Bearer access_token_here" \
+        http://localhost:8080/v1/chat/completions
+   ```
 
 3. **Refresh Access Token**
+
 ```bash
 curl -X POST http://localhost:8080/auth/refresh \
      -H "Content-Type: application/json" \
@@ -509,12 +516,14 @@ curl -X POST http://localhost:8080/auth/logout \
 With persistence enabled, you can use the management APIs:
 
 #### Get Token List
+
 ```bash
 curl -X GET "http://localhost:8080/api/auth/jwt/tokens?page=0&size=20&status=ACTIVE" \
      -H "Authorization: Bearer admin_token"
 ```
 
 #### Revoke Specific Token
+
 ```bash
 curl -X POST "http://localhost:8080/api/auth/jwt/tokens/token-uuid-123/revoke" \
      -H "Authorization: Bearer admin_token" \
@@ -523,6 +532,7 @@ curl -X POST "http://localhost:8080/api/auth/jwt/tokens/token-uuid-123/revoke" \
 ```
 
 #### Bulk Token Revocation
+
 ```bash
 curl -X POST "http://localhost:8080/api/auth/jwt/tokens/revoke-batch" \
      -H "Authorization: Bearer admin_token" \
@@ -534,6 +544,7 @@ curl -X POST "http://localhost:8080/api/auth/jwt/tokens/revoke-batch" \
 ```
 
 #### Manual Cleanup
+
 ```bash
 curl -X POST "http://localhost:8080/api/auth/jwt/cleanup" \
      -H "Authorization: Bearer admin_token" \
@@ -542,6 +553,7 @@ curl -X POST "http://localhost:8080/api/auth/jwt/cleanup" \
 ```
 
 #### Get Blacklist Statistics
+
 ```bash
 curl -X GET "http://localhost:8080/api/auth/jwt/blacklist/stats" \
      -H "Authorization: Bearer admin_token"
@@ -593,6 +605,7 @@ jairouter:
 ```
 
 Authentication Priority:
+
 1. If the request contains a JWT token, JWT authentication is used first
 2. If JWT authentication fails or no JWT token exists, API Key authentication is attempted
 3. If both authentication methods fail, a 401 error is returned
@@ -684,6 +697,7 @@ jairouter:
 The system logs the following JWT and API Key events:
 
 #### JWT Token Events
+
 - **Token Issued**: When a new JWT token is created
 - **Token Refreshed**: When an access token is refreshed
 - **Token Revoked**: When a token is manually revoked
@@ -691,12 +705,14 @@ The system logs the following JWT and API Key events:
 - **Token Expired**: When a token naturally expires
 
 #### API Key Events
+
 - **Key Created**: When a new API key is generated
 - **Key Used**: When an API key is used for authentication
 - **Key Revoked**: When an API key is revoked
 - **Key Expired**: When an API key expires
 
 #### Security Events
+
 - **Suspicious Activity**: Unusual authentication patterns
 - **Failed Authentication**: Failed login attempts
 - **Bulk Operations**: Mass token/key operations
@@ -773,6 +789,7 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 ```
 
 Response includes:
+
 - Total JWT and API Key operations
 - Failed authentication statistics
 - Suspicious activity alerts
@@ -782,6 +799,7 @@ Response includes:
 ### Monitoring Metrics
 
 #### JWT Token Metrics
+
 - `jairouter_security_jwt_tokens_issued_total`: Total tokens issued
 - `jairouter_security_jwt_tokens_refreshed_total`: Total tokens refreshed
 - `jairouter_security_jwt_tokens_revoked_total`: Total tokens revoked
@@ -790,12 +808,14 @@ Response includes:
 - `jairouter_security_jwt_active_tokens`: Number of active tokens
 
 #### API Key Metrics
+
 - `jairouter_security_api_keys_created_total`: Total API keys created
 - `jairouter_security_api_keys_used_total`: Total API key usage
 - `jairouter_security_api_keys_revoked_total`: Total API keys revoked
 - `jairouter_security_api_key_validation_duration_seconds`: API key validation duration
 
 #### Storage Metrics
+
 - `jairouter_security_storage_operations_total`: Total storage operations
 - `jairouter_security_storage_errors_total`: Storage operation errors
 - `jairouter_security_h2_connection_status`: H2 connection health
@@ -837,12 +857,14 @@ Response includes:
 **Error Message**: `Invalid JWT token`
 
 **Possible Causes**:
+
 - Incorrect token format
 - Signature validation failure
 - Expired token
 - Incorrect key configuration
 
 **Solutions**:
+
 1. Check if token format is correct
 2. Verify signature key configuration
 3. Check if token has expired
@@ -853,6 +875,7 @@ Response includes:
 **Error Message**: `JWT token has expired`
 
 **Solutions**:
+
 1. Use refresh token to obtain new access token
 2. Re-login to obtain new token
 3. Adjust token expiration time configuration
@@ -862,6 +885,7 @@ Response includes:
 **Error Message**: `JWT token has been revoked`
 
 **Solutions**:
+
 1. Check if token has been revoked
 2. Re-login to obtain new token
 3. Check blacklist cache configuration
@@ -879,8 +903,9 @@ logging:
 #### 2. Token Decoding Tools
 
 Use online tools to decode JWT tokens:
-- https://jwt.io/
-- https://jwt-decoder.com/
+
+- <https://jwt.io/>
+- <https://jwt-decoder.com/>
 
 #### 3. Verify Token Content
 

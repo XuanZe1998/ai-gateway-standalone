@@ -51,6 +51,9 @@ public class VideoTaskSettler {
     private final BillingService billingService;
     private final ModelPricingService pricingService;
     private final org.unreal.modelrouter.billing.ResponseSnapshotBuilder responseSnapshotBuilder;
+    private org.unreal.modelrouter.billing.DepartmentBudgetService departmentBudgets;
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setDepartmentBudgets(org.unreal.modelrouter.billing.DepartmentBudgetService service){this.departmentBudgets=service;}
 
     public VideoTaskSettler(final VideoTaskRepository repository,
                             final BillingService billingService,
@@ -82,7 +85,9 @@ public class VideoTaskSettler {
             return;
         }
         // 后台轮询场景：identity 为 null，从留档字段重建身份（保证计费落账字段完整）
-        final UserIdentity effectiveIdentity = identity != null ? identity : rebuildIdentityFromEntity(entity);
+        final UserIdentity effectiveIdentity = entity.getUsageSnapshot()!=null
+                ? rebuildIdentityFromEntity(entity).withUsageSnapshot(departmentBudgets.decode(entity.getUsageSnapshot()))
+                : identity != null ? identity : rebuildIdentityFromEntity(entity);
         switch (status) {
             case "succeeded" -> settleSuccess(entity, upstreamResp, snapshot, effectiveIdentity, clientIp, traceId);
             case "failed", "expired", "cancelled" -> settleTerminalFailure(entity, status, upstreamResp, snapshot);
@@ -126,6 +131,7 @@ public class VideoTaskSettler {
         int claimed = repository.claimTerminal(entity.getId(), "expired", "404",
                 truncate(reason, MAX_ERROR_MESSAGE), null, LocalDateTime.now());
         if (claimed > 0) {
+            if(departmentBudgets!=null)departmentBudgets.release(departmentBudgets.decode(entity.getUsageSnapshot()));
             logger.info("视频任务置过期: taskNo={}, reason={}", entity.getTaskNo(), reason);
         }
     }
@@ -191,11 +197,15 @@ public class VideoTaskSettler {
                     + "taskNo={}, model={}", entity.getTaskNo(), entity.getModelName());
         }
         Boolean hasVideoInput = entity.getHasVideoInput();
+        BigDecimal inputSeconds = org.unreal.modelrouter.billing.usage.RequestBillingMetadata.inputVideoSeconds(upstreamResp);
+        if (inputSeconds != null && (hasVideoInput == null || inputSeconds.signum() > 0))
+            hasVideoInput = inputSeconds.signum() > 0;
 
         // 上游真实生成耗时（秒）：updated_at - created_at，反映模型实际处理时长而非轮询空窗
         Long upstreamGenerationMs = resolveUpstreamGenerationMs(upstreamResp);
 
         BillingService.BillingContext ctx = BillingService.BillingContext.create()
+                .usageSnapshot(identity.usageSnapshot())
                 .userId(identity.userId())
                 .userAccount(identity.userAccount())
                 .apiKeyId(identity.apiKeyId())
@@ -223,7 +233,8 @@ public class VideoTaskSettler {
                 .platformUser(identity.platformUser())
                 .accountId(resolveAccountId(identity))
                 .accountType(resolveAccountType(identity))
-                .videoUsage(new BillingService.VideoUsage(resolution, hasVideoInput, seconds, completionTokens))
+                .videoUsage(new BillingService.VideoUsage(resolution, hasVideoInput, seconds, completionTokens,
+                        inputSeconds))
                 // 计费规则快照：任务创建时锁定的提交时刻计费规则（V7 billing_rule_snapshot），
                 // 结算优先用快照计价——平台侧后续改价/删规则不影响已提交任务账单；
                 // 快照缺失（创建时定价未命中/历史任务）解析为 null，BillingService 回退实时定价
@@ -263,6 +274,7 @@ public class VideoTaskSettler {
                 truncate(errorMessage, MAX_ERROR_MESSAGE),
                 truncate(snapshot, MAX_RESPONSE_SNAPSHOT), LocalDateTime.now());
         if (claimed > 0) {
+            if(departmentBudgets!=null)departmentBudgets.release(departmentBudgets.decode(entity.getUsageSnapshot()));
             logger.info("视频任务终态落库: taskNo={}, status={}, errorCode={}",
                     entity.getTaskNo(), status, errorCode);
         }

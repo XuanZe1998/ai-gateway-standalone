@@ -226,3 +226,6 @@ config-external/tls-dev/
 
 # Cloudflare Tunnel connector credential (created locally after dashboard setup)
 /.cloudflare-tunnel-token
+
+# Private deployment snapshots and credentials
+/.local-ops/

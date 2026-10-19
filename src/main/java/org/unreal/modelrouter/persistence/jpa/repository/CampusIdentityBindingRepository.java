@@ -7,6 +7,7 @@ import org.unreal.modelrouter.persistence.jpa.entity.CampusIdentityBindingEntity
 import java.util.Optional;
 
 public interface CampusIdentityBindingRepository extends JpaRepository<CampusIdentityBindingEntity, String> {
+    boolean existsBySystemUserIdAndEnabledTrue(Long systemUserId);
     Optional<CampusIdentityBindingEntity> findByIdentityProviderAndExternalSubject(
             String identityProvider, String externalSubject);
 

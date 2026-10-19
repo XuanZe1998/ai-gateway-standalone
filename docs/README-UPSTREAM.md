@@ -1,7 +1,7 @@
 # JAiRouter
 
 <p align="center">
-  <img src="logo/JAiRouterLogo.png" alt="JAiRouter Logo" width="400">
+  <img src="https://raw.githubusercontent.com/XuanZe1998/ai-gateway-standalone/main/logo/JAiRouterLogo.png" alt="JAiRouter Logo" width="400">
 </p>
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Lincoln-cn/JAiRouter)
@@ -9,12 +9,11 @@
 
 JAiRouter is a Spring Boot-based model service routing and load balancing gateway designed to centrally manage and route various AI model services (such as Chat, Embedding, Rerank, TTS, etc.), supporting multiple load balancing strategies, rate limiting, circuit breaking, health checks, dynamic configuration updates, and more.
 
-[中文介绍](README-ZH.md)
+[中文介绍](https://github.com/Lincoln-cn/JAiRouter/blob/master/README-ZH.md)
 
 > ⚠️ **LTS Release Notice**: `v2.6.11` is the final Long-Term Support version. No new features will be added to this branch. v3.0 is indefinitely postponed due to limited community demand. The v2.6.x LTS branch will continue to receive security patches, critical bug fixes, and dependency updates for 24 months.
 
 ---
-
 
 ## 🧭 Feature Overview (Web Console)
 
@@ -89,7 +88,7 @@ docker pull sodlinken/jairouter:latest
 
 **New in v1.8.0**: Key generation tool for automatic generation of secure JWT secrets and admin passwords.
 
-**Option 1: Using Docker (Recommended)**
+#### Option 1: Using Docker (Recommended)
 
 ```bash
 # Generate JWT secret (Base64 encoded, at least 32 characters)
@@ -108,7 +107,7 @@ docker run --rm sodlinken/jairouter:latest java -jar /app/modelrouter.jar --gene
 # Password Strength: Strong
 ```
 
-**Option 2: Using OpenSSL (No jar needed)**
+#### Option 2: Using OpenSSL (No jar needed)
 
 ```bash
 # Generate JWT secret
@@ -120,7 +119,7 @@ openssl rand -base64 24 | tr -dc 'A-Za-z0-9!@#$%^&*' | head -c 16
 
 ### 3. Run Container
 
-**Option 1: Using generated keys (Recommended)**
+#### Option 1: Using generated keys (Recommended)
 
 ```bash
 # Set environment variables
@@ -137,7 +136,7 @@ docker run -d \
   sodlinken/jairouter:latest
 ```
 
-**Option 2: Using default password (Development only)**
+#### Option 2: Using default password (Development only)
 
 ```bash
 docker run -d \
@@ -155,29 +154,26 @@ docker run -d \
 curl http://localhost:8080/admin/login
 ```
 
-![](./docs/capture/login.png)
-
 **Default Login Credentials**:
+
 - Username: `admin`
 - Password: The value of `INITIAL_ADMIN_PASSWORD` environment variable set at startup
   - **Development environment default**: `ChangeMeOnFirstStartup123456` (when not set)
   - **Production environment**: Must be set via environment variable, otherwise security warnings will be issued during startup
   - **Recommended**: Generate a strong password using the key generation tool:
+
     ```bash
     docker run --rm sodlinken/jairouter:latest java -jar /app/modelrouter.jar --generate-password
     ```
 
 After successful login, you can enter the web interface to perform service configuration, management, tracing, and performance analysis operations.
 
-![](./docs/capture/dashboard.png)
-
-
 ## 📘 API Documentation
 
 After starting the project, you can access the automatically generated API documentation at the following addresses:
 
-- **Swagger UI**: http://127.0.0.1:8080/swagger-ui/index.html
-- **OpenAPI JSON**: http://127.0.0.1:8080/v3/api-docs
+- **Swagger UI**: <http://127.0.0.1:8080/swagger-ui/index.html>
+- **OpenAPI JSON**: <http://127.0.0.1:8080/v3/api-docs>
 
 ## 📌 Development Roadmap (Status Update)
 
@@ -277,7 +273,7 @@ After starting the project, you can access the automatically generated API docum
 
 ---
 
-📖 **Full Documentation & Deployment Guide**: [Click Here](https://jairouter.com)
+📖 **Full Documentation & Deployment Guide**: [Project roadmap](https://jairouter.com)
 🐙 **Source Code Repository**: [GitHub - JAiRouter](https://github.com/Lincoln-cn/jairouter)
 
 ---

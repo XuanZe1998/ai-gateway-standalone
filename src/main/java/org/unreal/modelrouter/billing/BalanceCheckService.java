@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.unreal.modelrouter.auth.security.model.UserIdentity;
 import org.unreal.modelrouter.auth.security.util.RealNameAuthUtils;
-import org.unreal.modelrouter.billing.freequota.FreeQuotaService;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -15,8 +14,8 @@ import java.math.BigDecimal;
 
 /**
  * 请求前余额校验服务。
- * 在 BaseAdapter.processRequest() 中调用，余额 < 0 时拒绝请求。
- * 余额 ≥ 0 时允许请求通过（扣减后可能变为负数，由下次请求前校验拦截）。
+ * 在 BaseAdapter.processRequest() 中调用，余额 ≤ 0 时拒绝请求。
+ * 余额 > 0 时允许请求通过（扣减后可能变为负数，由下次请求前校验拦截）。
  * 企业用户和个人用户统一按 ai_account_balance 余额校验。
  */
 @Slf4j
@@ -25,17 +24,36 @@ import java.math.BigDecimal;
 public class BalanceCheckService {
 
     private final EnterpriseLookupService enterpriseLookupService;
-    private final FreeQuotaService freeQuotaService;
     private final ModelPricingService pricingService;
+    private final UserUsagePolicyService usagePolicyService;
+    private DepartmentBudgetService departmentBudgets;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setDepartmentBudgets(DepartmentBudgetService service) { this.departmentBudgets=service; }
+
+    public Mono<UserIdentity> prepare(UserIdentity identity,String service,String model,String channel,Object request) {
+        return Mono.fromCallable(()->departmentBudgets==null?identity:departmentBudgets.admit(identity,service,model,channel,request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(prepared->checkBalance(prepared,service).thenReturn(prepared)
+                        .onErrorResume(error->release(prepared).then(Mono.error(error))));
+    }
+    public Mono<Void> release(UserIdentity identity) {
+        return Mono.fromRunnable(()->{if(departmentBudgets!=null&&identity!=null)departmentBudgets.release(identity.usageSnapshot());})
+                .subscribeOn(Schedulers.boundedElastic()).then();
+    }
+    public Mono<Void> uncertain(UserIdentity identity,String reason) {
+        return Mono.fromRunnable(()->{if(departmentBudgets!=null&&identity!=null)departmentBudgets.unconfirmed(identity.usageSnapshot(),null,reason);})
+                .subscribeOn(Schedulers.boundedElastic()).then();
+    }
 
     /**
-     * 校验实名认证状态与余额。
+     * 校验调用资格与余额。
      * - 本地 API Key / JWT / SYSTEM 用户（platformUser=false）：跳过
-     * - 平台用户：必须严格成对实名认证（user_type=1/verify_status=4 或 user_type=2/verify_status=2），否则 403
-     * - 文本类服务优先检查剩余免费额度，有则放行
+     * - 校园用户：统一认证通过即可；其他平台用户仍须实名认证，否则 403
+     * - 管理员授权的免费使用豁免余额门槛；月度免费 Token 不豁免
      * - 企业用户（userType=1）：accountId=companyId，检查 ai_account_balance 余额
      * - 个人用户（userType=2）：accountId=userId，检查 ai_account_balance 余额
-     * - 余额 < 0 返回 402
+     * - 余额 ≤ 0 返回 402
      */
     public Mono<Void> checkBalance(UserIdentity identity, String serviceType) {
         if (identity == null) {
@@ -43,14 +61,19 @@ public class BalanceCheckService {
             return Mono.empty();
         }
 
-        // 非平台用户跳过余额校验
+        // Reject saved sessions issued by the retired CAS balance-bypass switch.
+        if (!identity.platformUser() && identity.systemUserId() != null) {
+            return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "校园会话已过期，请重新登录以加载计费身份。"));
+        }
+        // 非平台内部用户跳过余额校验
         if (!identity.platformUser()) {
             log.info("余额校验跳过: 非平台用户, user={}", identity.userAccount());
             return Mono.empty();
         }
 
-        // 平台用户：实名认证兜底校验
-        if (!RealNameAuthUtils.isRealNameAuthenticated(identity.userType(), identity.verifyStatus())) {
+        // 校园认证赋予调用资格；所有平台用户仍经过下面的余额校验。
+        if (!identity.campusAuthenticated()
+                && !RealNameAuthUtils.isRealNameAuthenticated(identity.userType(), identity.verifyStatus())) {
             log.warn("实名认证校验失败: user={}, userType={}, verifyStatus={}",
                     identity.userAccount(), identity.userType(), identity.verifyStatus());
             return Mono.error(new ResponseStatusException(
@@ -59,55 +82,35 @@ public class BalanceCheckService {
             ));
         }
 
-        // 平台用户且属于文本类服务：优先检查免费额度（在 boundedElastic 上执行 JPA，避免阻塞 Netty）
-        return Mono.fromCallable(() -> {
-            if (!freeQuotaService.isEnabledFor(identity.userId(), serviceType)) {
-                return false;
-            }
-            return freeQuotaService.getRemainingQuota(identity.userId(), serviceType) > 0;
-        }).subscribeOn(Schedulers.boundedElastic())
-                .flatMap(hasFreeQuota -> {
-                    if (hasFreeQuota) {
-                        log.info("免费额度校验通过, user={}, serviceType={}", identity.userId(), serviceType);
-                        return Mono.empty();
+        if(identity.usageSnapshot()!=null&&identity.usageSnapshot().departmentFunded())return Mono.empty();
+        return Mono.fromCallable(() -> identity.usageSnapshot()!=null?identity.usageSnapshot().freeUsage():usagePolicyService.isFreeUsage(identity.userId()))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(free -> free ? Mono.empty() : checkPaidBalance(identity));
+    }
+
+    private Mono<Void> checkPaidBalance(UserIdentity identity) {
+        AccountRef accountRef;
+        if(identity.usageSnapshot()!=null) {
+            var snapshot=identity.usageSnapshot();
+            accountRef=snapshot.accountId()==null||snapshot.accountId().isBlank()||snapshot.accountType()==null?null:
+                    new AccountRef(snapshot.accountId(),snapshot.accountType());
+        } else accountRef=resolveAccountRef(identity);
+        if (accountRef == null) {
+            return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "账户信息不完整，请联系管理员。"));
+        }
+        // 免费 Token 只影响本次计费，不豁免请求前的可用余额门槛。
+        return Mono.fromCallable(() -> enterpriseLookupService.lookupByAccount(
+                        accountRef.accountId(), accountRef.accountType()))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(info -> {
+                    BigDecimal balance = info.map(EnterpriseLookupService.EnterpriseInfo::getBalance)
+                            .orElse(BigDecimal.ZERO);
+                    if (balance.compareTo(BigDecimal.ZERO) <= 0) {
+                        return Mono.error(new ResponseStatusException(HttpStatus.PAYMENT_REQUIRED,
+                                "账户余额不足，可用余额必须大于 0，请联系管理员分配额度或充值。"));
                     }
-
-                    // 确定账户标识
-                    AccountRef accountRef = resolveAccountRef(identity);
-                    if (accountRef == null) {
-                        log.warn("账户标识解析失败, user={}, userType={}, companyId={}, userId={}",
-                                identity.userAccount(), identity.userType(), identity.companyId(), identity.userId());
-                        return Mono.error(new ResponseStatusException(
-                                HttpStatus.FORBIDDEN,
-                                "账户信息不完整，请联系管理员。"
-                        ));
-                    }
-
-                    log.info("余额校验: user={}, accountId={}, accountType={}",
-                            identity.userAccount(), accountRef.accountId(), accountRef.accountType());
-
-                    return Mono.fromCallable(() -> enterpriseLookupService.lookupByAccount(
-                            accountRef.accountId(), accountRef.accountType()))
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .flatMap(optInfo -> {
-                                EnterpriseLookupService.EnterpriseInfo info = optInfo.orElse(null);
-
-                                // 账户不存在视为余额 0，按余额不足处理
-                                BigDecimal balance = info != null ? info.getBalance() : BigDecimal.ZERO;
-
-                                if (balance.compareTo(BigDecimal.ZERO) <= 0) {
-                                    log.info("账户余额不足, user={}, accountId={}, balance={}",
-                                            identity.userAccount(), accountRef.accountId(), balance);
-                                    return Mono.error(new ResponseStatusException(
-                                            HttpStatus.PAYMENT_REQUIRED,
-                                            "账户余额不足，请充值。"
-                                    ));
-                                }
-
-                                log.debug("余额校验通过, user={}, accountId={}, balance={}",
-                                        identity.userAccount(), accountRef.accountId(), balance);
-                                return Mono.empty();
-                            });
+                    return Mono.empty();
                 });
     }
 

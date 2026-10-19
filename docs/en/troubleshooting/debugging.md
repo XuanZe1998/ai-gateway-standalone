@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document provides debugging techniques, tool usage, and problem localization methods for JAiRouter.
 
 ## Debugging Environment Configuration
@@ -16,6 +14,7 @@ This document provides debugging techniques, tool usage, and problem localizatio
 ### Development Environment Debugging
 
 #### Enable Debug Mode
+
 ```yaml
 # application-dev.yml
 logging:
@@ -33,7 +32,8 @@ spring:
 
 #### IDE Debug Configuration
 
-**IntelliJ IDEA**
+##### IntelliJ IDEA
+
 ```
 Run/Debug Configurations:
 - Main class: org.unreal.modelrouter.ModelRouterApplication
@@ -42,7 +42,8 @@ Run/Debug Configurations:
 - Environment variables: SPRING_PROFILES_ACTIVE=dev
 ```
 
-**VS Code**
+##### VS Code
+
 ```json
 {
   "type": "java",
@@ -61,6 +62,7 @@ Run/Debug Configurations:
 ### Remote Debugging
 
 #### Enable Remote Debugging
+
 ```bash
 # Add debug parameters when starting the application
 java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
@@ -68,6 +70,7 @@ java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
 ```
 
 #### Docker Remote Debugging
+
 ```yaml
 # docker-compose-debug.yml
 version: '3.8'
@@ -87,6 +90,7 @@ services:
 ### Log Level Configuration
 
 #### Global Log Configuration
+
 ```yaml
 # application.yml
 logging:
@@ -107,6 +111,7 @@ logging:
 ```
 
 #### Dynamic Log Level Adjustment
+
 ```bash
 # Adjust log level at runtime
 curl -X POST http://localhost:8080/actuator/loggers/org.unreal.modelrouter \
@@ -120,6 +125,7 @@ curl http://localhost:8080/actuator/loggers/org.unreal.modelrouter
 ### Structured Logging
 
 #### Add Trace ID
+
 ```java
 @Component
 public class TraceIdFilter implements WebFilter {
@@ -136,6 +142,7 @@ public class TraceIdFilter implements WebFilter {
 ```
 
 #### Key Point Logging
+
 ```java
 @Service
 public class LoadBalancerService {
@@ -159,6 +166,7 @@ public class LoadBalancerService {
 ### Log Analysis Tools
 
 #### Real-time Log Monitoring
+
 ```bash
 # View logs in real-time
 tail -f logs/jairouter-debug.log
@@ -174,6 +182,7 @@ grep "ERROR" logs/jairouter-debug.log | tail -10
 ```
 
 #### Log Analysis Script
+
 ```bash
 #!/bin/bash
 # log-analyzer.sh
@@ -213,6 +222,7 @@ echo "Log analysis completed, report saved to: $REPORT_FILE"
 ### HTTP Request Debugging
 
 #### Using curl for Debugging
+
 ```bash
 # Verbose output mode
 curl -v -X POST http://localhost:8080/v1/chat/completions \
@@ -237,6 +247,7 @@ curl -w "@curl-format.txt" -o /dev/null -s http://localhost:8080/v1/chat/complet
 ```
 
 #### Using httpie for Debugging
+
 ```bash
 # Install httpie
 pip install httpie
@@ -257,6 +268,7 @@ http --print=HhBb POST localhost:8080/v1/chat/completions \
 ### Network Connection Debugging
 
 #### Port and Connection Checking
+
 ```bash
 # Check port listening
 netstat -tlnp | grep :8080
@@ -276,6 +288,7 @@ sudo firewall-cmd --list-all
 ```
 
 #### Network Packet Analysis
+
 ```bash
 # Capture packets with tcpdump
 sudo tcpdump -i any -w jairouter.pcap port 8080
@@ -292,6 +305,7 @@ sudo tcpdump -i any -A -s 0 port 8080
 ### Memory Debugging
 
 #### Heap Memory Analysis
+
 ```bash
 # View heap memory usage
 jstat -gc <pid>
@@ -308,6 +322,7 @@ jmap -histo <pid> | head -20
 ```
 
 #### Memory Leak Detection
+
 ```bash
 # Enable memory leak detection
 java -XX:+HeapDumpOnOutOfMemoryError \
@@ -324,6 +339,7 @@ java -XX:+HeapDumpOnOutOfMemoryError \
 ### Thread Debugging
 
 #### Thread Dump Analysis
+
 ```bash
 # Generate thread dump
 jstack <pid> > threads.dump
@@ -339,6 +355,7 @@ grep "java.lang.Thread.State" threads.dump | sort | uniq -c
 ```
 
 #### Thread Monitoring
+
 ```java
 @Component
 public class ThreadMonitor {
@@ -368,6 +385,7 @@ public class ThreadMonitor {
 ### Performance Debugging
 
 #### CPU Performance Analysis
+
 ```bash
 # Use Java Flight Recorder
 java -XX:+FlightRecorder \
@@ -383,6 +401,7 @@ java -jar async-profiler.jar -d 60 -f profile.html <pid>
 ```
 
 #### Method-level Performance Analysis
+
 ```java
 @Component
 public class PerformanceMonitor {
@@ -423,6 +442,7 @@ public @interface Monitored {
 ### Reactor Debugging
 
 #### Enable Debug Mode
+
 ```java
 @SpringBootApplication
 public class ModelRouterApplication {
@@ -437,6 +457,7 @@ public class ModelRouterApplication {
 ```
 
 #### Reactive Stream Debugging
+
 ```java
 @Service
 public class ChatService {
@@ -466,6 +487,7 @@ public class ChatService {
 ```
 
 #### Backpressure Debugging
+
 ```java
 @Component
 public class BackpressureMonitor {
@@ -487,6 +509,7 @@ public class BackpressureMonitor {
 ### Configuration Validation
 
 #### Configuration Property Checking
+
 ```bash
 # View all configuration properties
 curl http://localhost:8080/actuator/configprops | jq
@@ -499,6 +522,7 @@ curl http://localhost:8080/actuator/env/model.services | jq
 ```
 
 #### Configuration Binding Debugging
+
 ```java
 @ConfigurationProperties(prefix = "model")
 @Validated
@@ -525,6 +549,7 @@ public class ModelConfiguration {
 ### Dynamic Configuration Debugging
 
 #### Configuration Update Tracking
+
 ```java
 @Component
 public class ConfigurationChangeListener {
@@ -543,6 +568,7 @@ public class ConfigurationChangeListener {
 ### Spring Boot Actuator
 
 #### Enable Debug Endpoints
+
 ```yaml
 management:
   endpoints:
@@ -557,6 +583,7 @@ management:
 ```
 
 #### Custom Health Check
+
 ```java
 @Component
 public class BackendHealthIndicator implements HealthIndicator {
@@ -588,6 +615,7 @@ public class BackendHealthIndicator implements HealthIndicator {
 ### External Debugging Tools
 
 #### Zipkin Distributed Tracing
+
 ```yaml
 # Add dependencies
 spring:
@@ -599,6 +627,7 @@ spring:
 ```
 
 #### Prometheus Monitoring
+
 ```java
 @Component
 public class CustomMetrics {
@@ -627,16 +656,19 @@ public class CustomMetrics {
 ### 1. Layered Debugging Strategy
 
 #### Network Layer Debugging
+
 - Use network packet capture tools to analyze requests/responses
 - Check DNS resolution and connection establishment
 - Verify SSL/TLS handshake process
 
 #### Application Layer Debugging
+
 - Add logging for critical paths
 - Use breakpoints to debug business logic
 - Monitor method execution time
 
 #### Data Layer Debugging
+
 - Check configuration data loading and parsing
 - Verify data transformation and serialization
 - Monitor cache hit rates
@@ -644,12 +676,14 @@ public class CustomMetrics {
 ### 2. Problem Localization Process
 
 #### Quick Localization
+
 1. Check application health status
 2. Review recent error logs
 3. Verify configuration correctness
 4. Test network connectivity
 
 #### In-depth Analysis
+
 1. Enable detailed logging
 2. Use performance analysis tools
 3. Analyze memory and thread states
@@ -658,6 +692,7 @@ public class CustomMetrics {
 ### 3. Debugging Environment Management
 
 #### Development Environment
+
 ```yaml
 # application-dev.yml
 logging:
@@ -677,6 +712,7 @@ spring:
 ```
 
 #### Test Environment
+
 ```yaml
 # application-test.yml
 logging:
@@ -691,6 +727,7 @@ management:
 ```
 
 #### Production Environment
+
 ```yaml
 # application-prod.yml
 logging:
@@ -707,12 +744,14 @@ management:
 ### 4. Debugging Toolbox
 
 #### Essential Tools
+
 - **curl/httpie**: HTTP request testing
 - **jstack/jmap**: JVM debugging
 - **tcpdump/wireshark**: Network analysis
 - **ab/wrk**: Performance testing
 
 #### Recommended Tools
+
 - **VisualVM**: JVM performance analysis
 - **Eclipse MAT**: Memory analysis
 - **async-profiler**: CPU performance analysis

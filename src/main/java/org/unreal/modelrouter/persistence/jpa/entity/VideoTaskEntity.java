@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
     @Index(name = "idx_video_task_submitted", columnList = "submitted_at")
 })
 public class VideoTaskEntity {
+    @Column(name="usage_snapshot",columnDefinition="TEXT") private String usageSnapshot;
 
     /** 主键 ID，数据库自增 */
     @Id

@@ -18,6 +18,7 @@ JAiRouter v1.8.0+ 引入了启动时配置验证机制，自动检测关键配�
 **配置项**: `RATE_LIMIT_CAPACITY` (环境变量)
 
 **验证规则**:
+
 | 规则类型 | 最小值 | 最大值 | 说明 |
 |----------|--------|--------|------|
 | 错误 | 1 | - | 限流容量必须大于 0 |
@@ -26,6 +27,7 @@ JAiRouter v1.8.0+ 引入了启动时配置验证机制，自动检测关键配�
 **推荐值**: 100 - 10000
 
 **示例**:
+
 ```bash
 # 正确配置
 export RATE_LIMIT_CAPACITY=1000
@@ -44,6 +46,7 @@ export RATE_LIMIT_CAPACITY=200000
 **配置项**: `RATE_LIMIT_RATE` (环境变量)
 
 **验证规则**:
+
 | 规则类型 | 最小值 | 最大值 | 说明 |
 |----------|--------|--------|------|
 | 错误 | 1 | - | 限流速率必须大于 0 |
@@ -52,6 +55,7 @@ export RATE_LIMIT_CAPACITY=200000
 **推荐值**: 10 - 1000 (请求/秒)
 
 **示例**:
+
 ```bash
 # 正确配置
 export RATE_LIMIT_RATE=100
@@ -67,6 +71,7 @@ export RATE_LIMIT_RATE=0
 **配置项**: `CIRCUIT_BREAKER_FAILURE_THRESHOLD` (环境变量)
 
 **验证规则**:
+
 | 规则类型 | 最小值 | 最大值 | 说明 |
 |----------|--------|--------|------|
 | 错误 | 1 | - | 熔断器失败阈值必须大于 0 |
@@ -75,6 +80,7 @@ export RATE_LIMIT_RATE=0
 **推荐值**: 5 - 20
 
 **示例**:
+
 ```bash
 # 正确配置
 export CIRCUIT_BREAKER_FAILURE_THRESHOLD=5
@@ -90,6 +96,7 @@ export CIRCUIT_BREAKER_FAILURE_THRESHOLD=150
 **配置项**: `CIRCUIT_BREAKER_TIMEOUT` (环境变量，单位：毫秒)
 
 **验证规则**:
+
 | 规则类型 | 最小值 | 最大值 | 说明 |
 |----------|--------|--------|------|
 | 错误 | 1000 | - | 熔断器超时不能小于 1 秒 |
@@ -98,6 +105,7 @@ export CIRCUIT_BREAKER_FAILURE_THRESHOLD=150
 **推荐值**: 30000 - 120000 (30 秒 -2 分钟)
 
 **示例**:
+
 ```bash
 # 正确配置
 export CIRCUIT_BREAKER_TIMEOUT=60000
@@ -116,6 +124,7 @@ export CIRCUIT_BREAKER_TIMEOUT=400000
 **配置项**: `JWT_EXPIRATION_MINUTES` (环境变量，单位：分钟)
 
 **验证规则**:
+
 | 规则类型 | 最小值 | 最大值 | 说明 |
 |----------|--------|--------|------|
 | 错误 | 1 | - | JWT 过期时间必须大于 0 分钟 |
@@ -124,6 +133,7 @@ export CIRCUIT_BREAKER_TIMEOUT=400000
 **推荐值**: 60 - 480 (1 小时 -8 小时)
 
 **示例**:
+
 ```bash
 # 正确配置
 export JWT_EXPIRATION_MINUTES=120
@@ -139,6 +149,7 @@ export JWT_EXPIRATION_MINUTES=2000
 **配置项**: `SERVER_PORT` (环境变量)
 
 **验证规则**:
+
 | 规则类型 | 最小值 | 最大值 | 说明 |
 |----------|--------|--------|------|
 | 错误 | 1 | 65535 | 端口必须在有效范围内 |
@@ -147,6 +158,7 @@ export JWT_EXPIRATION_MINUTES=2000
 **推荐值**: 8080, 8443, 3000 等高位端口
 
 **示例**:
+
 ```bash
 # 正确配置
 export SERVER_PORT=8080
@@ -165,6 +177,7 @@ export SERVER_PORT=80
 **配置项**: `SERVER_TOMCAT_THREADS_MAX` (环境变量)
 
 **验证规则**:
+
 | 规则类型 | 最小值 | 最大值 | 说明 |
 |----------|--------|--------|------|
 | 错误 | 1 | - | 线程池大小必须大于 0 |
@@ -173,6 +186,7 @@ export SERVER_PORT=80
 **推荐值**: 50 - 200
 
 **示例**:
+
 ```bash
 # 正确配置
 export SERVER_TOMCAT_THREADS_MAX=100
@@ -186,17 +200,20 @@ export SERVER_TOMCAT_THREADS_MAX=600
 ## 验证级别说明
 
 ### ✅ OK (通过)
+
 - 配置在合理范围内
 - 不会输出日志（DEBUG 级别除外）
 - 应用正常启动
 
 ### ⚠️ WARN (警告)
+
 - 配置可能不是最优，但可以接受
 - 输出警告日志
 - **不阻止应用启动**
 - 建议根据提示优化配置
 
 ### ❌ ERROR (错误)
+
 - 配置存在明显问题
 - 输出错误日志
 - **不阻止应用启动**，但强烈建议修正
@@ -207,6 +224,7 @@ export SERVER_TOMCAT_THREADS_MAX=600
 ## 验证输出示例
 
 ### 全部通过
+
 ```
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                            JAiRouter 配置验证                                ║
@@ -231,6 +249,7 @@ export SERVER_TOMCAT_THREADS_MAX=600
 ```
 
 ### 有警告
+
 ```
 ⚠️  [rate-limit-capacity] 限流容量 - 限流容量过大，可能导致内存压力
 ⚠️  [circuit-breaker-threshold] 熔断器失败阈值 - 熔断器失败阈值过大，可能无法及时熔断
@@ -246,6 +265,7 @@ export SERVER_TOMCAT_THREADS_MAX=600
 ```
 
 ### 有错误
+
 ```
 ❌ [rate-limit-rate] 限流速率 - 限流速率必须大于 0
 ❌ [jwt-expiration] JWT 过期时间 - JWT 过期时间必须大于 0 分钟
@@ -267,9 +287,11 @@ export SERVER_TOMCAT_THREADS_MAX=600
 ## 启用/禁用验证
 
 ### 启用（默认）
+
 验证功能默认启用，无需额外配置。
 
 ### 禁用
+
 如需禁用验证，可设置以下配置：
 
 ```yaml
@@ -281,6 +303,7 @@ jairouter:
 ```
 
 或使用环境变量：
+
 ```bash
 export JAiROUTER_CONFIG_VALIDATION_ENABLED=false
 ```
@@ -321,6 +344,7 @@ public class CustomConfigurationValidator {
 ## 最佳实践
 
 ### 1. 开发环境
+
 ```bash
 export RATE_LIMIT_CAPACITY=100
 export RATE_LIMIT_RATE=10
@@ -332,6 +356,7 @@ export SERVER_TOMCAT_THREADS_MAX=50
 ```
 
 ### 2. 生产环境
+
 ```bash
 export RATE_LIMIT_CAPACITY=10000
 export RATE_LIMIT_RATE=500
@@ -343,6 +368,7 @@ export SERVER_TOMCAT_THREADS_MAX=200
 ```
 
 ### 3. 高性能环境
+
 ```bash
 export RATE_LIMIT_CAPACITY=50000
 export RATE_LIMIT_RATE=2000
@@ -360,6 +386,7 @@ export SERVER_TOMCAT_THREADS_MAX=400
 ### 问题：验证规则未生效
 
 **检查项**:
+
 1. 确认 `jairouter.config.validation.enabled` 为 `true`（默认值）
 2. 检查日志中是否有 "JAiRouter 配置验证" 输出
 3. 确认环境变量已正确设置
@@ -367,16 +394,18 @@ export SERVER_TOMCAT_THREADS_MAX=400
 ### 问题：误报警告
 
 **解决方法**:
+
 1. 检查配置值是否确实合理
 2. 如确认配置无误，可通过调整警告阈值解决
 3. 或忽略警告（不影响启动）
 
 ### 问题：配置错误但未阻止启动
 
-**说明**: 
+**说明**:
 配置验证的目的是**提前发现问题**，而不是阻止启动。即使有错误，应用仍会启动，但可能运行时出现问题。
 
 **建议**:
+
 - 看到错误日志后立即修正配置
 - 在 CI/CD 流程中加入配置检查
 - 使用 Docker 环境变量强制注入正确配置

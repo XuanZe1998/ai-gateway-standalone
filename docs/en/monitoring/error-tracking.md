@@ -8,9 +8,9 @@ JAiRouter's error tracking feature is a complete error monitoring and analysis s
 
 JAiRouter uses a modular configuration management approach, with error tracking configuration located in a separate configuration file:
 
-- **Main Configuration File**: [src/main/resources/application.yml](file://d:/IdeaProjects/model-router/src/main/resources/application.yml)
-- **Error Tracking Configuration File**: [src/main/resources/config/monitoring/error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml)
-- **Environment Configuration Files**: [src/main/resources/application-{profile}.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-dev.yml)
+- **Main Configuration File**: [src/main/resources/application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- **Error Tracking Configuration File**: [src/main/resources/config/monitoring/error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml)
+- **Environment Configuration Files**: [src/main/resources/application-{profile}.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-dev.yml)
 
 ## Modular Configuration Explanation
 
@@ -27,21 +27,25 @@ spring:
 ## Features
 
 ### 📊 Error Collection and Aggregation
+
 - Automatic collection of exception information in the system
 - Aggregation of error information by error type, operation, and other dimensions
 - Intelligent deduplication and aggregation algorithms
 
 ### 🔍 Stack Trace Sanitization and Protection
+
 - Automatic sanitization of sensitive information (passwords, keys, etc.)
 - Filtering of sensitive package paths
 - Control of stack depth to protect system information
 
 ### 📈 Metric Monitoring
+
 - Error counters and distribution statistics
 - Error duration monitoring
 - Metrics grouped by error type and operation
 
 ### 🚨 Alert Notification
+
 - Integration with Prometheus metric export
 - Structured log output
 - Configurable alert thresholds
@@ -50,7 +54,7 @@ spring:
 
 ### 1. Enable Error Tracking
 
-Configure in [error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml):
+Configure in [error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml):
 
 ```yaml
 jairouter:
@@ -266,7 +270,7 @@ jairouter:
 
 ### Configuration Management
 
-1. **Base Configuration**: Define common configurations in [error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml)
+1. **Base Configuration**: Define common configurations in [error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml)
 2. **Environment Differences**: Override specific configurations in corresponding environment configuration files
 3. **Sensitive Information Protection**: Properly configure stack trace sanitization rules to protect system security
 

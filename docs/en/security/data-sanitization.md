@@ -3,11 +3,9 @@
 <!-- 版本信息 -->
 > **文档版本**: 1.0.0  
 > **最后更新**: 2025-08-19  
-> **Git 提交**:   
-> **作者**: 
+> **Git 提交**:
+> **作者**:
 <!-- /版本信息 -->
-
-
 
 ## Overview
 
@@ -67,6 +65,7 @@ curl -H "X-API-Key: your-api-key" \
 ```
 
 The actual content sent to the AI model will be sanitized to:
+
 ```
 My phone number is 138****5678, email is u***@example.com
 ```
@@ -507,12 +506,14 @@ jairouter:
 #### 1. Sanitization Not Working
 
 **Possible Causes**:
+
 - Sanitization feature not enabled
 - Regular expression not matching
 - User in whitelist
 - Rule priority issues
 
 **Solutions**:
+
 1. Check if sanitization feature is enabled
 2. Test if regular expression is correct
 3. Check whitelist configuration
@@ -521,12 +522,14 @@ jairouter:
 #### 2. Performance Issues
 
 **Possible Causes**:
+
 - Regular expression too complex
 - Thread pool configuration inappropriate
 - Cache not enabled
 - Processing too much data
 
 **Solutions**:
+
 1. Optimize regular expressions
 2. Adjust thread pool size
 3. Enable cache functionality
@@ -535,11 +538,13 @@ jairouter:
 #### 3. False Sanitization
 
 **Possible Causes**:
+
 - Regular expression too broad
 - Rule conflicts
 - Strategy configuration errors
 
 **Solutions**:
+
 1. Precise regular expressions
 2. Adjust rule priorities
 3. Correct sanitization strategies
@@ -557,8 +562,9 @@ logging:
 #### 2. Test Regular Expressions
 
 Use online tools to test regular expressions:
-- https://regex101.com/
-- https://regexr.com/
+
+- <https://regex101.com/>
+- <https://regexr.com/>
 
 #### 3. Monitor Sanitization Effect
 

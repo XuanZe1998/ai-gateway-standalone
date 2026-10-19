@@ -132,7 +132,7 @@ jairouter_tracing_export_success_rate
 ### Performance Issue Diagnosis
 
 1. **Check if sampling rate is too high**
-2. **Monitor memory usage** 
+2. **Monitor memory usage**
 3. **Analyze GC frequency and duration**
 4. **Check exporter response time**
 

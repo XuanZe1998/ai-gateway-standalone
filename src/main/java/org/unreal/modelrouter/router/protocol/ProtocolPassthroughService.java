@@ -152,12 +152,12 @@ public class ProtocolPassthroughService {
 
         return Mono.deferContextual(ctx -> {
             UserIdentity identity = ctx.getOrDefault(UserIdentity.CONTEXT_KEY, UserIdentity.SYSTEM);
-            return balanceCheckService.checkBalance(identity, ModelServiceRegistry.ServiceType.chat.name())
-                    .then(Mono.fromRunnable(() -> balanceCheckService.requirePricingConfigured(
-                            instance.getName(), instance.getChannelId())))
-                    .then(stream
-                            ? doStreaming(protocol, upstreamRequestNode, client, path, instance, model, startTime, identity)
-                            : doNonStreaming(protocol, upstreamRequestNode, client, path, instance, model, startTime, identity));
+            return Mono.fromRunnable(() -> balanceCheckService.requirePricingConfigured(instance.getName(),instance.getChannelId()))
+                    .then(balanceCheckService.prepare(identity,ModelServiceRegistry.ServiceType.chat.name(),instance.getName(),instance.getChannelId(),upstreamRequestNode))
+                    .flatMap(prepared -> (stream
+                            ? doStreaming(protocol, upstreamRequestNode, client, path, instance, model, startTime, prepared)
+                            : doNonStreaming(protocol, upstreamRequestNode, client, path, instance, model, startTime, prepared))
+                            .doOnCancel(()->balanceCheckService.release(prepared).subscribe()));
         });
     }
 
@@ -186,7 +186,7 @@ public class ProtocolPassthroughService {
                             org.unreal.modelrouter.billing.usage.TokenUsage usage = success ? extractUsage(body, instance) : null;
                             recordBilling(protocol, instance, model, duration, success,
                                     success ? null : String.valueOf(status), success ? null : truncate(body),
-                                    usage, identity, status, body);
+                                    usage, identity, status, body, upstreamRequestNode, startTime);
 
                             String responseBody = formatUpstreamBody(protocol, body, success);
                             return ResponseEntity
@@ -195,10 +195,15 @@ public class ProtocolPassthroughService {
                                     .body(responseBody);
                         }))
                 .timeout(getTimeout(instance))
+                .doOnError(error -> {
+                    if(!(error instanceof TimeoutException))recordBilling(protocol,instance,model,System.currentTimeMillis()-startTime,
+                            false,error instanceof ResponseStatusException rse?String.valueOf(rse.getStatusCode().value()):"502",
+                            error.getMessage(),null,identity,null,null,upstreamRequestNode,startTime);
+                })
                 .onErrorResume(TimeoutException.class, e -> {
                     logger.error("透传非流式请求超时: protocol={}, model={}", protocol, model);
                     recordBilling(protocol, instance, model, System.currentTimeMillis() - startTime,
-                            false, "504", "上游服务响应超时", null, identity, 504, null);
+                            false, "504", "上游服务响应超时", null, identity, 504, null, upstreamRequestNode, startTime);
                     return Mono.error(new ResponseStatusException(
                             org.springframework.http.HttpStatus.GATEWAY_TIMEOUT, "上游服务响应超时，请稍后重试"));
                 });
@@ -307,7 +312,7 @@ public class ProtocolPassthroughService {
                     if (billingRecorded.compareAndSet(false, true)) {
                         recordBilling(protocol, instance, model, System.currentTimeMillis() - startTime,
                                 capturedUsage.get() != null, null, null, capturedUsage.get(), identity,
-                                200, lastUsageChunk.get());
+                                200, lastUsageChunk.get(), upstreamRequestNode, startTime);
                     }
                 })
                 .doOnError(throwable -> {
@@ -323,7 +328,7 @@ public class ProtocolPassthroughService {
                                 capturedUsage.get() != null, code, throwable.getMessage(),
                                 capturedUsage.get(), identity,
                                 parseHttpStatus(code),
-                                throwable instanceof UpstreamHttpException uhe ? uhe.protocolBody : null);
+                                throwable instanceof UpstreamHttpException uhe ? uhe.protocolBody : null, upstreamRequestNode, startTime);
                     }
                 })
                 .onErrorResume(throwable -> {
@@ -548,7 +553,7 @@ public class ProtocolPassthroughService {
                                final org.unreal.modelrouter.billing.usage.TokenUsage usage,
                                final UserIdentity identity,
                                final Integer httpStatus,
-                               final String upstreamBody) {
+                               final String upstreamBody, final JsonNode billingRequest, final long started) {
         long promptTokens = usage != null ? usage.legacyPromptTokens() : 0;
         long completionTokens = usage != null ? usage.legacyCompletionTokens() : 0;
         long totalTokens = usage != null
@@ -564,7 +569,7 @@ public class ProtocolPassthroughService {
                     && freeQuotaService.getRemainingQuota(identity.userId(), ModelServiceRegistry.ServiceType.chat.name()) > 0) {
                 freeQuotaResult = freeQuotaService.deductStreamingQuota(
                         identity.userId(), ModelServiceRegistry.ServiceType.chat.name(),
-                        usage != null ? usage.billableTotal() : totalTokens);
+                        usage != null ? usage.billableTotal() : totalTokens,identity.usageSnapshot());
             }
         } catch (Exception e) {
             logger.warn("透传免费额度扣减失败, model={}: {}", model, e.getMessage());
@@ -576,6 +581,7 @@ public class ProtocolPassthroughService {
             String snapshot = responseSnapshotBuilder.build(protocol, success, httpStatus,
                     errorCode, errorMessage, usageJson, upstreamBody);
             var ctx = BillingService.BillingContext.create()
+                    .usageSnapshot(identity!=null?identity.usageSnapshot():null)
                     .userId(identity != null ? identity.userId() : null)
                     .userAccount(identity != null ? identity.userAccount() : null)
                     .apiKeyId(identity != null ? identity.apiKeyId() : null)
@@ -606,6 +612,11 @@ public class ProtocolPassthroughService {
                     .accountType(resolveAccountType(identity))
                     .isFreeQuota(freeQuotaResult != null && freeQuotaResult.hitFreeQuota())
                     .freeQuotaConsumed(freeQuotaResult != null ? freeQuotaResult.deductedTokens() : 0L);
+            JsonNode actualResponse = null;
+            try { if (upstreamBody != null) actualResponse = objectMapper.readTree(upstreamBody); } catch (Exception ignored) { }
+            ctx.fastMode(org.unreal.modelrouter.billing.usage.RequestBillingMetadata.fastMode(billingRequest, actualResponse))
+                    .audioInputRequested(org.unreal.modelrouter.billing.usage.RequestBillingMetadata.hasAudioInput(billingRequest))
+                    .startedAt(java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(started), java.time.ZoneId.of("Asia/Shanghai")));
             billingService.recordBilling(ctx);
         } catch (Exception e) {
             logger.error("透传计费记录异常, protocol={}, model={}: {}", protocol, model, e.getMessage(), e);

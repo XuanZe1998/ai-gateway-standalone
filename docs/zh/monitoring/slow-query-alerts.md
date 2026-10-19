@@ -8,9 +8,9 @@ JAiRouter 的慢查询告警功能是一个完整的性能监控和告警系统�
 
 JAiRouter 使用模块化的配置管理方式，慢查询告警配置位于独立的配置文件中：
 
-- **主配置文件**: [src/main/resources/application.yml](file://d:/IdeaProjects/model-router/src/main/resources/application.yml)
-- **慢查询告警配置文件**: [src/main/resources/config/monitoring/slow-query-alerts.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/slow-query-alerts.yml)
-- **环境配置文件**: [src/main/resources/application-{profile}.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-dev.yml)
+- **主配置文件**: [src/main/resources/application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- **慢查询告警配置文件**: [src/main/resources/config/monitoring/slow-query-alerts.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/slow-query-alerts.yml)
+- **环境配置文件**: [src/main/resources/application-{profile}.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-dev.yml)
 
 ## 模块化配置说明
 
@@ -27,21 +27,25 @@ spring:
 ## 功能特性
 
 ### 🔍 自动慢查询检测
+
 - 基于可配置阈值的自动慢查询检测
 - 支持按操作类型设置不同的检测阈值
 - 实时性能指标收集和分析
 
 ### 📊 智能告警策略
+
 - 基于频率的告警抑制，避免告警轰炸
 - 支持按严重程度分级的告警策略
 - 可配置的告警触发条件（最小次数、时间间隔等）
 
 ### 📈 性能分析和统计
+
 - 详细的慢查询统计信息（次数、平均时间、最大时间等）
 - 性能趋势分析和热点识别
 - 操作性能的历史数据追踪
 
 ### 🔗 完整的集成支持
+
 - 与分布式追踪系统集成，提供完整的请求链路
 - 结构化日志输出，便于日志聚合分析
 - Prometheus 指标导出，支持可视化和告警
@@ -50,7 +54,7 @@ spring:
 
 ### 1. 启用慢查询告警
 
-在 [slow-query-alerts.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/slow-query-alerts.yml) 中配置：
+在 [slow-query-alerts.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/slow-query-alerts.yml) 中配置：
 
 ```yaml
 jairouter:
@@ -267,7 +271,7 @@ jairouter:
 
 ### 配置管理
 
-1. **基础配置**：在 [slow-query-alerts.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/slow-query-alerts.yml) 中定义通用配置
+1. **基础配置**：在 [slow-query-alerts.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/slow-query-alerts.yml) 中定义通用配置
 2. **环境差异**：在对应的环境配置文件中覆盖特定配置
 3. **阈值设置**：根据实际业务需求和性能测试结果设置合理的阈值
 

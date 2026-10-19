@@ -197,6 +197,7 @@ jobs:
   test-cross-platform:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.9', '3.11']
@@ -204,6 +205,8 @@ jobs:
     steps:
     - name: 检出代码
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
     - name: 设置 Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4

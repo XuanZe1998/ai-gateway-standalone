@@ -14,6 +14,7 @@
 | `ai_account_balance` | 全部新字段 | — |
 
 说明：
+
 - `subsidy_discount` 继续留在 `ai_enterprise`，供 `DiscountCalculationService` 查询企业补贴折扣。
 - `arrear_status` 已废弃，业务逻辑早已改为直接按 `balance < 0` 判断，本次一并清理。
 
@@ -41,6 +42,7 @@ CREATE UNIQUE INDEX uk_ai_account_balance_active
 ```
 
 账户映射规则：
+
 - **企业用户**：`accountId = sldd_system_users.company_id`，`accountType = 1`
 - **个人用户**：`accountId = sldd_system_users.user_id`，`accountType = 2`
 
@@ -49,6 +51,7 @@ CREATE UNIQUE INDEX uk_ai_account_balance_active
 采用 **方案 A：新增 `ai_account_balance` 实体/Repository，Service 层组合查询**。
 
 理由：
+
 - 表职责清晰，符合算力平台新设计。
 - 改动量适中，现有 `EnterpriseInfo`、`DiscountCalculationService` 结构基本保留。
 - 对个人用户启用余额账户的扩展自然。
@@ -102,9 +105,11 @@ int updateLastWarnThreshold(@Param("id") Long id,
 ### 6.1 `PlatformEnterpriseEntity` / `PlatformEnterpriseRepository` 调整
 
 `PlatformEnterpriseEntity` 删除字段：
+
 - `balance`, `warnEnabled`, `warnThreshold`, `lastWarnTime`, `lastWarnThreshold`, `arrearStatus`
 
 保留字段：
+
 - `id`, `companyId`, `description`, `subsidyDiscount`, 审计字段
 
 `PlatformEnterpriseRepository` 删除余额/预警相关方法，仅保留企业基础查询。
@@ -112,10 +117,12 @@ int updateLastWarnThreshold(@Param("id") Long id,
 ### 6.2 `EnterpriseLookupService` 改造
 
 对外接口保持不变：
+
 - `lookupByUserId(Long platformUserId)`
 - `lookupByEnterpriseId(Long enterpriseId)`
 
 内部实现：
+
 - 企业名称、`companyId`、`subsidyDiscount` 从 `ai_enterprise` 读取。
 - `balance`、`warnEnabled`、`warnThreshold`、`lastWarnTime`、`lastWarnThreshold` 从 `ai_account_balance` 读取。
 
@@ -151,6 +158,7 @@ public void deductAndAlert(String accountId, Integer accountType,
 ```
 
 扣减口径保持不变：
+
 1. 无条件扣减 `balance = balance - cost`（允许扣至负数）。
 2. 扣减后通过原生查询重读真实余额。
 3. 按现有 `shouldAlert` 规则判断下穿阈值线。
@@ -167,6 +175,7 @@ private Integer accountType;   // 1=企业, 2=个人
 ```
 
 在 `BaseAdapter` / `StreamingRequestProcessor` 组装 `BillingContext` 时设置：
+
 - `userType = 1`（企业）：`accountId = companyId`，`accountType = 1`
 - `userType = 2`（个人）：`accountId = userId`，`accountType = 2`
 
@@ -175,6 +184,7 @@ private Integer accountType;   // 1=企业, 2=个人
 ### 6.6 `PlatformDataSyncService` 改造
 
 认证阶段（`resolveUserLink`）：
+
 - 继续关联 `ai_enterprise` 获取 `enterpriseId` 和 `enterpriseName`（用于折扣白名单和日志）。
 - 不再读取 `ai_enterprise.balance`；原日志中打印余额的代码需要移除或改为从 `ai_account_balance` 读取（可选）。
 

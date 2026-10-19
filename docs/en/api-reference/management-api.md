@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter provides a complete set of management APIs for dynamic configuration management, service instance management, monitoring configuration, and more. All management APIs use the `/api` prefix.
 
 ## Service Type Management
@@ -16,9 +14,11 @@ JAiRouter provides a complete set of management APIs for dynamic configuration m
 ### Base Path: `/api/config/type`
 
 #### `GET /api/config/type`
+
 Get all configuration information of the current system.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -37,9 +37,11 @@ Get all configuration information of the current system.
 ```
 
 #### `GET /api/config/type/services`
+
 Get all available service types in the system.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -49,12 +51,15 @@ Get all available service types in the system.
 ```
 
 #### `GET /api/config/type/services/{serviceType}`
+
 Get configuration information for a specified service type.
 
 **Path Parameters:**
+
 - `serviceType` (string): Service type, e.g., "chat"
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -77,9 +82,11 @@ Get configuration information for a specified service type.
 ```
 
 #### `POST /api/config/type/services/{serviceType}`
+
 Create a new service type configuration.
 
 **Request Body Example:**
+
 ```json
 {
   "loadBalancer": "round_robin",
@@ -97,15 +104,19 @@ Create a new service type configuration.
 ```
 
 #### `PUT /api/config/type/services/{serviceType}`
+
 Update configuration for a specified service type.
 
 #### `DELETE /api/config/type/services/{serviceType}`
+
 Delete a specified service type and all its configurations.
 
 #### `GET /api/config/type/{serviceType}/models`
+
 Get all available models under a specified service type.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -115,6 +126,7 @@ Get all available models under a specified service type.
 ```
 
 #### `POST /api/config/type/reset`
+
 Reset system configuration to default values.
 
 ## Service Instance Management
@@ -122,9 +134,11 @@ Reset system configuration to default values.
 ### Base Path: `/api/config/instance`
 
 #### `GET /api/config/instance/type/{serviceType}`
+
 Get all instances under a specified service type.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -143,13 +157,16 @@ Get all instances under a specified service type.
 ```
 
 #### `GET /api/config/instance/info/{serviceType}`
+
 Get detailed information about a specified instance.
 
 **Query Parameters:**
-- [modelName](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\ratelimit\RateLimitContext.java#L7-L7) (string): Model name
-- [baseUrl](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\dto\UpdateInstanceDTO.java#L22-L22) (string): Base URL
+
+- [modelName](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/router/ratelimit/RateLimitContext.java) (string): Model name
+- [baseUrl](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/common/dto/UpdateInstanceDTO.java) (string): Base URL
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -168,9 +185,11 @@ Get detailed information about a specified instance.
 ```
 
 #### `POST /api/config/instance/add/{serviceType}`
+
 Add a new instance for a specified service type.
 
 **Request Body Example:**
+
 ```json
 {
   "name": "qwen2:7b",
@@ -183,9 +202,11 @@ Add a new instance for a specified service type.
 ```
 
 #### `PUT /api/config/instance/update/{serviceType}`
+
 Update configuration for a specified service instance.
 
 **Request Body Example:**
+
 ```json
 {
   "instanceId": "qwen2:7b@http://localhost:8000",
@@ -201,20 +222,24 @@ Update configuration for a specified service instance.
 ```
 
 #### `DELETE /api/config/instance/del/{serviceType}`
+
 Delete a specified service instance.
 
 **Query Parameters:**
-- [modelName](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\ratelimit\RateLimitContext.java#L7-L7) (string): Model name
-- [baseUrl](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\dto\UpdateInstanceDTO.java#L22-L22) (string): Base URL
+
+- [modelName](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/router/ratelimit/RateLimitContext.java) (string): Model name
+- [baseUrl](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/common/dto/UpdateInstanceDTO.java) (string): Base URL
 
 ## Monitoring Management
 
 ### Base Path: `/api/monitoring`
 
 #### `GET /api/monitoring/config`
+
 Get current monitoring configuration.
 
 **Response Example:**
+
 ```json
 {
   "enabled": true,
@@ -237,9 +262,11 @@ Get current monitoring configuration.
 ```
 
 #### `PUT /api/monitoring/config/enabled`
+
 Update monitoring enabled status.
 
 **Request Body Example:**
+
 ```json
 {
   "enabled": true
@@ -247,9 +274,11 @@ Update monitoring enabled status.
 ```
 
 #### `PUT /api/monitoring/config/prefix`
+
 Update metric prefix.
 
 **Request Body Example:**
+
 ```json
 {
   "prefix": "jairouter_v2"
@@ -257,9 +286,11 @@ Update metric prefix.
 ```
 
 #### `PUT /api/monitoring/config/collection-interval`
+
 Update collection interval.
 
 **Request Body Example:**
+
 ```json
 {
   "interval": "PT60S"
@@ -267,9 +298,11 @@ Update collection interval.
 ```
 
 #### `PUT /api/monitoring/config/categories`
+
 Update enabled monitoring categories.
 
 **Request Body Example:**
+
 ```json
 {
   "categories": ["request", "system"]
@@ -277,9 +310,11 @@ Update enabled monitoring categories.
 ```
 
 #### `PUT /api/monitoring/config/custom-tags`
+
 Update custom tags.
 
 **Request Body Example:**
+
 ```json
 {
   "customTags": {
@@ -290,12 +325,15 @@ Update custom tags.
 ```
 
 #### `GET /api/monitoring/config/snapshot`
+
 Get monitoring configuration snapshot.
 
 #### `GET /api/monitoring/health`
+
 Get monitoring system health status.
 
 **Response Example:**
+
 ```json
 {
   "status": "UP",
@@ -309,9 +347,11 @@ Get monitoring system health status.
 ```
 
 #### `GET /api/monitoring/overview`
+
 Get an overview of the monitoring system's overall status.
 
 **Response Example:**
+
 ```json
 {
   "enabled": true,
@@ -342,12 +382,15 @@ Get an overview of the monitoring system's overall status.
 ### Error Handling Management
 
 #### `GET /api/monitoring/errors/stats`
+
 Get error handling statistics.
 
 #### `POST /api/monitoring/errors/reset`
+
 Reset error status for a specified component.
 
 **Request Body Example:**
+
 ```json
 {
   "component": "metricsCollector",
@@ -358,9 +401,11 @@ Reset error status for a specified component.
 ### Degradation Policy Management
 
 #### `GET /api/monitoring/degradation/status`
+
 Get degradation policy status.
 
 **Response Example:**
+
 ```json
 {
   "level": "NORMAL",
@@ -373,9 +418,11 @@ Get degradation policy status.
 ```
 
 #### `POST /api/monitoring/degradation/level`
+
 Set degradation level.
 
 **Request Body Example:**
+
 ```json
 {
   "level": "PARTIAL"
@@ -383,15 +430,18 @@ Set degradation level.
 ```
 
 **Available Levels:**
+
 - `NORMAL` - Normal Mode
 - `PARTIAL` - Partial Degradation
 - `MINIMAL` - Minimal Mode
 - `DISABLED` - Disabled Mode
 
 #### `POST /api/monitoring/degradation/auto-mode`
+
 Enable/disable automatic degradation policy mode.
 
 **Request Body Example:**
+
 ```json
 {
   "enabled": false
@@ -399,14 +449,17 @@ Enable/disable automatic degradation policy mode.
 ```
 
 #### `POST /api/monitoring/degradation/force-recovery`
+
 Force recovery to normal mode.
 
 ### Cache Management
 
 #### `GET /api/monitoring/cache/stats`
+
 Get cache statistics.
 
 **Response Example:**
+
 ```json
 {
   "currentSize": 150,
@@ -418,14 +471,17 @@ Get cache statistics.
 ```
 
 #### `POST /api/monitoring/cache/clear`
+
 Clear cache.
 
 ### Circuit Breaker Management
 
 #### `GET /api/monitoring/circuit-breaker/stats`
+
 Get circuit breaker statistics.
 
 **Response Example:**
+
 ```json
 {
   "state": "CLOSED",
@@ -437,9 +493,11 @@ Get circuit breaker statistics.
 ```
 
 #### `POST /api/monitoring/circuit-breaker/force-open`
+
 Force open the circuit breaker.
 
 #### `POST /api/monitoring/circuit-breaker/force-close`
+
 Force close the circuit breaker.
 
 ## JWT Token Management
@@ -447,15 +505,18 @@ Force close the circuit breaker.
 ### Base Path: `/api/auth/jwt`
 
 #### `GET /api/auth/jwt/tokens`
+
 Get a list of all JWT tokens with pagination and filtering support.
 
 **Query Parameters:**
+
 - `page` (integer, optional): Page number, default is 0
 - `size` (integer, optional): Page size, default is 20
 - `userId` (string, optional): Filter by user ID
 - `status` (string, optional): Filter by token status (ACTIVE, REVOKED, EXPIRED)
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -484,12 +545,15 @@ Get a list of all JWT tokens with pagination and filtering support.
 ```
 
 #### `GET /api/auth/jwt/tokens/{tokenId}`
+
 Get detailed information about a specific JWT token.
 
 **Path Parameters:**
+
 - `tokenId` (string): Token ID (UUID)
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -513,12 +577,15 @@ Get detailed information about a specific JWT token.
 ```
 
 #### `POST /api/auth/jwt/tokens/{tokenId}/revoke`
+
 Revoke a specific JWT token.
 
 **Path Parameters:**
+
 - `tokenId` (string): Token ID (UUID)
 
 **Request Body Example:**
+
 ```json
 {
   "reason": "Security breach detected"
@@ -526,6 +593,7 @@ Revoke a specific JWT token.
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -539,9 +607,11 @@ Revoke a specific JWT token.
 ```
 
 #### `POST /api/auth/jwt/tokens/revoke-batch`
+
 Revoke multiple JWT tokens in batch.
 
 **Request Body Example:**
+
 ```json
 {
   "tokenIds": ["token-uuid-123", "token-uuid-456"],
@@ -550,6 +620,7 @@ Revoke multiple JWT tokens in batch.
 ```
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -564,9 +635,11 @@ Revoke multiple JWT tokens in batch.
 ```
 
 #### `POST /api/auth/jwt/cleanup`
+
 Manually trigger cleanup of expired tokens and blacklist entries.
 
 **Request Body Example:**
+
 ```json
 {
   "cleanupType": "ALL"
@@ -574,11 +647,13 @@ Manually trigger cleanup of expired tokens and blacklist entries.
 ```
 
 **Available Cleanup Types:**
+
 - `EXPIRED_TOKENS` - Clean up expired tokens only
 - `EXPIRED_BLACKLIST` - Clean up expired blacklist entries only
 - `ALL` - Clean up both expired tokens and blacklist entries
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -594,9 +669,11 @@ Manually trigger cleanup of expired tokens and blacklist entries.
 ```
 
 #### `GET /api/auth/jwt/blacklist/stats`
+
 Get JWT blacklist statistics and system health information.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -630,9 +707,11 @@ Get JWT blacklist statistics and system health information.
 ### Base Path: `/api/models`
 
 #### `GET /api/models`
+
 Get information for all available models.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -666,9 +745,11 @@ Get information for all available models.
 ### Base Path: `/api/config/version`
 
 #### `GET /api/config/version`
+
 Get a list of all configuration versions.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -678,15 +759,19 @@ Get a list of all configuration versions.
 ```
 
 #### `GET /api/config/version/{version}`
+
 Get details of a specified version configuration.
 
 **Path Parameters:**
-- [version](file://springfox\documentation\service\ApiInfo.java#L8-L8) (integer): Version number
+
+- `version` (integer): Version number
 
 #### `GET /api/config/version/current`
+
 Get the current configuration version number.
 
 **Response Example:**
+
 ```json
 {
   "success": true,
@@ -696,12 +781,15 @@ Get the current configuration version number.
 ```
 
 #### `POST /api/config/version/rollback/{version}`
+
 Rollback to a specified version configuration.
 
 #### `POST /api/config/version/apply/{version}`
+
 Apply a specified version configuration.
 
 #### `DELETE /api/config/version/{version}`
+
 Delete a specified version configuration (cannot delete the current version).
 
 ## General Response Format
@@ -709,6 +797,7 @@ Delete a specified version configuration (cannot delete the current version).
 All management APIs use a unified response format:
 
 ### Success Response
+
 ```json
 {
   "success": true,
@@ -718,6 +807,7 @@ All management APIs use a unified response format:
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,

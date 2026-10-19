@@ -13,10 +13,10 @@ JAiRouter 内置熔断器机制，用于防止服务雪崩和级联故障。当�
 
 从 v1.0.0 版本开始，JAiRouter 采用模块化配置结构，熔断器相关配置已移至独立的配置文件中：
 
-- 主配置文件: [application.yml](file://D:/IdeaProjects/model-router/src/main/resources/application.yml)
-- 模型服务基础配置: [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml)
+- 主配置文件: [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- 模型服务基础配置: [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml)
 
-您可以在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中找到所有熔断器相关配置，包括全局配置、各服务类型配置和实例配置。
+您可以在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中找到所有熔断器相关配置，包括全局配置、各服务类型配置和实例配置。
 
 ## 熔断器概述
 
@@ -58,7 +58,7 @@ stateDiagram-v2
 
 ### 基础配置
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置全局熔断器：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置全局熔断器：
 
 ```yaml
 # config/base/model-services-base.yml
@@ -123,7 +123,7 @@ model:
 
 ### YAML 配置
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置各服务类型的熔断器：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置各服务类型的熔断器：
 
 ```yaml
 model:
@@ -182,7 +182,7 @@ JAiRouter 也支持通过动态配置 API 更新熔断器配置：
 
 ### 独立实例熔断
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置实例级别的熔断器：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置实例级别的熔断器：
 
 ```yaml
 model:
@@ -242,7 +242,7 @@ JAiRouter 也支持通过动态配置 API 更新实例级熔断器配置：
 
 ### 基础降级配置
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置全局和服务级降级策略：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置全局和服务级降级策略：
 
 ```yaml
 model:
@@ -634,6 +634,7 @@ model:
 **现象**：服务频繁熔断，影响正常使用
 
 **排查**：
+
 ```bash
 # 检查失败率
 curl "http://localhost:8080/actuator/metrics/jairouter.circuitbreaker.calls"
@@ -643,6 +644,7 @@ curl "http://localhost:8080/actuator/metrics/jairouter.circuitbreaker.opened"
 ```
 
 **解决**：
+
 ```yaml
 # 调整参数
 circuit-breaker:
@@ -656,6 +658,7 @@ circuit-breaker:
 **现象**：服务故障时熔断器没有开启
 
 **排查**：
+
 ```bash
 # 检查熔断器配置
 curl "http://localhost:8080/actuator/configprops" | jq '.model.circuit-breaker'
@@ -665,6 +668,7 @@ curl "http://localhost:8080/actuator/metrics/jairouter.circuitbreaker.state"
 ```
 
 **解决**：
+
 ```yaml
 # 确保熔断器启用
 circuit-breaker:
@@ -678,6 +682,7 @@ circuit-breaker:
 **现象**：熔断时返回的降级响应格式错误
 
 **排查**：
+
 ```bash
 # 测试降级响应
 curl -X POST "http://localhost:8080/v1/chat/completions" \
@@ -686,6 +691,7 @@ curl -X POST "http://localhost:8080/v1/chat/completions" \
 ```
 
 **解决**：
+
 ```yaml
 # 修正降级响应格式
 fallback:

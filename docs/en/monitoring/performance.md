@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document describes how to optimize the performance of the JAiRouter monitoring system, reduce the impact of monitoring on application performance, and improve the efficiency of the monitoring system itself.
 
 ## Performance Impact Assessment
@@ -27,6 +25,7 @@ The impact of monitoring functionality on system performance is mainly reflected
 ### Performance Benchmark Testing
 
 #### Test Environment Configuration
+
 ```yaml
 # Test Configuration
 monitoring:
@@ -42,6 +41,7 @@ monitoring:
 ```
 
 #### Benchmark Test Results
+
 ```bash
 # Run Performance Test
 ./mvnw test -Dtest=MonitoringPerformanceBenchmarkTest
@@ -57,6 +57,7 @@ monitoring:
 ### Sampling Strategy Optimization
 
 #### 1. Hierarchical Sampling Configuration
+
 ```yaml
 monitoring:
   metrics:
@@ -74,6 +75,7 @@ monitoring:
 ```
 
 #### 2. Dynamic Sampling Rate Adjustment
+
 ```yaml
 monitoring:
   metrics:
@@ -87,6 +89,7 @@ monitoring:
 ```
 
 #### 3. Conditional Sampling
+
 ```java
 @Component
 public class ConditionalMetricsCollector {
@@ -113,6 +116,7 @@ public class ConditionalMetricsCollector {
 ### Asynchronous Processing Optimization
 
 #### 1. Asynchronous Processing Configuration
+
 ```yaml
 monitoring:
   metrics:
@@ -135,6 +139,7 @@ monitoring:
 ```
 
 #### 2. Asynchronous Processing Implementation
+
 ```java
 @Component
 public class AsyncMetricsProcessor {
@@ -171,6 +176,7 @@ public class AsyncMetricsProcessor {
 ### Memory Optimization
 
 #### 1. Memory Usage Configuration
+
 ```yaml
 monitoring:
   metrics:
@@ -190,6 +196,7 @@ monitoring:
 ```
 
 #### 2. Memory Monitoring and Adaptation
+
 ```java
 @Component
 public class MemoryAwareMetricsCollector {
@@ -220,6 +227,7 @@ public class MemoryAwareMetricsCollector {
 ### Scrape Configuration Optimization
 
 #### 1. Scrape Interval Optimization
+
 ```yaml
 # prometheus.yml
 global:
@@ -247,6 +255,7 @@ scrape_configs:
 ```
 
 #### 2. Storage Optimization
+
 ```yaml
 # prometheus.yml startup parameters
 command:
@@ -262,6 +271,7 @@ command:
 ### Recording Rules Optimization
 
 #### 1. Pre-aggregation of Common Queries
+
 ```yaml
 # rules/jairouter-recording-rules.yml
 groups:
@@ -287,6 +297,7 @@ groups:
 ```
 
 #### 2. Hierarchical Recording Rules
+
 ```yaml
 groups:
   # High-frequency basic rules
@@ -322,6 +333,7 @@ groups:
 ### Query Optimization
 
 #### 1. Using Recording Rules
+
 ```promql
 # Before optimization: Complex query
 sum(rate(jairouter_requests_total{status=~"4..|5.."}[5m])) / sum(rate(jairouter_requests_total[5m])) * 100
@@ -331,6 +343,7 @@ jairouter:error_rate_5m * 100
 ```
 
 #### 2. Query Cache Configuration
+
 ```yaml
 # grafana.ini
 [caching]
@@ -343,6 +356,7 @@ max_cache_size_mb = 100
 ```
 
 #### 3. Panel Optimization
+
 ```json
 {
   "targets": [
@@ -365,11 +379,13 @@ max_cache_size_mb = 100
 ### Dashboard Optimization
 
 #### 1. Panel Count Control
+
 - No more than 20 panels per dashboard
 - Use row folding to organize panels
 - Avoid displaying too many data series in a single panel
 
 #### 2. Refresh Interval Optimization
+
 ```json
 {
   "refresh": "30s",  // Increase refresh interval
@@ -385,6 +401,7 @@ max_cache_size_mb = 100
 ### Metric Transmission Optimization
 
 #### 1. Compression Configuration
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -396,6 +413,7 @@ scrape_configs:
 ```
 
 #### 2. Batch Transmission
+
 ```java
 @Component
 public class BatchMetricsExporter {
@@ -416,6 +434,7 @@ public class BatchMetricsExporter {
 ### Network Connection Optimization
 
 #### 1. Connection Pool Configuration
+
 ```yaml
 monitoring:
   metrics:
@@ -427,6 +446,7 @@ monitoring:
 ```
 
 #### 2. Local Caching
+
 ```java
 @Component
 public class CachedMetricsCollector {
@@ -453,6 +473,7 @@ public class CachedMetricsCollector {
 ### Monitoring Performance Metrics
 
 #### 1. Monitoring Overhead Metrics
+
 ```yaml
 # Add metrics for the monitoring system itself
 - record: monitoring:collection_duration_seconds
@@ -466,6 +487,7 @@ public class CachedMetricsCollector {
 ```
 
 #### 2. Performance Alerts
+
 ```yaml
 groups:
   - name: monitoring.performance
@@ -486,6 +508,7 @@ groups:
 ### Automatic Performance Tuning
 
 #### 1. Adaptive Configuration
+
 ```java
 @Component
 public class AdaptiveMonitoringConfig {
@@ -565,6 +588,7 @@ monitoring:
 ### Benchmark Testing
 
 #### 1. Performance Test Script
+
 ```bash
 #!/bin/bash
 
@@ -585,6 +609,7 @@ python analyze_performance.py baseline.txt monitoring.txt
 ```
 
 #### 2. Performance Analysis Script
+
 ```python
 import re
 
@@ -612,6 +637,7 @@ def analyze_performance(baseline_file, monitoring_file):
 ### Continuous Performance Monitoring
 
 #### 1. Performance Regression Detection
+
 ```yaml
 # Add performance check in CI/CD
 - name: Performance Regression Test
@@ -624,6 +650,7 @@ def analyze_performance(baseline_file, monitoring_file):
 ```
 
 #### 2. Performance Trend Monitoring
+
 ```promql
 # Monitor performance trends
 increase(jairouter_request_duration_seconds_sum[24h]) / increase(jairouter_request_duration_seconds_count[24h])

@@ -17,7 +17,7 @@
 
 ## 启用步骤
 
-1. 审核并执行 [V8__teacher_device_bound_access.sql](../src/main/resources/db/scripts/V8__teacher_device_bound_access.sql)。Standalone 环境的 `ddl-auto: update` 会自动创建表，生产环境应手工审批。
+1. 审核并执行 [V8__teacher_device_bound_access.sql](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/db/scripts/V8__teacher_device_bound_access.sql)。Standalone 环境的 `ddl-auto: update` 会自动创建表，生产环境应手工审批。
 2. 复制 `config-external/auth/teacher-access.example.yml` 为 `config-external/auth/teacher-access.yml`。
 3. 在 `.env` 中填写 OIDC issuer/client id/client secret，以及独立的 32 字节以上 `TEACHER_TOKEN_SECRET`。
 4. 确认 IdP 返回工号、用户名和教师角色 claim，必要时在模板中修改 claim 名称。

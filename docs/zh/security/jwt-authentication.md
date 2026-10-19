@@ -51,22 +51,25 @@ jairouter:
 
 **配置内容的说明**  
 若需 **更换用于携带 JWT 的 HTTP 头**，可在启用 JWT 的同时追加：
+
  ```yaml
  jwt:
    enabled: true
    jwt-header: "Jairouter_Token"
  ```
+
  此时 JAiRouter 不再读取默认的 `Authorization` 头，而是读取自定义的 `Jairouter_Token` 头获取令牌，适用于与既有系统共用 `Authorization` 头的场景。
 
 ### 2. 设置 JWT 密钥
 
 #### 对称密钥（HS256/HS384/HS512）
+
 ```bash
 # 生产环境 JWT 密钥配置
 export PROD_JWT_SECRET="your-very-strong-production-jwt-secret-key-at-least-32-characters-long"
 ```
 
-#### 对称密钥（HS256/HS384/HS512）
+#### 对称密钥（HS256/HS384/HS512） — Section
 
 ```bash
 # 生产环境 JWT 密钥配置
@@ -175,16 +178,16 @@ curl -X POST http://localhost:8080/api/auth/jwt/login \
 
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| [enabled](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\config\TraceConfig.java#L12-L12) | boolean | false | 是否启用 JWT 认证 |
-| [secret](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityProperties.java#L126-L127) | string | - | JWT 签名密钥（对称算法） |
+| [enabled](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/config/core/TraceConfig.java) | boolean | false | 是否启用 JWT 认证 |
+| [secret](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/SecurityProperties.java) | string | - | JWT 签名密钥（对称算法） |
 | `public-key` | string | - | JWT 公钥（非对称算法） |
 | `private-key` | string | - | JWT 私钥（非对称算法） |
-| [algorithm](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityProperties.java#L132-L134) | string | "HS256" | JWT 签名算法 |
+| [algorithm](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/SecurityProperties.java) | string | "HS256" | JWT 签名算法 |
 | `expiration-minutes` | int | 60 | 访问令牌过期时间（分钟） |
 | `refresh-expiration-days` | int | 7 | 刷新令牌过期时间（天） |
-| [issuer](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityProperties.java#L153-L155) | string | "jairouter" | JWT 发行者标识 |
+| [issuer](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/SecurityProperties.java) | string | "jairouter" | JWT 发行者标识 |
 | `blacklist-enabled` | boolean | true | 是否启用黑名单功能 |
-| [accounts](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\JwtUserProperties.java#L14-L14) | array | [] | 用户账户列表 |
+| [accounts](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/properties/JwtUserProperties.java) | array | [] | 用户账户列表 |
 
 ### 支持的签名算法
 
@@ -305,7 +308,7 @@ jairouter:
 
 ### 密码编码器配置
 
-在 [SecurityConfiguration.java](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\security\config\SecurityConfiguration.java) 中配置密码编码器：
+在 [SecurityConfiguration.java](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/auth/security/config/SecurityConfiguration.java) 中配置密码编码器：
 
 ```java
 /**
@@ -345,29 +348,33 @@ jairouter:
 ### 刷新令牌流程
 
 1. **获取访问令牌和刷新令牌**
-```bash
-curl -X POST http://localhost:8080/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{"username": "user", "password": "pass"}'
-```
 
-响应：
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expires_in": 900,
-  "token_type": "Bearer"
-}
-```
+   ```bash
+   curl -X POST http://localhost:8080/auth/login \
+        -H "Content-Type: application/json" \
+        -d '{"username": "user", "password": "pass"}'
+   ```
+
+   响应：
+
+   ```json
+   {
+     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     "expires_in": 900,
+     "token_type": "Bearer"
+   }
+   ```
 
 2. **使用访问令牌访问 API**
-```bash
-curl -H "Authorization: Bearer access_token_here" \
-     http://localhost:8080/v1/chat/completions
-```
+
+   ```bash
+   curl -H "Authorization: Bearer access_token_here" \
+        http://localhost:8080/v1/chat/completions
+   ```
 
 3. **刷新访问令牌**
+
 ```bash
 curl -X POST http://localhost:8080/auth/refresh \
      -H "Content-Type: application/json" \
@@ -521,12 +528,14 @@ curl -X POST http://localhost:8080/auth/logout \
 启用持久化后，您可以使用管理 API：
 
 #### 获取令牌列表
+
 ```bash
 curl -X GET "http://localhost:8080/api/auth/jwt/tokens?page=0&size=20&status=ACTIVE" \
      -H "Authorization: Bearer admin_token"
 ```
 
 #### 撤销特定令牌
+
 ```bash
 curl -X POST "http://localhost:8080/api/auth/jwt/tokens/token-uuid-123/revoke" \
      -H "Authorization: Bearer admin_token" \
@@ -535,6 +544,7 @@ curl -X POST "http://localhost:8080/api/auth/jwt/tokens/token-uuid-123/revoke" \
 ```
 
 #### 批量令牌撤销
+
 ```bash
 curl -X POST "http://localhost:8080/api/auth/jwt/tokens/revoke-batch" \
      -H "Authorization: Bearer admin_token" \
@@ -546,6 +556,7 @@ curl -X POST "http://localhost:8080/api/auth/jwt/tokens/revoke-batch" \
 ```
 
 #### 手动清理
+
 ```bash
 curl -X POST "http://localhost:8080/api/auth/jwt/cleanup" \
      -H "Authorization: Bearer admin_token" \
@@ -554,6 +565,7 @@ curl -X POST "http://localhost:8080/api/auth/jwt/cleanup" \
 ```
 
 #### 获取黑名单统计
+
 ```bash
 curl -X GET "http://localhost:8080/api/auth/jwt/blacklist/stats" \
      -H "Authorization: Bearer admin_token"
@@ -605,6 +617,7 @@ jairouter:
 ```
 
 认证优先级：
+
 1. 如果请求包含 JWT 令牌，优先使用 JWT 认证
 2. 如果 JWT 认证失败或不存在 JWT 令牌，尝试 API Key 认证
 3. 如果两种认证都失败，返回 401 错误
@@ -696,6 +709,7 @@ jairouter:
 系统记录以下 JWT 和 API Key 事件：
 
 #### JWT 令牌事件
+
 - **令牌颁发**：创建新 JWT 令牌时
 - **令牌刷新**：刷新访问令牌时
 - **令牌撤销**：手动撤销令牌时
@@ -703,12 +717,14 @@ jairouter:
 - **令牌过期**：令牌自然过期时
 
 #### API Key 事件
+
 - **密钥创建**：生成新 API 密钥时
 - **密钥使用**：使用 API 密钥进行认证时
 - **密钥撤销**：撤销 API 密钥时
 - **密钥过期**：API 密钥过期时
 
 #### 安全事件
+
 - **可疑活动**：异常认证模式
 - **认证失败**：失败的登录尝试
 - **批量操作**：大量令牌/密钥操作
@@ -785,6 +801,7 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 ```
 
 响应包括：
+
 - JWT 和 API Key 操作总数
 - 失败认证统计
 - 可疑活动警报
@@ -794,6 +811,7 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 ### 监控指标
 
 #### JWT 令牌指标
+
 - `jairouter_security_jwt_tokens_issued_total`：颁发的令牌总数
 - `jairouter_security_jwt_tokens_refreshed_total`：刷新的令牌总数
 - `jairouter_security_jwt_tokens_revoked_total`：撤销的令牌总数
@@ -802,12 +820,14 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 - `jairouter_security_jwt_active_tokens`：活动令牌数
 
 #### API Key 指标
+
 - `jairouter_security_api_keys_created_total`：创建的 API 密钥总数
 - `jairouter_security_api_keys_used_total`：API 密钥使用总数
 - `jairouter_security_api_keys_revoked_total`：撤销的 API 密钥总数
 - `jairouter_security_api_key_validation_duration_seconds`：API 密钥验证耗时
 
 #### 存储指标
+
 - `jairouter_security_storage_operations_total`：存储操作总数
 - `jairouter_security_storage_errors_total`：存储操作错误
 - `jairouter_security_h2_connection_status`：H2 连接健康状态
@@ -849,12 +869,14 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 **错误信息**：`Invalid JWT token`
 
 **可能原因**：
+
 - 令牌格式不正确
 - 签名验证失败
 - 令牌已过期
 - 密钥配置错误
 
 **解决方案**：
+
 1. 检查令牌格式是否正确
 2. 验证签名密钥配置
 3. 检查令牌是否过期
@@ -865,6 +887,7 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 **错误信息**：`JWT token has expired`
 
 **解决方案**：
+
 1. 使用刷新令牌获取新的访问令牌
 2. 重新登录获取新令牌
 3. 调整令牌过期时间配置
@@ -874,6 +897,7 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 **错误信息**：`JWT token has been revoked`
 
 **解决方案**：
+
 1. 检查令牌是否被撤销
 2. 重新登录获取新令牌
 3. 检查黑名单缓存配置
@@ -891,8 +915,9 @@ logging:
 #### 2. 令牌解析工具
 
 使用在线工具解析 JWT 令牌：
-- https://jwt.io/
-- https://jwt-decoder.com/
+
+- <https://jwt.io/>
+- <https://jwt-decoder.com/>
 
 #### 3. 验证令牌内容
 
@@ -947,6 +972,7 @@ curl -X POST "http://localhost:8080/api/security/jwt/accounts/{accountId}/toggle
 ```
 
 响应：
+
 ```json
 {
   "success": true,
@@ -1060,6 +1086,7 @@ curl -X GET "http://localhost:8080/api/security/blacklist/stats" \
 ```
 
 响应：
+
 ```json
 {
   "totalEntries": 150,

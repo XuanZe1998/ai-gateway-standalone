@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter 为各种 AI 服务提供 OpenAI 兼容的 API，以及用于配置和监控的管理 API。
 
 ## API 分类
@@ -117,6 +115,7 @@ JAiRouter 在所有 API 中提供一致的错误响应：
 ### 聊天对话
 
 **请求：**
+
 ```http
 POST /v1/chat/completions
 Content-Type: application/json
@@ -135,6 +134,7 @@ Content-Type: application/json
 ```
 
 **响应：**
+
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -167,6 +167,7 @@ Content-Type: application/json
 JAiRouter 支持聊天对话的流式响应：
 
 **请求：**
+
 ```http
 POST /v1/chat/completions
 Content-Type: application/json
@@ -179,6 +180,7 @@ Content-Type: application/json
 ```
 
 **响应：**
+
 ```http
 HTTP/1.1 200 OK
 Content-Type: text/event-stream
@@ -197,6 +199,7 @@ data: [DONE]
 JAiRouter 与 OpenAI SDK 兼容。只需更改基础 URL：
 
 ### Python (openai)
+
 ```python
 from openai import OpenAI
 
@@ -207,6 +210,7 @@ client = OpenAI(
 ```
 
 ### Node.js (openai)
+
 ```javascript
 import OpenAI from 'openai';
 
@@ -217,6 +221,7 @@ const openai = new OpenAI({
 ```
 
 ### curl
+
 ```bash
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
@@ -232,6 +237,7 @@ GET /actuator/health
 ```
 
 **响应：**
+
 ```json
 {
   "status": "UP",

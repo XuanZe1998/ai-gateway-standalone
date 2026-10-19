@@ -3,35 +3,37 @@
 <!-- 版本信息 -->
 > **文档版本**: 1.0.0  
 > **最后更新**: 2025-08-19  
-> **Git 提交**:   
-> **作者**: 
+> **Git 提交**:
+> **作者**:
 <!-- /版本信息 -->
-
-
 
 JAiRouter provides enterprise-grade security features, including authentication, data sanitization, security auditing, and monitoring. These features ensure that your AI model services not only deliver high-performance routing but also meet strict security and compliance requirements.
 
 ## Feature Overview
 
 ### 🔐 Authentication
+
 - **API Key Authentication**: Supports multi-level permission control and expiration management
 - **JWT Authentication**: Supports standard JWT tokens and refresh mechanisms
 - **Dual Authentication**: API Key and JWT can be used simultaneously
 - **Cache Optimization**: Supports Redis and local caching for performance improvement
 
 ### 🛡️ Data Sanitization
+
 - **Bidirectional Sanitization**: Supports sanitization of both request and response data
 - **Smart Recognition**: Automatically identifies PII data and sensitive keywords
 - **Multiple Strategies**: Supports masking, replacement, deletion, hashing, and other sanitization strategies
 - **Whitelist Mechanism**: Supports user and IP whitelists
 
 ### 📊 Security Auditing
+
 - **Comprehensive Logging**: Records all security-related events
 - **Real-time Alerts**: Supports real-time alerts for abnormal situations
 - **Long-term Storage**: Supports long-term storage and archiving of audit logs
 - **Compliance Support**: Meets data protection regulatory requirements
 
 ### 📈 Security Monitoring
+
 - **Performance Metrics**: Provides detailed performance metrics for security functions
 - **Health Checks**: Real-time monitoring of security function status
 - **Alert Notifications**: Supports multiple alert methods including email and Webhook
@@ -40,7 +42,7 @@ JAiRouter provides enterprise-grade security features, including authentication,
 
 ### 1. Enable Security Features
 
-Enable security features in [application.yml](file://D:\IdeaProjects\model-router\target\classes\application.yml):
+Enable security features in [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/target/classes/application.yml):
 
 ```yaml
 jairouter:
@@ -174,18 +176,21 @@ jairouter:
 ## Best Practices
 
 ### Authentication Security
+
 - Use strong API Keys (at least 32 characters)
 - Rotate API Keys and JWT secrets regularly
 - Set reasonable expiration times
 - Enable caching for performance improvement
 
 ### Data Protection
+
 - Configure sanitization rules according to business needs
 - Regularly review and update sanitization patterns
 - Set whitelists appropriately
 - Ensure compliance
 
 ### Operations Security
+
 - Enable detailed audit logs
 - Configure real-time alerts
 - Backup configurations regularly
@@ -210,11 +215,13 @@ export REDIS_PASSWORD="your-redis-password"
 ## Monitoring Metrics
 
 ### Authentication Metrics
+
 - `jairouter_security_authentication_attempts_total`: Total authentication attempts
 - `jairouter_security_authentication_successes_total`: Total successful authentications
 - `jairouter_security_authentication_failures_total`: Total authentication failures
 
 ### Sanitization Metrics
+
 - `jairouter_security_sanitization_operations_total`: Total sanitization operations
 - `jairouter_security_sanitization_duration_seconds`: Sanitization operation duration
 - `jairouter_security_sanitization_patterns_matched_total`: Total matched patterns

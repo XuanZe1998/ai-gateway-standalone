@@ -7,11 +7,9 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 Welcome to JAiRouter! This section will help you quickly get started with JAiRouter, from installation to your first API call.
 
-## What is JAiRouter?
+## What is JAiRouter
 
 JAiRouter is a Spring Boot-based AI model service routing and load balancing gateway that provides unified access to various AI model services through OpenAI-compatible APIs.
 

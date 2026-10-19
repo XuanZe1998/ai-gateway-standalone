@@ -112,7 +112,7 @@ traceresponse: 00-{trace-id}-{span-id}-{flags}
 
 ### 3.1 功能模块整合
 
-**原 4 个功能模块 → 新 3 个功能模块**
+#### 原 4 个功能模块 → 新 3 个功能模块
 
 | 原模块 | 新模块 | 变化 |
 |--------|--------|------|
@@ -134,17 +134,20 @@ traceresponse: 00-{trace-id}-{span-id}-{flags}
 ## 四、实施计划
 
 ### Phase 1: 后端增强（核心）
+
 - [ ] 增强 TracingService 子 Span 创建
 - [ ] 增强 BackendCallTracingInterceptor Trace Context 传播
 - [ ] 改进 TraceQueryService Span 关系计算
 - [ ] 实现 Redis 追踪数据存储
 
 ### Phase 2: 前端重构
+
 - [ ] 整合 Dashboard.vue
 - [ ] 简化 Management.vue
 - [ ] 增强 Search.vue 链路详情
 
 ### Phase 3: 测试验证
+
 - [ ] E2E 测试完整链路追踪
 - [ ] 前端功能验证
 

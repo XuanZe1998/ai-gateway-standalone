@@ -25,21 +25,21 @@ spring:
 ### 配置模块分类
 
 1. **基础配置模块** (`config/base/`)
-   - [server-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/base/server-base.yml) - 服务器基础配置
-   - [model-services-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) - 模型服务配置
-   - [monitoring-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/base/monitoring-base.yml) - 监控基础配置
+   - [server-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/server-base.yml) - 服务器基础配置
+   - [model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) - 模型服务配置
+   - [monitoring-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/monitoring-base.yml) - 监控基础配置
 
 2. **功能配置模块** (`config/{feature}/`)
-   - [tracing/tracing-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/tracing/tracing-base.yml) - 追踪功能配置
-   - [security/security-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/security/security-base.yml) - 安全功能配置
-   - [monitoring/slow-query-alerts.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/slow-query-alerts.yml) - 慢查询告警配置
-   - [monitoring/error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml) - 错误追踪配置
+   - [tracing/tracing-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/tracing/tracing-base.yml) - 追踪功能配置
+   - [security/security-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/security/security-base.yml) - 安全功能配置
+   - [monitoring/slow-query-alerts.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/slow-query-alerts.yml) - 慢查询告警配置
+   - [monitoring/error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml) - 错误追踪配置
 
 3. **环境配置文件** (`application-{profile}.yml`)
-   - [application-dev.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-dev.yml) - 开发环境配置
-   - [application-staging.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-staging.yml) - 预发布环境配置
-   - [application-prod.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-prod.yml) - 生产环境配置
-   - [application-legacy.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-legacy.yml) - 向后兼容配置
+   - [application-dev.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-dev.yml) - 开发环境配置
+   - [application-staging.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-staging.yml) - 预发布环境配置
+   - [application-prod.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-prod.yml) - 生产环境配置
+   - [application-legacy.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-legacy.yml) - 向后兼容配置
 
 ## 配置优先级
 
@@ -253,7 +253,7 @@ java -jar app.jar --spring.profiles.active=legacy
 
 ### 修改配置
 
-1. **基础配置修改**：编辑 [config/base/](file://d:/IdeaProjects/model-router/src/main/resources/config/base/) 目录下的对应文件
+1. **基础配置修改**：编辑 [config/base/](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/) 目录下的对应文件
 2. **功能启用/禁用**：编辑对应的功能配置文件
 3. **环境差异配置**：编辑对应的环境配置文件
 4. **敏感配置**：建议使用环境变量注入

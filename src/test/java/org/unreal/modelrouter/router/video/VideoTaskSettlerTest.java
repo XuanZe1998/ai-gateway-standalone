@@ -471,6 +471,34 @@ class VideoTaskSettlerTest {
         assertThat(captor.getValue().getResponseTimeMs()).isNull();
     }
 
+    @Test
+    void delayedVideoUsesSubmissionDepartmentAndFreePolicyEvenWithNewQueryIdentity() {
+        var budgets=org.mockito.Mockito.mock(org.unreal.modelrouter.billing.DepartmentBudgetService.class);
+        var snapshot=new org.unreal.modelrouter.billing.DepartmentUsageSnapshot("request-video","code:OLD","原学院","DEPARTMENT",true,"DEPARTMENT",2,"old-account",2,
+                org.unreal.modelrouter.billing.DepartmentBudgetService.month().minusMonths(1),10000L,null,null,null);
+        when(budgets.decode("saved-policy")).thenReturn(snapshot);settler.setDepartmentBudgets(budgets);
+        when(repository.claimTerminal(any(),anyString(),any(),any(),any(),any())).thenReturn(1);
+        when(billingService.recordBillingSync(any())).thenReturn(22L);
+        var archived=entity();archived.setUsageSnapshot("saved-policy");archived.setPlatformUser(true);
+        settler.settle(archived,upstream("{\"status\":\"succeeded\",\"resolution\":\"720p\",\"duration\":5,\"usage\":{\"completion_tokens\":1200}}"),SNAPSHOT,identity(),null,null);
+        var ctx=ArgumentCaptor.forClass(BillingService.BillingContext.class);verify(billingService).recordBillingSync(ctx.capture());
+        assertThat(ctx.getValue().getUsageSnapshot()).isEqualTo(snapshot);
+        assertThat(ctx.getValue().getUsageSnapshot().departmentId()).isEqualTo("code:OLD");
+        assertThat(ctx.getValue().getUsageSnapshot().freeUsage()).isTrue();
+    }
+
+    @Test
+    void confirmedVideoCancellationReleasesOnlyItsSubmissionReservation() {
+        var budgets=org.mockito.Mockito.mock(org.unreal.modelrouter.billing.DepartmentBudgetService.class);
+        var snapshot=new org.unreal.modelrouter.billing.DepartmentUsageSnapshot("request-cancel","code:OLD","原学院","DEPARTMENT",false,"DEPARTMENT",2,"old-account",2,
+                org.unreal.modelrouter.billing.DepartmentBudgetService.month(),null,null,null,null);
+        when(budgets.decode("saved-policy")).thenReturn(snapshot);settler.setDepartmentBudgets(budgets);
+        when(repository.claimTerminal(any(),anyString(),any(),any(),any(),any())).thenReturn(1);
+        var archived=entity();archived.setUsageSnapshot("saved-policy");
+        settler.settle(archived,upstream("{\"status\":\"cancelled\"}"),null,identity(),null,null);
+        verify(budgets).release(snapshot);verifyNoInteractions(billingService);
+    }
+
     // ==================== 辅助 ====================
 
     private static VideoTaskEntity entity() {

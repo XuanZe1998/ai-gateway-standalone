@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档提供 JAiRouter 的调试技巧、工具使用和问题定位方法。
 
 ## 调试环境配置
@@ -16,6 +14,7 @@
 ### 开发环境调试
 
 #### 启用调试模式
+
 ```yaml
 # application-dev.yml
 logging:
@@ -33,7 +32,8 @@ spring:
 
 #### IDE 调试配置
 
-**IntelliJ IDEA**
+##### IntelliJ IDEA
+
 ```
 Run/Debug Configurations:
 - Main class: org.unreal.modelrouter.ModelRouterApplication
@@ -42,7 +42,8 @@ Run/Debug Configurations:
 - Environment variables: SPRING_PROFILES_ACTIVE=dev
 ```
 
-**VS Code**
+##### VS Code
+
 ```json
 {
   "type": "java",
@@ -61,6 +62,7 @@ Run/Debug Configurations:
 ### 远程调试
 
 #### 启用远程调试
+
 ```bash
 # 启动应用时添加调试参数
 java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
@@ -68,6 +70,7 @@ java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
 ```
 
 #### Docker 远程调试
+
 ```yaml
 # docker-compose-debug.yml
 version: '3.8'
@@ -87,6 +90,7 @@ services:
 ### 日志级别配置
 
 #### 全局日志配置
+
 ```yaml
 # application.yml
 logging:
@@ -107,6 +111,7 @@ logging:
 ```
 
 #### 动态调整日志级别
+
 ```bash
 # 运行时调整日志级别
 curl -X POST http://localhost:8080/actuator/loggers/org.unreal.modelrouter \
@@ -120,6 +125,7 @@ curl http://localhost:8080/actuator/loggers/org.unreal.modelrouter
 ### 结构化日志
 
 #### 添加追踪 ID
+
 ```java
 @Component
 public class TraceIdFilter implements WebFilter {
@@ -136,6 +142,7 @@ public class TraceIdFilter implements WebFilter {
 ```
 
 #### 关键点日志记录
+
 ```java
 @Service
 public class LoadBalancerService {
@@ -159,6 +166,7 @@ public class LoadBalancerService {
 ### 日志分析工具
 
 #### 实时日志监控
+
 ```bash
 # 实时查看日志
 tail -f logs/jairouter-debug.log
@@ -174,6 +182,7 @@ grep "ERROR" logs/jairouter-debug.log | tail -10
 ```
 
 #### 日志分析脚本
+
 ```bash
 #!/bin/bash
 # log-analyzer.sh
@@ -213,6 +222,7 @@ echo "日志分析完成，报告保存到: $REPORT_FILE"
 ### HTTP 请求调试
 
 #### 使用 curl 调试
+
 ```bash
 # 详细输出模式
 curl -v -X POST http://localhost:8080/v1/chat/completions \
@@ -237,6 +247,7 @@ curl -w "@curl-format.txt" -o /dev/null -s http://localhost:8080/v1/chat/complet
 ```
 
 #### 使用 httpie 调试
+
 ```bash
 # 安装 httpie
 pip install httpie
@@ -257,6 +268,7 @@ http --print=HhBb POST localhost:8080/v1/chat/completions \
 ### 网络连接调试
 
 #### 端口和连接检查
+
 ```bash
 # 检查端口监听
 netstat -tlnp | grep :8080
@@ -276,6 +288,7 @@ sudo firewall-cmd --list-all
 ```
 
 #### 网络抓包分析
+
 ```bash
 # 使用 tcpdump 抓包
 sudo tcpdump -i any -w jairouter.pcap port 8080
@@ -292,6 +305,7 @@ sudo tcpdump -i any -A -s 0 port 8080
 ### 内存调试
 
 #### 堆内存分析
+
 ```bash
 # 查看堆内存使用
 jstat -gc <pid>
@@ -308,6 +322,7 @@ jmap -histo <pid> | head -20
 ```
 
 #### 内存泄漏检测
+
 ```bash
 # 启用内存泄漏检测
 java -XX:+HeapDumpOnOutOfMemoryError \
@@ -324,6 +339,7 @@ java -XX:+HeapDumpOnOutOfMemoryError \
 ### 线程调试
 
 #### 线程转储分析
+
 ```bash
 # 生成线程转储
 jstack <pid> > threads.dump
@@ -339,6 +355,7 @@ grep "java.lang.Thread.State" threads.dump | sort | uniq -c
 ```
 
 #### 线程监控
+
 ```java
 @Component
 public class ThreadMonitor {
@@ -368,6 +385,7 @@ public class ThreadMonitor {
 ### 性能调试
 
 #### CPU 性能分析
+
 ```bash
 # 使用 Java Flight Recorder
 java -XX:+FlightRecorder \
@@ -383,6 +401,7 @@ java -jar async-profiler.jar -d 60 -f profile.html <pid>
 ```
 
 #### 方法级性能分析
+
 ```java
 @Component
 public class PerformanceMonitor {
@@ -423,6 +442,7 @@ public @interface Monitored {
 ### Reactor 调试
 
 #### 启用调试模式
+
 ```java
 @SpringBootApplication
 public class ModelRouterApplication {
@@ -437,6 +457,7 @@ public class ModelRouterApplication {
 ```
 
 #### 响应式流调试
+
 ```java
 @Service
 public class ChatService {
@@ -466,6 +487,7 @@ public class ChatService {
 ```
 
 #### 背压调试
+
 ```java
 @Component
 public class BackpressureMonitor {
@@ -487,6 +509,7 @@ public class BackpressureMonitor {
 ### 配置验证
 
 #### 配置属性检查
+
 ```bash
 # 查看所有配置属性
 curl http://localhost:8080/actuator/configprops | jq
@@ -499,6 +522,7 @@ curl http://localhost:8080/actuator/env/model.services | jq
 ```
 
 #### 配置绑定调试
+
 ```java
 @ConfigurationProperties(prefix = "model")
 @Validated
@@ -525,6 +549,7 @@ public class ModelConfiguration {
 ### 动态配置调试
 
 #### 配置更新追踪
+
 ```java
 @Component
 public class ConfigurationChangeListener {
@@ -543,6 +568,7 @@ public class ConfigurationChangeListener {
 ### Spring Boot Actuator
 
 #### 启用调试端点
+
 ```yaml
 management:
   endpoints:
@@ -557,6 +583,7 @@ management:
 ```
 
 #### 自定义健康检查
+
 ```java
 @Component
 public class BackendHealthIndicator implements HealthIndicator {
@@ -588,6 +615,7 @@ public class BackendHealthIndicator implements HealthIndicator {
 ### 外部调试工具
 
 #### Zipkin 链路追踪
+
 ```yaml
 # 添加依赖
 spring:
@@ -599,6 +627,7 @@ spring:
 ```
 
 #### Prometheus 监控
+
 ```java
 @Component
 public class CustomMetrics {
@@ -627,16 +656,19 @@ public class CustomMetrics {
 ### 1. 分层调试策略
 
 #### 网络层调试
+
 - 使用网络抓包工具分析请求/响应
 - 检查 DNS 解析和连接建立
 - 验证 SSL/TLS 握手过程
 
 #### 应用层调试
+
 - 添加关键路径的日志记录
 - 使用断点调试业务逻辑
 - 监控方法执行时间
 
 #### 数据层调试
+
 - 检查配置数据的加载和解析
 - 验证数据转换和序列化
 - 监控缓存命中率
@@ -644,12 +676,14 @@ public class CustomMetrics {
 ### 2. 问题定位流程
 
 #### 快速定位
+
 1. 检查应用健康状态
 2. 查看最近的错误日志
 3. 验证配置是否正确
 4. 测试网络连通性
 
 #### 深入分析
+
 1. 启用详细日志记录
 2. 使用性能分析工具
 3. 分析内存和线程状态
@@ -658,6 +692,7 @@ public class CustomMetrics {
 ### 3. 调试环境管理
 
 #### 开发环境
+
 ```yaml
 # application-dev.yml
 logging:
@@ -677,6 +712,7 @@ spring:
 ```
 
 #### 测试环境
+
 ```yaml
 # application-test.yml
 logging:
@@ -691,6 +727,7 @@ management:
 ```
 
 #### 生产环境
+
 ```yaml
 # application-prod.yml
 logging:
@@ -707,12 +744,14 @@ management:
 ### 4. 调试工具箱
 
 #### 必备工具
+
 - **curl/httpie**: HTTP 请求测试
 - **jstack/jmap**: JVM 调试
 - **tcpdump/wireshark**: 网络分析
 - **ab/wrk**: 性能测试
 
 #### 推荐工具
+
 - **VisualVM**: JVM 性能分析
 - **Eclipse MAT**: 内存分析
 - **async-profiler**: CPU 性能分析

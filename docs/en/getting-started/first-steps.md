@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 After completing the [Quick Start](quick-start.md), this guide will help you understand JAiRouter's core concepts and configure it for your specific needs.
 
 ## Core Concepts
@@ -367,16 +365,19 @@ Now that you understand the basics, explore more advanced topics:
 ### Common Issues
 
 **No Available Instances**:
+
 - Check if backend services are running
 - Verify network connectivity
 - Check health check configuration
 
 **Rate Limit Exceeded**:
+
 - Adjust rate limit settings
 - Check if client IP rate limiting is appropriate
 - Monitor request patterns
 
 **Circuit Breaker Open**:
+
 - Check backend service health
 - Review failure threshold settings
 - Monitor error rates

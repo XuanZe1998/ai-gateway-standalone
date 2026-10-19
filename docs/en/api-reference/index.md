@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter provides OpenAI-compatible APIs for various AI services, along with management APIs for configuration and monitoring.
 
 ## API Categories
@@ -117,6 +115,7 @@ JAiRouter provides consistent error responses across all APIs:
 ### Chat Completion
 
 **Request:**
+
 ```http
 POST /v1/chat/completions
 Content-Type: application/json
@@ -135,6 +134,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -165,6 +165,7 @@ Content-Type: application/json
 ### Embeddings
 
 **Request:**
+
 ```http
 POST /v1/embeddings
 Content-Type: application/json
@@ -176,6 +177,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -202,6 +204,7 @@ Content-Type: application/json
 JAiRouter supports streaming for chat completions:
 
 **Request:**
+
 ```http
 POST /v1/chat/completions
 Content-Type: application/json
@@ -214,6 +217,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 200 OK
 Content-Type: text/event-stream
@@ -232,6 +236,7 @@ data: [DONE]
 JAiRouter is compatible with OpenAI SDKs. Simply change the base URL:
 
 ### Python (openai)
+
 ```python
 from openai import OpenAI
 
@@ -242,6 +247,7 @@ client = OpenAI(
 ```
 
 ### Node.js (openai)
+
 ```javascript
 import OpenAI from 'openai';
 
@@ -252,6 +258,7 @@ const openai = new OpenAI({
 ```
 
 ### curl
+
 ```bash
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
@@ -275,6 +282,7 @@ GET /api/config/instance/type/chat?page=1&size=10
 ```
 
 **Response:**
+
 ```json
 {
   "content": [...],
@@ -306,6 +314,7 @@ GET /actuator/health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "UP",

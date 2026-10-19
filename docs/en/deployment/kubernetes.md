@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter supports deployment in Kubernetes clusters, providing enterprise-grade features such as high availability, auto-scaling, and rolling updates. This document details how to deploy JAiRouter in a K8s environment.
 
 ## Kubernetes Deployment Overview
@@ -24,13 +22,13 @@ JAiRouter supports deployment in Kubernetes clusters, providing enterprise-grade
 
 ### Architecture Diagram
 
-``mermaid
+```mermaid
 graph TB
     subgraph "Kubernetes Cluster"
         subgraph "Ingress Layer"
             A[Ingress Controller]
         end
-        
+
         subgraph "Service Layer"
             B[JAiRouter Service]
         end
@@ -72,6 +70,7 @@ graph TB
     L --> E
     L --> J
     J --> K
+
 ```
 
 ## Prerequisites
@@ -1308,6 +1307,6 @@ data:
 After completing the Kubernetes deployment, you can:
 
 - **[Production Deployment](production.md)** - Configure a production-grade high-availability environment
-- **[Monitoring Guide](../../monitoring/index.md)** - Set up a complete monitoring system
+- **[Monitoring Guide](../monitoring/index.md)** - Set up a complete monitoring system
 - **[Troubleshooting](../troubleshooting/index.md)** - Learn K8s environment fault diagnosis
 - **[Performance Tuning](../troubleshooting/performance.md)** - Optimize K8s deployment performance

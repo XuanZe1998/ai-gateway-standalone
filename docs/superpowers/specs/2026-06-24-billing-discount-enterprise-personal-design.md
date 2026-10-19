@@ -172,10 +172,12 @@ public record DiscountBreakdown(
 ### 折扣解析规则
 
 **模型折扣**：
+
 - 从 `ModelPricingService.getPrice(modelName, channelId)` 获取 `ModelPricing.discountRate`。
 - 保持现有逻辑不变。
 
 **用户折扣**：
+
 - 非平台用户（本地 API Key / JWT）→ `1.0`
 - 企业用户（`userType == 1`）：按 `(userType=1, userId=companyId)` 查询 `ai_user_discount`
 - 个人用户（`userType == 2`）：按 `(userType=2, userId=systemUserId)` 查询 `ai_user_discount`
@@ -183,6 +185,7 @@ public record DiscountBreakdown(
 - 查到 `discount=90` → 转换为 `0.90`
 
 **企业补贴折扣**：
+
 - 非企业用户 → `1.0`
 - 企业用户：按 `enterpriseId` 查询 `ai_enterprise.subsidy_discount`
   - `null` → `1.0`

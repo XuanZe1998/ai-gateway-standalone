@@ -43,6 +43,7 @@
 ## Task 1: 数据模型层 — 用户类型、企业补贴折扣、用户折扣表、账单快照字段
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/persistence/jpa/entity/platform/PlatformSystemUserEntity.java`
 - Modify: `src/main/java/org/unreal/modelrouter/persistence/jpa/entity/platform/PlatformEnterpriseEntity.java`
 - Create: `src/main/java/org/unreal/modelrouter/persistence/jpa/entity/billing/UserDiscountEntity.java`
@@ -50,6 +51,7 @@
 - Modify: `src/main/java/org/unreal/modelrouter/persistence/jpa/entity/BillingRecordEntity.java`
 
 **Interfaces:**
+
 - Consumes: 无
 - Produces:
   - `PlatformSystemUserEntity.getUserType(): Integer`
@@ -69,9 +71,11 @@ private Integer userType;
 并添加 getter/setter（如果类使用 Lombok `@Data`，则无需手动添加）。
 
 验证：
+
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn compile -DskipTests -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS
 
 ### Step 1.2: 修改 `PlatformEnterpriseEntity`
@@ -162,6 +166,7 @@ private BigDecimal finalDiscountRate;
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn compile -DskipTests -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS
 
 ```bash
@@ -178,10 +183,12 @@ git commit -m "feat(billing): 数据模型层支持用户类型、用户折扣�
 ## Task 2: 用户身份传播 — UserIdentity 与 PlatformDataSyncService
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/auth/security/model/UserIdentity.java`
 - Modify: `src/main/java/org/unreal/modelrouter/platform/sync/PlatformDataSyncService.java`
 
 **Interfaces:**
+
 - Consumes: `PlatformSystemUserEntity.getUserType()`
 - Produces:
   - `UserIdentity.userType(): Integer`
@@ -281,6 +288,7 @@ return new ApiKeyLookupResult(new UserIdentity(
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn compile -DskipTests -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS
 
 ```bash
@@ -294,9 +302,11 @@ git commit -m "feat(auth): UserIdentity 透传 userType 与 systemUserId"
 ## Task 3: 计费上下文扩展 — BillingContext
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/billing/BillingService.java`（内部类 `BillingContext`）
 
 **Interfaces:**
+
 - Consumes: 无
 - Produces:
   - `BillingContext.userType(Integer): BillingContext`
@@ -332,6 +342,7 @@ public Long getSystemUserId() { return systemUserId; }
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn compile -DskipTests -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS
 
 ```bash
@@ -344,11 +355,13 @@ git commit -m "feat(billing): BillingContext 扩展 userType 与 systemUserId"
 ## Task 4: 折扣计算服务 — DiscountBreakdown 与 DiscountCalculationService
 
 **Files:**
+
 - Create: `src/main/java/org/unreal/modelrouter/billing/DiscountBreakdown.java`
 - Create: `src/main/java/org/unreal/modelrouter/billing/DiscountCalculationService.java`
 - Create: `src/test/java/org/unreal/modelrouter/billing/DiscountCalculationServiceTest.java`
 
 **Interfaces:**
+
 - Consumes:
   - `UserIdentity.userType(): Integer`
   - `UserIdentity.systemUserId(): Long`
@@ -630,6 +643,7 @@ class DiscountCalculationServiceTest {
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn test -Dtest=DiscountCalculationServiceTest -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS, tests PASS
 
 ### Step 4.5: 提交
@@ -646,9 +660,11 @@ git commit -m "feat(billing): 折扣计算服务与用户/企业折扣查询"
 ## Task 5: BillingService 接入折扣计算并写入快照
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/billing/BillingService.java`
 
 **Interfaces:**
+
 - Consumes:
   - `DiscountCalculationService.calculate(UserIdentity, String, String): DiscountBreakdown`
   - `BillingContext.getUserType(): Integer`
@@ -749,6 +765,7 @@ if (Boolean.TRUE.equals(ctx.getIsFreeQuota())) {
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn test -Dtest=BillingServiceTest -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS。如果测试因构造参数变化失败，同步更新测试中的 `BillingService` 构造。
 
 ### Step 5.6: 提交
@@ -763,10 +780,12 @@ git commit -m "feat(billing): BillingService 接入多级折扣并写入账单�
 ## Task 6: 适配 BaseAdapter 构建 BillingContext
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/router/adapter/BaseAdapter.java`
 - 可能修改所有 `adapter/impl/*Adapter.java`（如果它们直接构造 `BillingContext`）
 
 **Interfaces:**
+
 - Consumes: `UserIdentity.userType()`、`UserIdentity.systemUserId()`、`UserIdentity.companyId()`
 - Produces: `BillingContext` 携带 `userType` 和 `systemUserId`
 
@@ -800,6 +819,7 @@ BillingContext ctx = BillingContext.create()
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn test -Dtest=BillingServiceTest,BaseAdapterExtendedTest,BaseAdapterFreeQuotaTest -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS
 
 ### Step 6.4: 提交
@@ -815,9 +835,11 @@ git commit -m "feat(adapter): BillingContext 构建时透传 userType 与 system
 ## Task 7: 补充 BillingServiceTest 验证折扣快照
 
 **Files:**
+
 - Modify: `src/test/java/org/unreal/modelrouter/billing/BillingServiceTest.java`
 
 **Interfaces:**
+
 - Consumes: `BillingService` 注入 `DiscountCalculationService` 后的行为
 - Produces: 测试用例验证 `BillingRecordEntity` 的新字段
 
@@ -884,9 +906,10 @@ void shouldWriteDiscountSnapshotForEnterpriseUser() {
 ```
 
 （输入 1000 prompt × 0.001 + 500 completion × 0.002 = 2.0 原始费用；2.0 × 0.612 = 1.224？
-让我重新算：prompt 1000 * 0.001 = 1.0；completion 500 * 0.002 = 1.0；original = 2.0；final 0.612 -> total = 1.224。上面的 0.918 算错了，应改为 1.224。）
+让我重新算：prompt 1000 *0.001 = 1.0；completion 500* 0.002 = 1.0；original = 2.0；final 0.612 -> total = 1.224。上面的 0.918 算错了，应改为 1.224。）
 
 修正断言：
+
 ```java
 assertThat(record.getTotalCost()).isEqualByComparingTo(new BigDecimal("1.224000"));
 ```
@@ -896,6 +919,7 @@ assertThat(record.getTotalCost()).isEqualByComparingTo(new BigDecimal("1.224000"
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn test -Dtest=BillingServiceTest -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS, tests PASS
 
 ### Step 7.4: 提交
@@ -916,6 +940,7 @@ git commit -m "test(billing): 验证账单折扣快照字段写入"
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn compile -DskipTests -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS
 
 ### Step 8.2: 运行 billing 相关测试
@@ -923,6 +948,7 @@ Expected: BUILD SUCCESS
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn test -Dtest=DiscountCalculationServiceTest,BillingServiceTest,BalanceCheckServiceTest,BalanceDeductionServiceTest,FreeQuotaServiceTest -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS, all tests PASS
 
 ### Step 8.3: 运行 adapter 相关测试
@@ -930,6 +956,7 @@ Expected: BUILD SUCCESS, all tests PASS
 ```bash
 JAVA_HOME="/c/Program Files/Java/jdk-17.0.1" mvn test -Dtest=BaseAdapterExtendedTest,BaseAdapterFreeQuotaTest,BaseAdapterMetricsTest -Dcheckstyle.skip=true -Dspotbugs.skip=true
 ```
+
 Expected: BUILD SUCCESS, all tests PASS
 
 ### Step 8.4: 提交

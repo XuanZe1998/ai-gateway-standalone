@@ -150,11 +150,12 @@ public abstract class BaseAdapter implements ServiceCapability {
         tracingManager.recordCallStart(adapterType, selectedInstance, serviceType, modelNameFromRequest);
         return Mono.deferContextual(ctx -> {
             UserIdentity identity = ctx.getOrDefault(UserIdentity.CONTEXT_KEY, UserIdentity.SYSTEM);
-            return balanceCheckService.checkBalance(identity, serviceType.name())
-                    .then(Mono.fromRunnable(() -> balanceCheckService.requirePricingConfigured(
-                            selectedInstance.getName(), selectedInstance.getChannelId())))
-                    .then(processRequestWithRetry(request, authorization, client, path, selectedInstance,
-                            serviceType, modelNameFromRequest, processor, startTime, 0));
+            return Mono.fromRunnable(() -> balanceCheckService.requirePricingConfigured(selectedInstance.getName(), selectedInstance.getChannelId()))
+                    .then(balanceCheckService.prepare(identity,serviceType.name(),selectedInstance.getName(),selectedInstance.getChannelId(),request))
+                    .flatMap(prepared -> processRequestWithRetry(request, authorization, client, path, selectedInstance,
+                            serviceType, modelNameFromRequest, processor, startTime, 0)
+                            .contextWrite(reactor.util.context.Context.of(UserIdentity.CONTEXT_KEY,prepared))
+                            .doOnCancel(()->balanceCheckService.release(prepared).subscribe()));
         });
     }
 
@@ -180,7 +181,7 @@ public abstract class BaseAdapter implements ServiceCapability {
                                 ModelUtils.getModelNameFromRequest(request), duration, success);
                         // 记录 Token 使用量
                         recordTokenUsage(adapterType, instanceName, selectedInstance,
-                                serviceType, modelName, duration, true, null, response, identity);
+                                serviceType, modelName, duration, success, success?null:response==null?"500":String.valueOf(response.getStatusCode().value()), response, identity, request, startTime);
                     })
                     .onErrorResume(throwable -> {
                         long duration = System.currentTimeMillis() - startTime;
@@ -204,7 +205,7 @@ public abstract class BaseAdapter implements ServiceCapability {
                         }
                         // 仅在最终失败（已耗尽重试次数或错误不可重试）时记录 Token 使用量 + 计费
                         recordTokenUsage(adapterType, instanceName, selectedInstance,
-                                serviceType, modelName, duration, false, errorCode, null, identity);
+                                serviceType, modelName, duration, false, errorCode, null, identity, request, startTime);
                         return errorResponseBuilder.buildErrorResponse(throwable).flatMap(Mono::error);
                     });
         });
@@ -445,7 +446,7 @@ public abstract class BaseAdapter implements ServiceCapability {
             final ModelRouterProperties.ModelInstance instance,
             final ModelServiceRegistry.ServiceType serviceType, final String modelName,
             final long durationMs, final boolean success, final String errorCode,
-            final ResponseEntity<?> response, final UserIdentity identity) {
+            final ResponseEntity<?> response, final UserIdentity identity, final Object request, final long started) {
         // 流式请求的 Token 用量 + 计费由 StreamingRequestProcessor.doOnComplete/doOnError 统一处理；
         // 此处 response.getBody() 为尚未订阅的 Flux，无法提取 usage，直接跳过避免产生用量为 0 的重复记录
         if (response != null && response.getBody() instanceof reactor.core.publisher.Flux) {
@@ -464,7 +465,7 @@ public abstract class BaseAdapter implements ServiceCapability {
 
             // 从非流式响应中提取 usage（6 维归一化）
             if (success && response != null && response.getBody() != null) {
-                var node = objectMapper.valueToTree(response.getBody());
+                var node = response.getBody() instanceof String body ? objectMapper.readTree(body) : objectMapper.valueToTree(response.getBody());
                 var dataNode = node.path("data");
                 var usage = dataNode.has("usage") ? dataNode.path("usage") : node.path("usage");
                 if (usage != null && !usage.isMissingNode() && usage.isObject()) {
@@ -508,7 +509,7 @@ public abstract class BaseAdapter implements ServiceCapability {
         // 计费记录（异步，不影响主流程）
         recordBilling(adapterType, instanceName, instance, serviceType, modelName,
                 durationMs, success, errorCode, promptTokens, completionTokens, totalTokens, tokenUsage,
-                upstreamBody, identity);
+                upstreamBody, identity, request, started, response);
     }
 
     private void recordBilling(final String adapterType, final String instanceName,
@@ -517,7 +518,7 @@ public abstract class BaseAdapter implements ServiceCapability {
             final long durationMs, final boolean success, final String errorCode,
             final long promptTokens, final long completionTokens, final long totalTokens,
             final org.unreal.modelrouter.billing.usage.TokenUsage tokenUsage,
-            final String upstreamBody, final UserIdentity identity) {
+            final String upstreamBody, final UserIdentity identity, final Object request, final long started, final ResponseEntity<?> response) {
         org.unreal.modelrouter.billing.freequota.FreeQuotaResult freeQuotaResult = null;
 
         // 免费额度检查：独立 try-catch，避免额度服务故障影响计费记录保存
@@ -531,7 +532,7 @@ public abstract class BaseAdapter implements ServiceCapability {
                     && freeQuotaService.getRemainingQuota(identity.userId(), serviceType.name()) > 0) {
                 freeQuotaResult = freeQuotaService.deductStreamingQuota(
                         identity.userId(), serviceType.name(),
-                        tokenUsage != null ? tokenUsage.billableTotal() : totalTokens);
+                        tokenUsage != null ? tokenUsage.billableTotal() : totalTokens,identity.usageSnapshot());
             }
         } catch (Exception e) {
             // FreeQuotaService 不可用或其他异常：记录日志，继续保存计费记录（不带免费额度标记）
@@ -555,6 +556,7 @@ public abstract class BaseAdapter implements ServiceCapability {
                         success ? 200 : null, errorCode, null, usageJson, upstreamBody);
             }
             var ctx = org.unreal.modelrouter.billing.BillingService.BillingContext.create()
+                    .usageSnapshot(identity!=null?identity.usageSnapshot():null)
                     .userId(identity != null ? identity.userId() : null)
                     .userAccount(identity != null ? identity.userAccount() : null)
                     .apiKeyId(identity != null ? identity.apiKeyId() : null)
@@ -584,6 +586,16 @@ public abstract class BaseAdapter implements ServiceCapability {
                     .accountType(identity != null ? resolveAccountType(identity) : null)
                     .isFreeQuota(freeQuotaResult != null && freeQuotaResult.hitFreeQuota())
                     .freeQuotaConsumed(freeQuotaResult != null ? freeQuotaResult.deductedTokens() : 0L);
+            ctx.startedAt(java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(started), java.time.ZoneId.of("Asia/Shanghai")));
+            var responseNode = response == null ? objectMapper.nullNode() : (response.getBody() instanceof String body
+                    ? objectMapper.readTree(body) : objectMapper.valueToTree(response.getBody()));
+            var payload = responseNode.path("data").isObject() ? responseNode.path("data") : responseNode;
+            var requestMetadata = org.unreal.modelrouter.billing.usage.RequestBillingMetadata.requestMetadata(objectMapper, request);
+            ctx.fastMode(org.unreal.modelrouter.billing.usage.RequestBillingMetadata.fastMode(requestMetadata, payload));
+            ctx.audioInputRequested(org.unreal.modelrouter.billing.usage.RequestBillingMetadata.hasAudioInput(requestMetadata));
+            if ((serviceType == ModelServiceRegistry.ServiceType.imgGen || serviceType == ModelServiceRegistry.ServiceType.imgEdit)
+                    && ApplicationContextProvider.getBean(org.unreal.modelrouter.billing.ModelPricingService.class).isImagePricing(modelName, instance.getChannelId()))
+                ctx.imageCount(org.unreal.modelrouter.billing.usage.RequestBillingMetadata.imageCount(payload));
             billingService.recordBilling(ctx);
         } catch (Exception e) {
             logger.error("计费记录异常, model={}, user={}, enterpriseId={}: {}",

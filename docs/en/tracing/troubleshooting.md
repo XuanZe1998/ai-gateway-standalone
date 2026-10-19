@@ -7,6 +7,7 @@ This document provides diagnosis and solutions for common issues with the JAiRou
 ### 1. Missing Tracing Data
 
 **Symptoms**:
+
 - No traceId and spanId in logs
 - No tracing data in monitoring panels
 - Exporter not receiving tracing information
@@ -36,6 +37,7 @@ curl http://localhost:8080/actuator/metrics/jairouter.tracing.sampling.rate
 ### 2. Partial Data Loss
 
 **Symptoms**:
+
 - Only some requests have tracing data
 - Child Spans missing
 - Async operations have no tracing information
@@ -60,6 +62,7 @@ jairouter:
 ### 1. Tracing Causing Performance Degradation
 
 **Symptoms**:
+
 - Significantly increased response time
 - Rising CPU usage
 - High memory usage
@@ -100,6 +103,7 @@ jairouter:
 ### 2. Memory Leak
 
 **Symptoms**:
+
 - Continuously growing heap memory
 - OutOfMemoryError occurs
 - Frequent GC but memory not released
@@ -134,6 +138,7 @@ jairouter:
 ### 1. Configuration Not Taking Effect
 
 **Symptoms**:
+
 - No changes after modifying configuration
 - Configuration validation fails
 - Configuration errors at startup
@@ -185,6 +190,7 @@ curl http://localhost:8080/api/admin/config/history
 ### 1. Jaeger Connection Failure
 
 **Error Message**:
+
 ```
 Failed to export spans to Jaeger: Connection refused
 ```
@@ -230,6 +236,7 @@ jairouter:
 ### 1. Context Loss in Reactive Streams
 
 **Issue Manifestation**:
+
 - No traceId in async operations
 - Child Span creation fails
 - MDC information missing

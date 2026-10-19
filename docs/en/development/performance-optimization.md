@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## Overview
 
 This document describes the performance optimization strategies and implementation methods for the JAiRouter documentation site, ensuring users get a fast and smooth browsing experience.
@@ -18,12 +16,14 @@ This document describes the performance optimization strategies and implementati
 ### 1. Build-time Optimization
 
 #### Resource Compression
+
 - **HTML Compression**: Remove comments, whitespace, and redundant attributes
 - **CSS Compression**: Compress stylesheets, remove unused styles
 - **JavaScript Compression**: Compress scripts, optimize code structure
 - **Image Optimization**: Automatically compress PNG, JPG, and SVG images
 
 #### Search Index Optimization
+
 ```yaml
 # mkdocs.yml search configuration
 plugins:
@@ -34,6 +34,7 @@ plugins:
 ### 2. Runtime Optimization
 
 #### Font Optimization
+
 ```css
 /* Use system font stack to reduce font loading time */
 body {
@@ -43,10 +44,12 @@ body {
 ```
 
 #### Image Lazy Loading
+
 - Automatically add lazy loading attributes to images
 - Use responsive images for different device optimization
 
 #### CSS Optimization
+
 - Use CSS variables to reduce code duplication
 - Optimize selector performance
 - Reduce repaints and reflows
@@ -54,6 +57,7 @@ body {
 ### 3. Caching Strategy
 
 #### Browser Caching
+
 ```yaml
 # GitHub Pages automatically configures cache headers
 Cache-Control: public, max-age=31536000  # Static resources
@@ -61,6 +65,7 @@ Cache-Control: public, max-age=3600      # HTML files
 ```
 
 #### Service Worker (Planned)
+
 - Offline caching of critical resources
 - Smart update strategy
 - Background sync
@@ -68,11 +73,13 @@ Cache-Control: public, max-age=3600      # HTML files
 ### 4. Network Optimization
 
 #### CDN Acceleration
+
 - GitHub Pages built-in global CDN
 - Automatic selection of nearest server nodes
 - Support for HTTP/2 and HTTPS
 
 #### Resource Preloading
+
 ```html
 <!-- Critical resource preloading -->
 <link rel="preload" href="/assets/stylesheets/main.css" as="style">
@@ -84,11 +91,13 @@ Cache-Control: public, max-age=3600      # HTML files
 ### 1. Core Metrics
 
 #### Web Vitals
+
 - **LCP (Largest Contentful Paint)**: < 2.5s
 - **FID (First Input Delay)**: < 100ms
 - **CLS (Cumulative Layout Shift)**: < 0.1
 
 #### Custom Metrics
+
 - Page load time
 - Search response time
 - Resource loading success rate
@@ -96,6 +105,7 @@ Cache-Control: public, max-age=3600      # HTML files
 ### 2. Monitoring Tools
 
 #### Built-in Monitoring
+
 ```javascript
 // Page performance monitoring
 if ('performance' in window) {
@@ -108,6 +118,7 @@ if ('performance' in window) {
 ```
 
 #### External Tools
+
 - Google PageSpeed Insights
 - GTmetrix
 - WebPageTest
@@ -116,6 +127,7 @@ if ('performance' in window) {
 ### 3. Performance Testing
 
 #### Automated Testing
+
 ```yaml
 # GitHub Actions performance testing
 - name: Performance Testing
@@ -125,6 +137,7 @@ if ('performance' in window) {
 ```
 
 #### Manual Testing
+
 - Testing under different network conditions
 - Multi-device compatibility testing
 - Cross-browser performance comparison
@@ -134,6 +147,7 @@ if ('performance' in window) {
 ### 1. Responsive Design
 
 #### Mobile Optimization
+
 ```css
 /* Mobile font size adjustment */
 @media screen and (max-width: 768px) {
@@ -144,6 +158,7 @@ if ('performance' in window) {
 ```
 
 #### Touch-friendly
+
 - Increase touch target areas
 - Optimize scrolling experience
 - Support gesture operations
@@ -151,6 +166,7 @@ if ('performance' in window) {
 ### 2. Interaction Optimization
 
 #### Animation Effects
+
 ```css
 /* Page loading animation */
 .md-content {
@@ -164,6 +180,7 @@ if ('performance' in window) {
 ```
 
 #### Feedback Mechanisms
+
 - Loading status indicators
 - Success/failure notifications
 - Progress bars
@@ -171,6 +188,7 @@ if ('performance' in window) {
 ### 3. Accessibility Optimization
 
 #### Keyboard Navigation
+
 ```javascript
 // Search shortcut key
 document.addEventListener('keydown', function(e) {
@@ -182,11 +200,13 @@ document.addEventListener('keydown', function(e) {
 ```
 
 #### Screen Reader Support
+
 - Semantic HTML structure
 - ARIA labels and attributes
 - Focus management
 
 #### High Contrast Mode
+
 ```css
 @media (prefers-contrast: high) {
   .md-typeset table th {
@@ -210,11 +230,13 @@ document.addEventListener('keydown', function(e) {
 ### Performance Optimization History
 
 #### v1.0 Optimization
+
 - Implemented resource compression: 30% file size reduction
 - Optimized images: 50% image loading time reduction
 - Enabled caching: 40% repeat visit speed improvement
 
 #### v1.1 Optimization (Planned)
+
 - Implement Service Worker
 - Add resource preloading
 - Optimize critical rendering path
@@ -224,11 +246,13 @@ document.addEventListener('keydown', function(e) {
 ### 1. Content Optimization
 
 #### Document Structure
+
 - Reasonable heading hierarchy
 - Appropriate paragraph length
 - Clear navigation structure
 
 #### Image Usage
+
 - Use appropriate image formats
 - Provide multiple resolution versions
 - Add meaningful alt text
@@ -236,6 +260,7 @@ document.addEventListener('keydown', function(e) {
 ### 2. Code Optimization
 
 #### CSS Best Practices
+
 ```css
 /* Avoid complex selectors */
 .good { color: blue; }
@@ -250,6 +275,7 @@ document.addEventListener('keydown', function(e) {
 ```
 
 #### JavaScript Best Practices
+
 ```javascript
 // Use event delegation
 document.addEventListener('click', function(e) {
@@ -267,11 +293,13 @@ document.body.appendChild(fragment);
 ### 3. Monitoring and Maintenance
 
 #### Regular Checks
+
 - Monthly performance audits
 - Dependency package updates
 - Security vulnerability scans
 
 #### Continuous Optimization
+
 - Optimize based on user feedback
 - Track new performance best practices
 - Regularly update optimization strategies
@@ -281,16 +309,19 @@ document.body.appendChild(fragment);
 ### Common Performance Issues
 
 #### Slow Loading
+
 1. Check network connection
 2. Verify CDN status
 3. Analyze resource sizes
 
 #### Slow Search Response
+
 1. Check search index size
 2. Optimize search algorithm
 3. Consider server-side search
 
 #### Poor Mobile Experience
+
 1. Test different devices
 2. Check touch interactions
 3. Optimize mobile layout
@@ -298,11 +329,13 @@ document.body.appendChild(fragment);
 ### Performance Debugging Tools
 
 #### Browser Developer Tools
+
 - Network panel: Analyze resource loading
 - Performance panel: Analyze runtime performance
 - Lighthouse: Comprehensive performance assessment
 
 #### Command Line Tools
+
 ```bash
 # Using Lighthouse CLI
 lighthouse https://lincoln-cn.github.io/JAiRouter

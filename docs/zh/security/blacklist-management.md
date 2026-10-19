@@ -132,6 +132,7 @@ Content-Type: application/json
 ```
 
 请求体：
+
 ```json
 {
   "type": "IP",
@@ -142,6 +143,7 @@ Content-Type: application/json
 ```
 
 响应：
+
 ```json
 {
   "success": true,
@@ -165,12 +167,14 @@ Authorization: Bearer {token}
 ```
 
 参数说明：
+
 - `type`：可选，筛选类型（IP/USER/TOKEN）
 - `page`：可选，页码，默认 0
 - `size`：可选，每页条数，默认 20
 - `status`：可选，状态筛选（ACTIVE/EXPIRED）
 
 响应：
+
 ```json
 {
   "success": true,
@@ -210,6 +214,7 @@ Content-Type: application/json
 ```
 
 请求体：
+
 ```json
 {
   "reason": "更新后的原因",
@@ -233,6 +238,7 @@ Content-Type: application/json
 ```
 
 请求体：
+
 ```json
 {
   "entries": [
@@ -244,6 +250,7 @@ Content-Type: application/json
 ```
 
 响应：
+
 ```json
 {
   "success": true,
@@ -268,6 +275,7 @@ Authorization: Bearer {token}
 ```
 
 响应：
+
 ```json
 {
   "success": true,
@@ -299,6 +307,7 @@ Authorization: Bearer {token}
 ```
 
 响应：
+
 ```json
 {
   "success": true,
@@ -414,30 +423,36 @@ jairouter:
 #### 1. IP 黑名单不生效
 
 **可能原因**：
+
 - 代理环境下 IP 获取不正确
 - CIDR 格式配置错误
 
 **解决方案**：
+
 1. 检查 `X-Forwarded-For` 或 `X-Real-IP` 头配置
 2. 验证 IP 格式是否正确
 
 #### 2. 用户仍能登录
 
 **可能原因**：
+
 - 用户名拼写错误
 - 黑名单未同步到验证层
 
 **解决方案**：
+
 1. 检查黑名单条目值是否正确
 2. 清除认证缓存
 
 #### 3. 黑名单条目过多
 
 **可能原因**：
+
 - 自动化攻击导致大量条目添加
 - 未设置过期时间
 
 **解决方案**：
+
 1. 配置自动清理
 2. 设置合理的过期时间
 3. 使用 CIDR 网段代替单个 IP

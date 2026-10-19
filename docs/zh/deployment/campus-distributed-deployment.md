@@ -274,7 +274,7 @@ docker push registry.example.edu/ai/ai-gateway:${GIT_COMMIT}
 
 集群 profile 已实现 PostgreSQL 中心存储和节点配置修订轮询。生产开放管理后台动态配置时还应保证：
 
-**推荐方案：数据库/配置中心作为唯一事实源**
+#### 推荐方案：数据库/配置中心作为唯一事实源
 
 - 使用当前 `store.type=jpa`，或接入 Nacos、Apollo、Consul 等配置中心；
 - 配置写入使用数据库事务和乐观锁版本号；
@@ -283,7 +283,7 @@ docker push registry.example.edu/ai/ai-gateway:${GIT_COMMIT}
 - 节点启动时从中心存储加载最新已发布版本；
 - 配置变更必须支持审计、灰度、校验和回滚。
 
-**过渡方案：单写节点 + 共享存储 + 主动刷新**
+#### 过渡方案：单写节点 + 共享存储 + 主动刷新
 
 - 仅一个管理节点允许写配置；
 - `config-store` 使用 RWX 共享存储；

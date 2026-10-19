@@ -97,6 +97,7 @@ public class ModelPricingService {
     public boolean hasUsablePricing(String modelName, String channelId) {
         ModelPricing pricing = getPrice(modelName, channelId);
         if (pricing == null) return false;
+        if (pricing.getPriceMode() != null) return !pricing.getVideoPriceRules().isEmpty();
         return switch (pricing.getBillingMode()) {
             case 2 -> !pricing.getTiers().isEmpty()
                     && pricing.getTiers().stream()
@@ -104,6 +105,15 @@ public class ModelPricingService {
             case 3 -> !pricing.getRules().isEmpty(); // 规则模式：至少一条启用规则
             default -> pricing.getInputPrice() != null && pricing.getOutputPrice() != null;
         };
+    }
+
+    public boolean isImagePricing(String modelName, String channelId) {
+        ModelPricing pricing = getPrice(modelName, channelId);
+        if (pricing == null || !Integer.valueOf(3).equals(pricing.getBillingMode())) return false;
+        return pricing.getRules().stream().anyMatch(r -> {
+            try { return objectMapper.readTree(r.priceJson()).path("imagePrice").isNumber(); }
+            catch (Exception e) { return false; }
+        });
     }
 
 
@@ -216,9 +226,10 @@ public class ModelPricingService {
          * @param hasVideoInput    是否有视频输入（统一价格模式为 null，不参与匹配）
          * @param price            单价：second 单位=元/秒；token 单位=元/token（同步层已 ÷1e6 转换）
          */
-        public record VideoPriceRule(String outputResolution, Boolean hasVideoInput, BigDecimal price) {
-            public VideoPriceRule {
-                price = price != null ? price : BigDecimal.ZERO;
+        public record VideoPriceRule(String outputResolution, Boolean hasVideoInput, BigDecimal price,
+                                     BigDecimal inputPrice) {
+            public VideoPriceRule(String resolution, Boolean hasInput, BigDecimal price) {
+                this(resolution, hasInput, price, null);
             }
         }
 

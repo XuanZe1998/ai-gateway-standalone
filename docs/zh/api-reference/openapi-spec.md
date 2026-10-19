@@ -7,13 +7,12 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter 使用 SpringDoc OpenAPI 3 自动生成 API 文档，提供交互式的 API 探索和测试体验。
 
 ## 访问方式
 
 ### Swagger UI 界面
+
 当 JAiRouter 服务运行时，可以通过以下地址访问交互式 API 文档：
 
 ```
@@ -21,6 +20,7 @@ http://localhost:8080/swagger-ui.html
 ```
 
 ### OpenAPI JSON 规范
+
 获取完整的 OpenAPI 3.0 JSON 规范文档：
 
 ```
@@ -28,6 +28,7 @@ http://localhost:8080/v3/api-docs
 ```
 
 ### OpenAPI YAML 规范
+
 获取 YAML 格式的 OpenAPI 规范文档：
 
 ```
@@ -57,6 +58,7 @@ springdoc:
 JAiRouter 的 API 按功能分为以下几个主要分组：
 
 ### 1. 统一模型接口 (Universal API)
+
 - **标签**: `统一模型接口`
 - **描述**: 提供兼容 OpenAI 格式的统一模型服务接口
 - **路径前缀**: `/v1`
@@ -70,31 +72,37 @@ JAiRouter 的 API 按功能分为以下几个主要分组：
   - 图像编辑 (`/v1/images/edits`)
 
 ### 2. 服务类型管理
+
 - **标签**: `服务类型管理`
 - **描述**: 提供服务类型的增删改查及相关配置管理接口
 - **路径前缀**: `/api/config/type`
 
 ### 3. 服务实例管理
+
 - **标签**: `服务实例管理`
 - **描述**: 提供服务实例的增删改查相关接口
 - **路径前缀**: `/api/config/instance`
 
 ### 4. 监控管理
+
 - **标签**: `监控管理`
 - **描述**: 提供监控配置的查询和动态更新功能
 - **路径前缀**: `/api/monitoring`
 
 ### 5. 模型信息接口
+
 - **标签**: `模型信息接口`
 - **描述**: 提供模型信息查询相关接口
 - **路径前缀**: `/api/models`
 
 ### 6. 配置版本管理
+
 - **标签**: `配置版本管理`
 - **描述**: 提供配置版本的查询、回滚和删除等管理接口
 - **路径前缀**: `/api/config/version`
 
 ### 7. 指标注册管理
+
 - **标签**: `Metric Registration`
 - **描述**: 动态指标注册和管理 API
 - **路径前缀**: `/api/monitoring/metrics`
@@ -102,28 +110,35 @@ JAiRouter 的 API 按功能分为以下几个主要分组：
 ## 使用 Swagger UI
 
 ### 1. 接口探索
+
 - 访问 `http://localhost:8080/swagger-ui.html`
 - 浏览不同的 API 分组和接口
 - 查看详细的请求参数和响应格式
 
 ### 2. 在线测试
+
 - 点击任意接口的 "Try it out" 按钮
 - 填写必需的参数
 - 点击 "Execute" 执行请求
 - 查看实际的响应结果
 
 ### 3. 认证配置
+
 对于需要认证的接口，可以在 Swagger UI 中配置认证信息：
 
 1. 点击页面右上角的 "Authorize" 按钮
 2. 在 "Authorization" 字段中输入 Bearer Token：
+
    ```
    Bearer your-api-key
    ```
+
 3. 点击 "Authorize" 确认
 
 ### 4. 模型和示例
+
 Swagger UI 会自动显示：
+
 - 请求和响应的数据模型
 - 示例 JSON 数据
 - 参数的类型和约束
@@ -132,6 +147,7 @@ Swagger UI 会自动显示：
 ## 自定义 OpenAPI 配置
 
 ### 1. 全局配置
+
 可以通过 Java 配置类自定义 OpenAPI 信息：
 
 ```java
@@ -167,6 +183,7 @@ public class OpenApiConfig {
 ```
 
 ### 2. 接口级别注解
+
 使用 OpenAPI 注解增强接口文档：
 
 ```java
@@ -215,6 +232,7 @@ public Mono<ResponseEntity<?>> chatCompletions(
 ## 导出和集成
 
 ### 1. 导出 OpenAPI 规范
+
 可以通过以下方式导出 OpenAPI 规范文件：
 
 ```bash
@@ -226,14 +244,17 @@ curl http://localhost:8080/v3/api-docs.yaml > jairouter-openapi.yaml
 ```
 
 ### 2. 集成到文档站点
+
 将 OpenAPI 规范集成到 MkDocs 文档站点：
 
 #### 安装插件
+
 ```bash
 pip install mkdocs-swagger-ui-tag
 ```
 
 #### 配置 mkdocs.yml
+
 ```yaml
 plugins:
   - swagger-ui-tag
@@ -243,6 +264,7 @@ markdown_extensions:
 ```
 
 #### 在文档中嵌入
+
 ```markdown
 # API 文档
 
@@ -250,6 +272,7 @@ markdown_extensions:
 ```
 
 ### 3. 生成客户端 SDK
+
 使用 OpenAPI Generator 生成各种语言的客户端 SDK：
 
 ```bash
@@ -280,22 +303,26 @@ openapi-generator-cli generate \
 ## 最佳实践
 
 ### 1. 文档质量
+
 - 为所有公开接口添加详细的 `@Operation` 注解
 - 使用 `@Parameter` 描述所有参数
 - 提供完整的 `@ApiResponse` 定义
 - 添加有意义的示例数据
 
 ### 2. 安全性
+
 - 为需要认证的接口添加 `@SecurityRequirement`
 - 在全局配置中定义安全方案
 - 不要在文档中暴露敏感信息
 
 ### 3. 版本管理
+
 - 使用语义化版本号
 - 在重大变更时更新版本
 - 保持向后兼容性
 
 ### 4. 性能优化
+
 - 在生产环境启用缓存
 - 限制文档访问权限
 - 考虑使用 CDN 加速
@@ -314,12 +341,15 @@ openapi-generator-cli generate \
 **解决**: 检查 DTO 类的注解和字段定义
 
 ### 2. 调试技巧
+
 - 启用 SpringDoc 调试日志：
+
   ```yaml
   logging:
     level:
       org.springdoc: DEBUG
   ```
+
 - 检查 `/v3/api-docs` 端点的原始 JSON 输出
 - 使用浏览器开发者工具检查网络请求
 

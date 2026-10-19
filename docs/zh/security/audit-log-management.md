@@ -111,6 +111,7 @@ Authorization: Bearer {token}
 ```
 
 参数说明：
+
 - `operation`：可选，筛选操作类型
 - `resourceType`：可选，筛选资源类型
 - `operator`：可选，筛选操作人
@@ -118,6 +119,7 @@ Authorization: Bearer {token}
 - `size`：可选，每页条数，默认 20
 
 响应：
+
 ```json
 {
   "success": true,
@@ -157,6 +159,7 @@ Content-Type: application/json
 ```
 
 请求体：
+
 ```json
 {
   "filters": {
@@ -311,20 +314,24 @@ jairouter:
 #### 1. 审计日志未记录
 
 **可能原因**：
+
 - 审计功能未启用
 - 日志表空间不足
 
 **解决方案**：
+
 1. 检查配置 `jairouter.security.audit-log.enabled`
 2. 检查数据库空间和连接
 
 #### 2. 日志查询缓慢
 
 **可能原因**：
+
 - 日志数据量过大
 - 缺少索引
 
 **解决方案**：
+
 1. 定期清理历史日志
 2. 为查询字段添加索引
 3. 使用日志归档

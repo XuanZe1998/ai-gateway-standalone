@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本指南将详细介绍如何在不同环境中安装和构建 JAiRouter。
 
 ## 环境要求
@@ -105,6 +103,7 @@ java -version
 ```
 
 如果没有安装 Java，请从以下渠道下载：
+
 - [OpenJDK](https://openjdk.org/install/)
 - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
 - [Amazon Corretto](https://aws.amazon.com/corretto/)
@@ -171,6 +170,7 @@ JAiRouter 提供多种构建方式，针对不同用户群体和网络环境优�
 ### 3. 中国用户专用构建（推荐）
 
 #### 优化特性
+
 - **阿里云Maven镜像**: 使用 `https://maven.aliyun.com/repository/public`
 - **完整仓库支持**: Central、Spring、Plugin等仓库镜像
 - **自动配置**: 内置settings.xml，无需手动配置
@@ -190,6 +190,7 @@ mvn clean package -s settings-china.xml
 ```
 
 #### 相关配置文件
+
 ```
 ├── Dockerfile.china              # 中国优化的Docker构建文件
 ├── settings-china.xml            # 阿里云Maven镜像配置
@@ -274,6 +275,7 @@ docker build -f Dockerfile.china -t sodlinken/jairouter:latest .
 ```
 
 **Dockerfile.china 特性**：
+
 - 在构建阶段自动配置阿里云Maven镜像
 - 使用china profile进行构建
 - 优化的多阶段构建流程
@@ -310,11 +312,13 @@ Docker 构建包含以下阶段：
 ### 5. 构建优化建议
 
 #### 中国用户
+
 - 优先使用 `./scripts/docker-build-china.sh`
 - 配置本地Docker使用国内镜像加速
 - 使用多阶段构建减少镜像大小
 
 #### 国际用户
+
 - 使用标准构建脚本
 - 配置Docker代理（如需要）
 - 利用Docker层缓存提升构建速度
@@ -326,6 +330,7 @@ Docker 构建包含以下阶段：
 ### 1. IDE 配置
 
 推荐使用以下 IDE：
+
 - **IntelliJ IDEA**: 推荐，内置 Spring Boot 支持
 - **Eclipse**: 需要安装 Spring Tools Suite
 - **VS Code**: 需要安装 Java 和 Spring Boot 扩展
@@ -457,6 +462,7 @@ docker build --no-cache -t sodlinken/jairouter:latest .
 **问题**: `Port 8080 was already in use`
 
 **解决方案**:
+
 ```bash
 # 查找占用进程
 netstat -tulpn | grep 8080
@@ -471,6 +477,7 @@ java -jar model-router.jar --server.port=8081
 **问题**: `Unsupported class file major version`
 
 **解决方案**:
+
 ```bash
 # 检查 Java 版本
 java -version
@@ -488,6 +495,7 @@ yum install java-17-openjdk
 **问题**: `OutOfMemoryError`
 
 **解决方案**:
+
 ```bash
 # 增加 JVM 内存
 java -Xmx2g -Xms1g -jar model-router.jar
@@ -498,6 +506,7 @@ java -Xmx2g -Xms1g -jar model-router.jar
 **问题**: Maven 依赖下载超时或失败
 
 **解决方案**:
+
 ```bash
 # 中国用户使用阿里云镜像
 ./mvnw clean package -Pchina
@@ -511,6 +520,7 @@ java -Xmx2g -Xms1g -jar model-router.jar
 **问题**: Docker 镜像构建失败
 
 **解决方案**:
+
 ```bash
 # 检查 Docker 版本
 docker --version

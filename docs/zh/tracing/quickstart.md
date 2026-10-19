@@ -121,6 +121,7 @@ curl -X POST http://localhost:8080/api/v1/chat/completions \
 根据您配置的导出器类型：
 
 #### 日志导出
+
 检查应用日志中的追踪信息：
 
 ```bash
@@ -129,9 +130,11 @@ tail -f logs/application.log | grep traceId
 ```
 
 #### Jaeger UI
+
 打开浏览器访问 `http://localhost:16686`，搜索服务名称 "jairouter"。
 
 #### OTLP 收集器
+
 检查您的 OTEL 收集器配置和后端存储。
 
 ## 配置采样策略
@@ -247,6 +250,7 @@ management:
 ### Q: 追踪数据没有导出
 
 **检查项目：**
+
 1. 确认 `jairouter.tracing.enabled=true`
 2. 检查导出器配置是否正确
 3. 验证网络连接（Jaeger/OTLP 端点）
@@ -255,6 +259,7 @@ management:
 ### Q: 性能影响过大
 
 **优化建议：**
+
 1. 降低采样率：`sampling.ratio: 0.1`
 2. 启用异步导出
 3. 调整批处理大小
@@ -263,6 +268,7 @@ management:
 ### Q: 追踪上下文丢失
 
 **排查步骤：**
+
 1. 检查异步操作是否正确传播上下文
 2. 确认自定义过滤器的执行顺序
 3. 验证 WebFlux 配置
