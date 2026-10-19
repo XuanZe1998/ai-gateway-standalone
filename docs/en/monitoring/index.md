@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter provides comprehensive monitoring capabilities to help you track performance, health, and usage patterns of your AI model routing gateway.
 
 ## Monitoring Overview

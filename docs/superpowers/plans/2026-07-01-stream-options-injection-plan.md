@@ -35,9 +35,11 @@
 ## Task 1: Create StreamUsageInjectionProperties
 
 **Files:**
+
 - Create: `src/main/java/org/unreal/modelrouter/router/adapter/config/StreamUsageInjectionProperties.java`
 
 **Interfaces:**
+
 - Consumes: none
 - Produces: `StreamUsageInjectionProperties` bean with `isEnabled()`, `matches(String baseUrl)` methods
 
@@ -144,9 +146,11 @@ git commit -m "feat: add StreamUsageInjectionProperties for configurable stream_
 ## Task 2: Modify StreamingRequestProcessor
 
 **Files:**
+
 - Modify: `src/main/java/org/unreal/modelrouter/router/adapter/processor/StreamingRequestProcessor.java`
 
 **Interfaces:**
+
 - Consumes: `StreamUsageInjectionProperties` bean via constructor
 - Produces: `injectStreamOptionsIfNeeded(Object, ServiceType, ModelInstance)` private method
 
@@ -300,9 +304,11 @@ git commit -m "feat: inject stream_options.include_usage for configured streamin
 ## Task 3: Add Default Configuration
 
 **Files:**
+
 - Modify: `src/main/resources/config/router/adapter.yml`
 
 **Interfaces:**
+
 - Consumes: none
 - Produces: `jairouter.adapter.stream-usage-injection` default config
 
@@ -337,9 +343,11 @@ git commit -m "config: add default stream_options injection config for Volcengin
 ## Task 4: Add Unit Tests
 
 **Files:**
+
 - Create: `src/test/java/org/unreal/modelrouter/router/adapter/processor/StreamUsageInjectionTest.java`
 
 **Interfaces:**
+
 - Consumes: `StreamUsageInjectionProperties`
 - Produces: passing tests
 
@@ -426,9 +434,11 @@ git commit -m "test: add StreamUsageInjectionProperties unit tests"
 ## Task 5: Add StreamingRequestProcessor Injection Tests
 
 **Files:**
+
 - Create: `src/test/java/org/unreal/modelrouter/router/adapter/processor/StreamingRequestProcessorTest.java`
 
 **Interfaces:**
+
 - Consumes: `StreamingRequestProcessor`, `StreamUsageInjectionProperties`
 - Produces: passing tests
 
@@ -601,6 +611,7 @@ git commit -m "test: add StreamingRequestProcessor stream_options injection test
 ## Task 6: Compile and Run Tests
 
 **Files:**
+
 - All of the above
 
 - [ ] **Step 6.1: Compile the project**

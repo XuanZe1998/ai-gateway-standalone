@@ -7,6 +7,7 @@
 ### 1. 追踪数据缺失
 
 **症状描述**：
+
 - 日志中看不到 traceId 和 spanId
 - 监控面板没有追踪数据
 - 导出器没有收到追踪信息
@@ -36,6 +37,7 @@ curl http://localhost:8080/actuator/metrics/jairouter.tracing.sampling.rate
 ### 2. 部分数据丢失
 
 **症状描述**：
+
 - 只有部分请求有追踪数据
 - 子 Span 缺失
 - 异步操作没有追踪信息
@@ -60,6 +62,7 @@ jairouter:
 ### 1. 追踪导致性能下降
 
 **症状描述**：
+
 - 响应时间明显增加
 - CPU 使用率上升
 - 内存使用量过高
@@ -100,6 +103,7 @@ jairouter:
 ### 2. 内存泄漏
 
 **症状描述**：
+
 - 堆内存持续增长
 - 出现 OutOfMemoryError
 - GC 频繁但内存不释放
@@ -134,6 +138,7 @@ jairouter:
 ### 1. 配置不生效
 
 **症状描述**：
+
 - 修改配置后没有变化
 - 配置验证失败
 - 启动时配置错误
@@ -185,6 +190,7 @@ curl http://localhost:8080/api/admin/config/history
 ### 1. Jaeger 连接失败
 
 **错误信息**：
+
 ```
 Failed to export spans to Jaeger: Connection refused
 ```
@@ -230,6 +236,7 @@ jairouter:
 ### 1. 响应式流中上下文丢失
 
 **问题表现**：
+
 - 异步操作中没有 traceId
 - 子 Span 创建失败
 - MDC 信息缺失

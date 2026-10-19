@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## Overview
 
 JAiRouter employs a multi-layered testing strategy to ensure code quality and system stability. This guide covers various aspects including unit testing, integration testing, and performance testing.
@@ -16,6 +14,7 @@ JAiRouter employs a multi-layered testing strategy to ensure code quality and sy
 ## Testing Frameworks
 
 ### Core Testing Frameworks
+
 - **JUnit 5**: Primary testing framework
 - **Mockito**: Mocking framework
 - **Spring Boot Test**: Spring integration testing support
@@ -23,6 +22,7 @@ JAiRouter employs a multi-layered testing strategy to ensure code quality and sy
 - **TestContainers**: Containerized integration testing
 
 ### Testing Tools
+
 - **AssertJ**: Fluent assertion library
 - **WireMock**: HTTP service mocking
 - **JaCoCo**: Code coverage analysis
@@ -32,17 +32,20 @@ JAiRouter employs a multi-layered testing strategy to ensure code quality and sy
 ### 1. Unit Testing
 
 #### Test Scope
+
 - Functionality verification of individual classes or methods
 - Business logic correctness
 - Boundary condition handling
 - Exception handling
 
 #### Naming Convention
+
 ```
 {ClassName}Test.java
 ```
 
 #### Basic Structure
+
 ```java
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Load Balancer Factory Test")
@@ -71,7 +74,8 @@ class LoadBalancerFactoryTest {
 
 #### Testing Best Practices
 
-**1. Use AAA Pattern**
+##### 1. Use AAA Pattern
+
 ```java
 @Test
 void shouldReturnTrueWhenTokensAvailable() {
@@ -86,7 +90,8 @@ void shouldReturnTrueWhenTokensAvailable() {
 }
 ```
 
-**2. Test Boundary Conditions**
+##### 2. Test Boundary Conditions
+
 ```java
 @Test
 void shouldRejectWhenExceedingCapacity() {
@@ -104,7 +109,8 @@ void shouldRejectWhenExceedingCapacity() {
 }
 ```
 
-**3. Exception Testing**
+##### 3. Exception Testing
+
 ```java
 @Test
 void shouldThrowExceptionWhenConfigInvalid() {
@@ -122,12 +128,14 @@ void shouldThrowExceptionWhenConfigInvalid() {
 ### 2. Integration Testing
 
 #### Test Scope
+
 - Multi-component collaboration
 - Spring container integration
 - Database interactions
 - External service calls
 
 #### Basic Structure
+
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
@@ -170,6 +178,7 @@ class UniversalControllerIntegrationTest {
 ```
 
 #### Using TestContainers
+
 ```java
 @SpringBootTest
 @Testcontainers
@@ -198,6 +207,7 @@ class DatabaseIntegrationTest {
 ### 3. Reactive Testing
 
 #### Testing Mono
+
 ```java
 @Test
 void shouldProcessRequestSuccessfully() {
@@ -216,6 +226,7 @@ void shouldProcessRequestSuccessfully() {
 ```
 
 #### Testing Flux
+
 ```java
 @Test
 void shouldStreamResponses() {
@@ -232,6 +243,7 @@ void shouldStreamResponses() {
 ```
 
 #### Testing Error Handling
+
 ```java
 @Test
 void shouldHandleServiceError() {
@@ -251,6 +263,7 @@ void shouldHandleServiceError() {
 ### 4. Performance Testing
 
 #### Concurrency Testing
+
 ```java
 @Test
 void shouldHandleConcurrentRequests() throws InterruptedException {
@@ -283,6 +296,7 @@ void shouldHandleConcurrentRequests() throws InterruptedException {
 ```
 
 #### Stress Testing
+
 ```java
 @Test
 @Timeout(value = 5, unit = TimeUnit.SECONDS)
@@ -299,6 +313,7 @@ void shouldCompleteWithinTimeLimit() {
 ## Test Data Management
 
 ### Test Configuration
+
 ```yaml
 # application-test.yml
 spring:
@@ -320,6 +335,7 @@ logging:
 ```
 
 ### Mock Data
+
 ```java
 @TestConfiguration
 public class TestDataConfiguration {
@@ -344,6 +360,7 @@ public class TestDataConfiguration {
 ```
 
 ### WireMock Usage
+
 ```java
 @ExtendWith(WireMockExtension.class)
 class AdapterIntegrationTest {
@@ -377,6 +394,7 @@ class AdapterIntegrationTest {
 ## Test Execution
 
 ### Running All Tests
+
 ```bash
 # Standard test execution
 ./mvnw test
@@ -386,6 +404,7 @@ class AdapterIntegrationTest {
 ```
 
 ### Running Specific Tests
+
 ```bash
 # Run a single test class
 ./mvnw test -Dtest=LoadBalancerTest
@@ -398,6 +417,7 @@ class AdapterIntegrationTest {
 ```
 
 ### Generating Coverage Reports
+
 ```bash
 # Generate JaCoCo coverage report
 ./mvnw clean test jacoco:report
@@ -409,11 +429,13 @@ open target/site/jacoco/index.html
 ## Testing Best Practices
 
 ### 1. Test Naming
+
 - Use descriptive test method names
 - Use `@DisplayName` to provide Chinese descriptions
 - Follow `should_ExpectedBehavior_When_StateUnderTest` pattern
 
 ### 2. Test Organization
+
 ```java
 @Nested
 @DisplayName("When configuration is valid")
@@ -439,6 +461,7 @@ class WhenConfigurationIsInvalid {
 ```
 
 ### 3. Test Data
+
 - Use `@ParameterizedTest` for data-driven testing
 - Use Builder pattern to create test objects
 - Avoid hard-coded test data
@@ -460,11 +483,13 @@ void shouldSupportAllLoadBalancerTypes(String type) {
 ```
 
 ### 4. Test Isolation
+
 - Each test method should be independent
 - Use `@BeforeEach` and `@AfterEach` for cleanup
 - Avoid dependencies between tests
 
 ### 5. Asynchronous Testing
+
 ```java
 @Test
 void shouldHandleAsyncOperation() {
@@ -481,6 +506,7 @@ void shouldHandleAsyncOperation() {
 ## Continuous Integration
 
 ### GitHub Actions Configuration
+
 ```yaml
 name: Tests
 
@@ -516,6 +542,7 @@ jobs:
 ```
 
 ### Quality Gates
+
 - Test coverage no less than 80%
 - All tests must pass
 - No Checkstyle and SpotBugs warnings
@@ -524,7 +551,8 @@ jobs:
 
 ### Common Issues
 
-**1. Test Timeout**
+#### 1. Test Timeout
+
 ```java
 @Test
 @Timeout(value = 10, unit = TimeUnit.SECONDS)
@@ -533,7 +561,8 @@ void testWithTimeout() {
 }
 ```
 
-**2. Memory Leaks**
+#### 2. Memory Leaks
+
 ```java
 @AfterEach
 void cleanup() {
@@ -543,7 +572,8 @@ void cleanup() {
 }
 ```
 
-**3. Concurrency Issues**
+#### 3. Concurrency Issues
+
 ```java
 @Test
 void shouldBeConcurrentSafe() {
@@ -552,6 +582,7 @@ void shouldBeConcurrentSafe() {
 ```
 
 ### Debugging Tips
+
 - Use `@EnabledIf` for conditional test execution
 - Use `@DisabledOnOs` to skip specific platforms
 - Use logging for debugging information

@@ -7,13 +7,12 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档介绍如何设置和配置 JAiRouter 的监控功能，包括基础配置、监控栈部署和验证步骤。
 
 ## 环境要求
 
 ### 系统要求
+
 - **操作系统**: Windows 10+, Linux, macOS
 - **Java**: 17+
 - **Docker**: 20.10+ (用于监控栈部署)
@@ -21,6 +20,7 @@
 - **磁盘**: 至少 10GB 可用空间
 
 ### 网络端口
+
 - **JAiRouter**: 8080 (应用端口), 8081 (管理端口)
 - **Prometheus**: 9090
 - **Grafana**: 3000
@@ -31,6 +31,7 @@
 ### 方法一：一键部署脚本
 
 #### Windows PowerShell
+
 ```powershell
 # 运行部署脚本
 .\scripts\setup-monitoring.ps1
@@ -40,6 +41,7 @@
 ```
 
 #### Linux/macOS
+
 ```bash
 # 给脚本执行权限
 chmod +x scripts/setup-monitoring.sh
@@ -54,11 +56,13 @@ chmod +x scripts/setup-monitoring.sh
 ### 方法二：手动部署
 
 #### 1. 创建必要目录
+
 ```bash
 mkdir -p monitoring/data/{prometheus,grafana,alertmanager}
 ```
 
 #### 2. 启动监控栈
+
 ```bash
 # 启动完整监控栈
 docker-compose -f docker-compose-monitoring.yml up -d
@@ -68,6 +72,7 @@ make compose-up-monitoring
 ```
 
 #### 3. 验证服务状态
+
 ```bash
 # 检查服务状态
 docker-compose -f docker-compose-monitoring.yml ps
@@ -160,6 +165,7 @@ alerting:
 ### Grafana 配置
 
 #### 数据源自动配置
+
 创建 `monitoring/grafana/provisioning/datasources/prometheus.yml`：
 
 ```yaml
@@ -175,6 +181,7 @@ datasources:
 ```
 
 #### 仪表板自动导入
+
 创建 `monitoring/grafana/provisioning/dashboards/jairouter-dashboards.yml`：
 
 ```yaml
@@ -306,7 +313,7 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 
 ### 3. 验证 Grafana 仪表板
 
-1. 访问 http://localhost:3000
+1. 访问 <http://localhost:3000>
 2. 使用 admin/jairouter2024 登录
 3. 检查数据源连接状态
 4. 验证仪表板是否正常显示数据
@@ -453,9 +460,11 @@ monitoring:
 ### 常见问题
 
 #### 1. 指标端点无法访问
+
 **症状**: 访问 `/actuator/prometheus` 返回 404
 
 **解决方案**:
+
 ```yaml
 management:
   endpoints:
@@ -465,9 +474,11 @@ management:
 ```
 
 #### 2. Grafana 无法连接 Prometheus
+
 **症状**: 仪表板显示 "No data"
 
 **解决方案**:
+
 ```bash
 # 检查网络连通性
 docker exec grafana curl http://prometheus:9090/api/v1/query?query=up
@@ -477,9 +488,11 @@ docker exec prometheus cat /etc/prometheus/prometheus.yml
 ```
 
 #### 3. 监控数据为空
+
 **症状**: Prometheus 端点返回空数据
 
 **解决方案**:
+
 ```yaml
 monitoring:
   metrics:

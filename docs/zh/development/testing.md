@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## 概述
 
 JAiRouter 采用多层次的测试策略，确保代码质量和系统稳定性。本指南涵盖了单元测试、集成测试、性能测试等各个方面。
@@ -16,6 +14,7 @@ JAiRouter 采用多层次的测试策略，确保代码质量和系统稳定性�
 ## 测试框架
 
 ### 核心测试框架
+
 - **JUnit 5**: 主要测试框架
 - **Mockito**: Mock 框架
 - **Spring Boot Test**: Spring 集成测试支持
@@ -23,6 +22,7 @@ JAiRouter 采用多层次的测试策略，确保代码质量和系统稳定性�
 - **TestContainers**: 容器化集成测试
 
 ### 测试工具
+
 - **AssertJ**: 流式断言库
 - **WireMock**: HTTP 服务模拟
 - **JaCoCo**: 代码覆盖率分析
@@ -32,17 +32,20 @@ JAiRouter 采用多层次的测试策略，确保代码质量和系统稳定性�
 ### 1. 单元测试
 
 #### 测试范围
+
 - 单个类或方法的功能验证
 - 业务逻辑正确性
 - 边界条件处理
 - 异常情况处理
 
 #### 命名规范
+
 ```
 {ClassName}Test.java
 ```
 
 #### 基本结构
+
 ```java
 @ExtendWith(MockitoExtension.class)
 @DisplayName("负载均衡器工厂测试")
@@ -71,7 +74,8 @@ class LoadBalancerFactoryTest {
 
 #### 测试最佳实践
 
-**1. 使用 AAA 模式**
+##### 1. 使用 AAA 模式
+
 ```java
 @Test
 void shouldReturnTrueWhenTokensAvailable() {
@@ -86,7 +90,8 @@ void shouldReturnTrueWhenTokensAvailable() {
 }
 ```
 
-**2. 测试边界条件**
+##### 2. 测试边界条件
+
 ```java
 @Test
 void shouldRejectWhenExceedingCapacity() {
@@ -104,7 +109,8 @@ void shouldRejectWhenExceedingCapacity() {
 }
 ```
 
-**3. 异常测试**
+##### 3. 异常测试
+
 ```java
 @Test
 void shouldThrowExceptionWhenConfigInvalid() {
@@ -122,12 +128,14 @@ void shouldThrowExceptionWhenConfigInvalid() {
 ### 2. 集成测试
 
 #### 测试范围
+
 - 多个组件协作
 - Spring 容器集成
 - 数据库交互
 - 外部服务调用
 
 #### 基本结构
+
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
@@ -170,6 +178,7 @@ class UniversalControllerIntegrationTest {
 ```
 
 #### 使用 TestContainers
+
 ```java
 @SpringBootTest
 @Testcontainers
@@ -198,6 +207,7 @@ class DatabaseIntegrationTest {
 ### 3. 响应式测试
 
 #### 测试 Mono
+
 ```java
 @Test
 void shouldProcessRequestSuccessfully() {
@@ -216,6 +226,7 @@ void shouldProcessRequestSuccessfully() {
 ```
 
 #### 测试 Flux
+
 ```java
 @Test
 void shouldStreamResponses() {
@@ -232,6 +243,7 @@ void shouldStreamResponses() {
 ```
 
 #### 测试错误处理
+
 ```java
 @Test
 void shouldHandleServiceError() {
@@ -251,6 +263,7 @@ void shouldHandleServiceError() {
 ### 4. 性能测试
 
 #### 并发测试
+
 ```java
 @Test
 void shouldHandleConcurrentRequests() throws InterruptedException {
@@ -283,6 +296,7 @@ void shouldHandleConcurrentRequests() throws InterruptedException {
 ```
 
 #### 压力测试
+
 ```java
 @Test
 @Timeout(value = 5, unit = TimeUnit.SECONDS)
@@ -299,6 +313,7 @@ void shouldCompleteWithinTimeLimit() {
 ## 测试数据管理
 
 ### 测试配置
+
 ```yaml
 # application-test.yml
 spring:
@@ -320,6 +335,7 @@ logging:
 ```
 
 ### Mock 数据
+
 ```java
 @TestConfiguration
 public class TestDataConfiguration {
@@ -344,6 +360,7 @@ public class TestDataConfiguration {
 ```
 
 ### WireMock 使用
+
 ```java
 @ExtendWith(WireMockExtension.class)
 class AdapterIntegrationTest {
@@ -377,6 +394,7 @@ class AdapterIntegrationTest {
 ## 测试执行
 
 ### 运行所有测试
+
 ```bash
 # 标准测试执行
 ./mvnw test
@@ -386,6 +404,7 @@ class AdapterIntegrationTest {
 ```
 
 ### 运行特定测试
+
 ```bash
 # 运行单个测试类
 ./mvnw test -Dtest=LoadBalancerTest
@@ -398,6 +417,7 @@ class AdapterIntegrationTest {
 ```
 
 ### 生成覆盖率报告
+
 ```bash
 # 生成 JaCoCo 覆盖率报告
 ./mvnw clean test jacoco:report
@@ -409,11 +429,13 @@ open target/site/jacoco/index.html
 ## 测试最佳实践
 
 ### 1. 测试命名
+
 - 使用描述性的测试方法名
 - 使用 `@DisplayName` 提供中文描述
 - 遵循 `should_ExpectedBehavior_When_StateUnderTest` 模式
 
 ### 2. 测试组织
+
 ```java
 @Nested
 @DisplayName("当配置有效时")
@@ -439,6 +461,7 @@ class WhenConfigurationIsInvalid {
 ```
 
 ### 3. 测试数据
+
 - 使用 `@ParameterizedTest` 进行数据驱动测试
 - 使用 Builder 模式创建测试对象
 - 避免硬编码测试数据
@@ -460,11 +483,13 @@ void shouldSupportAllLoadBalancerTypes(String type) {
 ```
 
 ### 4. 测试隔离
+
 - 每个测试方法应该独立
 - 使用 `@BeforeEach` 和 `@AfterEach` 进行清理
 - 避免测试之间的依赖关系
 
 ### 5. 异步测试
+
 ```java
 @Test
 void shouldHandleAsyncOperation() {
@@ -481,6 +506,7 @@ void shouldHandleAsyncOperation() {
 ## 持续集成
 
 ### GitHub Actions 配置
+
 ```yaml
 name: Tests
 
@@ -516,6 +542,7 @@ jobs:
 ```
 
 ### 质量门禁
+
 - 测试覆盖率不低于 80%
 - 所有测试必须通过
 - 无 Checkstyle 和 SpotBugs 警告
@@ -524,7 +551,8 @@ jobs:
 
 ### 常见问题
 
-**1. 测试超时**
+#### 1. 测试超时
+
 ```java
 @Test
 @Timeout(value = 10, unit = TimeUnit.SECONDS)
@@ -533,7 +561,8 @@ void testWithTimeout() {
 }
 ```
 
-**2. 内存泄漏**
+#### 2. 内存泄漏
+
 ```java
 @AfterEach
 void cleanup() {
@@ -543,7 +572,8 @@ void cleanup() {
 }
 ```
 
-**3. 并发问题**
+#### 3. 并发问题
+
 ```java
 @Test
 void shouldBeConcurrentSafe() {
@@ -552,6 +582,7 @@ void shouldBeConcurrentSafe() {
 ```
 
 ### 调试技巧
+
 - 使用 `@EnabledIf` 条件执行测试
 - 使用 `@DisabledOnOs` 跳过特定平台
 - 使用日志输出调试信息

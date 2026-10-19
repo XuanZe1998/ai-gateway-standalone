@@ -204,6 +204,7 @@ spring:
 Access `http://localhost:8080/h2-console` for management.
 
 Connection information:
+
 - JDBC URL: `jdbc:h2:file:./data/config`
 - Username: `sa`
 - Password: (empty)
@@ -317,6 +318,7 @@ store:
 ```
 
 After starting the application, the system will automatically:
+
 1. Migrate configuration data from `./config/*.json`
 2. Migrate API Keys from memory/configuration files
 3. Migrate JWT accounts from configuration files
@@ -458,6 +460,7 @@ If the configured storage directory does not exist, the system will log warning 
 ### Permission Issues
 
 If you encounter permission issues, please check:
+
 - Read/write permissions of the application running user to the storage directory
 - Execute permissions of the parent directory (permission to enter the directory)
 
@@ -468,6 +471,7 @@ Monitor the disk usage of the storage directory to ensure there is enough space 
 ### Auto-Merge Function Not Working
 
 If the auto-merge function is not working, please check:
+
 - Whether the `store.auto-merge` configuration is set to true
 - Whether the configuration directory exists and has read permissions
 - Whether the configuration file naming conforms to the `model-router-config@<version>.json` format
@@ -475,6 +479,7 @@ If the auto-merge function is not working, please check:
 ### Database Connection Failure
 
 If you encounter database connection issues, please check:
+
 - Whether the `store.h2.url` configuration is correct
 - Whether the database file path has write permissions
 - Detailed error information in application logs

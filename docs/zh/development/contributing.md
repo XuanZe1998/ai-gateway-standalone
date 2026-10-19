@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## 欢迎贡献
 
 感谢您对 JAiRouter 项目的关注！我们欢迎各种形式的贡献，包括但不限于：
@@ -31,18 +29,21 @@
 ### 环境配置
 
 1. **克隆项目**
+
    ```bash
    git clone https://github.com/Lincoln-cn/JAiRouter.git
    cd jairouter
    ```
 
 2. **验证Java版本**
+
    ```bash
    java -version
    # 确保输出显示 Java 17 或更高版本
    ```
 
 3. **构建项目**
+
    ```bash
    # 中国用户（推荐）
    ./mvnw clean package -Pchina
@@ -52,12 +53,14 @@
    ```
 
 4. **运行测试**
+
    ```bash
    # 跳过代码质量检查，直接运行测试
    ./mvnw compiler:compile compiler:testCompile surefire:test
    ```
 
 5. **启动应用**
+
    ```bash
    java -jar target/model-router-*.jar
    ```
@@ -206,6 +209,7 @@ class UniversalControllerIntegrationTest {
 ```
 
 **类型 (type):**
+
 - `feat`: 新功能
 - `fix`: Bug 修复
 - `docs`: 文档更新
@@ -215,6 +219,7 @@ class UniversalControllerIntegrationTest {
 - `chore`: 构建过程或辅助工具的变动
 
 **示例:**
+
 ```bash
 feat(loadbalancer): 添加一致性哈希负载均衡算法
 
@@ -230,6 +235,7 @@ Closes #123
 #### 提交 Pull Request
 
 1. **推送分支**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -240,6 +246,7 @@ Closes #123
    - 关联相关的 Issue
 
 3. **PR 描述模板**
+
    ```markdown
    ## 变更说明
    
@@ -274,6 +281,7 @@ Closes #123
 #### 代码审查要点
 
 **审查者关注点:**
+
 - 代码逻辑正确性
 - 性能影响
 - 安全性考虑
@@ -281,6 +289,7 @@ Closes #123
 - 文档更新
 
 **常见问题:**
+
 - 未处理的异常
 - 资源泄漏
 - 并发安全问题
@@ -291,6 +300,7 @@ Closes #123
 ### 添加新的适配器
 
 1. **创建适配器类**
+
    ```java
    @Component
    public class NewServiceAdapter extends BaseAdapter {
@@ -302,6 +312,7 @@ Closes #123
    ```
 
 2. **注册适配器**
+
    ```java
    @Configuration
    public class AdapterConfiguration {
@@ -315,6 +326,7 @@ Closes #123
    ```
 
 3. **添加测试**
+
    ```java
    @ExtendWith(MockitoExtension.class)
    class NewServiceAdapterTest {
@@ -347,6 +359,7 @@ Closes #123
 ### 添加新的负载均衡策略
 
 1. **实现接口**
+
    ```java
    @Component
    public class CustomLoadBalancer implements LoadBalancer {
@@ -358,6 +371,7 @@ Closes #123
    ```
 
 2. **注册策略**
+
    ```java
    @Component
    public class LoadBalancerFactory {
@@ -374,6 +388,7 @@ Closes #123
 ### 添加新的限流算法
 
 1. **实现接口**
+
    ```java
    @Component
    public class CustomRateLimiter implements RateLimiter {
@@ -385,6 +400,7 @@ Closes #123
    ```
 
 2. **配置支持**
+
    ```yaml
    model:
      services:

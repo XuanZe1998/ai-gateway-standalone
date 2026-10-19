@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document describes how to configure and manage the JAiRouter alerting system, including alert rule setup, notification configuration, and alert handling procedures.
 
 ## Alert Architecture
@@ -655,6 +653,7 @@ graph TD
 ### Alert Handling Checklist
 
 #### Critical Alert Handling
+
 - [ ] Confirm alert authenticity
 - [ ] Assess business impact scope
 - [ ] Notify relevant teams
@@ -667,6 +666,7 @@ graph TD
 - [ ] Update documentation and processes
 
 #### Warning Alert Handling
+
 - [ ] Confirm alert validity
 - [ ] Assess potential risks
 - [ ] Schedule handling time
@@ -706,6 +706,7 @@ route:
 ### Reducing Alert Noise
 
 #### 1. Set Reasonable Thresholds
+
 ```yaml
 # Avoid overly sensitive thresholds
 - alert: HighLatency
@@ -714,6 +715,7 @@ route:
 ```
 
 #### 2. Use Alert Grouping
+
 ```yaml
 route:
   group_by: ['alertname', 'service', 'severity']
@@ -722,6 +724,7 @@ route:
 ```
 
 #### 3. Implement Alert Inhibition
+
 ```yaml
 inhibit_rules:
   - source_match:
@@ -734,6 +737,7 @@ inhibit_rules:
 ### Alert Quality Monitoring
 
 #### Alert Metric Collection
+
 ```yaml
 # Collect alert-related metrics
 - record: jairouter:alert_firing_count
@@ -744,6 +748,7 @@ inhibit_rules:
 ```
 
 #### Alert Effectiveness Analysis
+
 - Alert accuracy: Real issues / Total alerts
 - Alert coverage: Detected issues / Actual issues
 - Average response time: From alert to start of handling
@@ -754,16 +759,19 @@ inhibit_rules:
 ### Alert Rule Design
 
 #### 1. Follow SLI/SLO Principles
+
 - Set alerts based on service level indicators
 - Focus on user experience metrics
 - Avoid alerts based on resource metrics
 
 #### 2. Use Layered Alerts
+
 - **Symptom alerts**: User-perceivable issues
 - **Cause alerts**: Root causes of symptoms
 - **Predictive alerts**: Trends that may lead to issues
 
 #### 3. Alert Naming Conventions
+
 ```yaml
 # Good alert naming
 - alert: JAiRouterHighLatency
@@ -779,17 +787,20 @@ inhibit_rules:
 ### Notification Strategy
 
 #### 1. Tiered Notifications
+
 - **Critical**: Immediate notification, multiple channels
 - **Warning**: Delayed notification, single channel
 - **Info**: Only recorded, periodic summary
 
 #### 2. Notification Content Optimization
+
 - Include sufficient context information
 - Provide runbook links
 - Use clear descriptive language
 - Avoid excessive technical jargon
 
 #### 3. Notification Time Management
+
 - Different strategies for business hours and after hours
 - Avoid non-emergency notifications late at night
 - Consider time zone differences
@@ -799,7 +810,9 @@ inhibit_rules:
 ### Common Issues
 
 #### 1. Alert Rules Not Triggering
+
 **Check Steps**:
+
 ```bash
 # Validate rule syntax
 promtool check rules rules/jairouter-alerts.yml
@@ -812,7 +825,9 @@ curl "http://localhost:9090/api/v1/query?query=up{job=\"jairouter\"}"
 ```
 
 #### 2. Notifications Not Sent
+
 **Check Steps**:
+
 ```bash
 # Check AlertManager status
 curl http://localhost:9093/api/v1/status
@@ -825,7 +840,9 @@ amtool config show
 ```
 
 #### 3. Alert Storm
+
 **Handling Methods**:
+
 ```bash
 # Create temporary silence
 amtool silence add alertname=".*" --duration="1h" --comment="Alert storm handling"

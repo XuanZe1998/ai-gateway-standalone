@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This guide will walk you through installing and setting up JAiRouter in your environment.
 
 ## System Requirements
@@ -33,21 +31,24 @@ java -jar jairouter-*.jar
 ### Method 2: Build from Source
 
 1. Clone the repository:
-```bash
-git clone https://github.com/Lincoln-cn/JAiRouter.git
-cd JAiRouter
-```
+
+   ```bash
+   git clone https://github.com/Lincoln-cn/JAiRouter.git
+   cd JAiRouter
+   ```
 
 2. Build the project:
-```bash
-# Windows
-./mvnw.cmd clean package
 
-# Linux/macOS
-./mvnw clean package
-```
+   ```bash
+   # Windows
+   ./mvnw.cmd clean package
+
+   # Linux/macOS
+   ./mvnw clean package
+   ```
 
 3. Run the application:
+
 ```bash
 java -jar target/model-router-*.jar
 ```
@@ -55,11 +56,13 @@ java -jar target/model-router-*.jar
 ### Method 3: Docker Deployment
 
 1. Pull the Docker image:
-```bash
-docker pull sodlinken/jairouter:latest
-```
+
+   ```bash
+   docker pull sodlinken/jairouter:latest
+   ```
 
 2. Run the container:
+
 ```bash
 docker run -d \
   --name jairouter \
@@ -112,14 +115,16 @@ JAiRouter looks for configuration files in the following order:
 After starting JAiRouter, verify the installation:
 
 1. **Health Check**:
-```bash
-curl http://localhost:8080/actuator/health
-```
+
+   ```bash
+   curl http://localhost:8080/actuator/health
+   ```
 
 2. **API Documentation**:
-Visit `http://localhost:8080/swagger-ui/index.html` in your browser
+   Visit `http://localhost:8080/swagger-ui/index.html` in your browser
 
 3. **Service Status**:
+
 ```bash
 curl http://localhost:8080/api/config/instance/type/chat
 ```
@@ -129,6 +134,7 @@ curl http://localhost:8080/api/config/instance/type/chat
 ### Common Issues
 
 **Port Already in Use**:
+
 ```bash
 # Change the port in application.yml
 server:
@@ -136,6 +142,7 @@ server:
 ```
 
 **Java Version Issues**:
+
 ```bash
 # Check Java version
 java -version
@@ -144,6 +151,7 @@ java -version
 ```
 
 **Memory Issues**:
+
 ```bash
 # Increase heap size
 java -Xmx1g -jar jairouter-*.jar

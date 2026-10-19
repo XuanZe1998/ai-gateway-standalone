@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document outlines the future development plans and feature roadmap for the JAiRouter project.
 
 ## Project Vision
@@ -27,6 +25,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 ### 🚧 v0.4.0 - Security and Authentication (Q2 2025)
 
 #### Core Features
+
 - **Multi-tenancy Support**
   - Tenant isolation and resource quotas
   - Tenant-based configuration management
@@ -63,6 +62,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
   - Detailed span attributes and events
 
 #### Technical Improvements
+
 - Spring Security integration
 - Database support (PostgreSQL/MySQL)
 - Cache layer optimization (Redis)
@@ -71,6 +71,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 - Docker build optimization for Chinese users
 
 #### Expected Benefits
+
 - Support for enterprise-level multi-tenant deployment
 - Compliance with security requirements
 - Complete user management system
@@ -79,6 +80,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 - Faster build times for Chinese users
 
 #### Implementation Status
+
 - ✅ Security module base architecture
 - ✅ API Key authentication core functionality
 - ✅ JWT token support
@@ -99,7 +101,8 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 
 ### 🎯 v0.5.0 - Intelligent Enhancement (Q3 2025)
 
-#### Core Features
+#### Core Features — 🎯 v0.5.0 - Intelligent Enhancement (Q3 2025)
+
 - **Intelligent Routing**
   - Smart selection based on model capabilities
   - Cost-optimized routing strategies
@@ -119,12 +122,14 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
   - Smart alert noise reduction
 
 #### Technical Features
+
 - Machine learning model integration
 - Time-series data analysis
 - Automated decision engine
 - Advanced data visualization
 
-#### Expected Benefits
+#### Expected Benefits — 🎯 v0.5.0 - Intelligent Enhancement (Q3 2025)
+
 - Reduced operational costs
 - Enhanced system intelligence
 - Optimized resource utilization
@@ -133,7 +138,8 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 
 ### 🌐 v0.6.0 - Cloud Native and Ecosystem (Q4 2025)
 
-#### Core Features
+#### Core Features — 🌐 v0.6.0 - Cloud Native and Ecosystem (Q4 2025)
+
 - **Cloud Native Support**
   - Kubernetes Operator
   - Helm Charts support
@@ -153,12 +159,14 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
   - Community plugin marketplace
 
 #### Technical Architecture
+
 - Microservices architecture refactoring
 - Event-driven architecture
 - Plugin-based extension mechanism
 - Standardized API specifications
 
-#### Expected Benefits
+#### Expected Benefits — 🌐 v0.6.0 - Cloud Native and Ecosystem (Q4 2025)
+
 - Better cloud-native experience
 - Rich ecosystem
 - Reduced integration costs
@@ -168,6 +176,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 ### 🚀 v1.0.0 - Production Ready (Q1 2026)
 
 #### Milestone Goals
+
 - **Enterprise-grade Stability**
   - 99.99% availability guarantee
   - Complete disaster recovery solution
@@ -184,6 +193,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
   - Comprehensive documentation and training
 
 #### Quality Assurance
+
 - Comprehensive automated testing
 - Performance benchmark testing
 - Security penetration testing
@@ -196,6 +206,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 ### Adapter Extensions
 
 #### Already Supported
+
 - ✅ GPUStack
 - ✅ Ollama  
 - ✅ VLLM
@@ -204,6 +215,7 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 - ✅ OpenAI
 
 #### Planned Support
+
 - 🔄 Anthropic Claude (v0.4.0)
 - 🔄 Google Gemini (v0.4.0)
 - 📋 Cohere API (v0.5.0)
@@ -216,12 +228,14 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 ### Load Balancing Strategies
 
 #### Already Implemented
+
 - ✅ Random
 - ✅ Round Robin
 - ✅ Least Connections
 - ✅ IP Hash
 
 #### Planned Implementation
+
 - 🔄 Weighted Round Robin - v0.4.0
 - 🔄 Consistent Hash - v0.4.0
 - 📋 Latency-based - v0.5.0
@@ -230,26 +244,30 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 
 ### Rate Limiting Algorithms
 
-#### Already Implemented
+#### Already Implemented — Rate Limiting Algorithms
+
 - ✅ Token Bucket
 - ✅ Leaky Bucket
 - ✅ Sliding Window
 - ✅ Warm Up
 
-#### Planned Implementation
+#### Planned Implementation — Rate Limiting Algorithms
+
 - 🔄 Adaptive Rate Limiting - v0.4.0
 - 📋 Distributed Rate Limiting - v0.5.0
 - 📋 User-based Rate Limiting - v0.4.0
 
 ### Monitoring and Observability
 
-#### Already Implemented
+#### Already Implemented — Monitoring and Observability
+
 - ✅ Prometheus metrics
 - ✅ Grafana dashboards
 - ✅ Health checks
 - ✅ Basic alerts
 
-#### Planned Implementation
+#### Planned Implementation — Monitoring and Observability
+
 - 🔄 Distributed tracing (Jaeger/Zipkin) - v0.4.0
 - 🔄 Structured logging (ELK Stack) - v0.4.0
 - 📋 Business metrics analysis - v0.5.0
@@ -261,11 +279,13 @@ JAiRouter aims to become the best open-source AI model service routing gateway, 
 ### Architecture Evolution
 
 #### Current Architecture (v0.3.x)
+
 ```
 Monolithic application → Modular design → Reactive programming
 ```
 
 #### Target Architecture (v1.0)
+
 ```
 Microservices architecture → Event-driven → Cloud-native deployment
 ```
@@ -273,14 +293,17 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ### Technology Stack Evolution
 
 #### Core Technologies
+
 - **Current**: Spring Boot 3.5.x + WebFlux
 - **Future**: Spring Boot 3.x + Spring Cloud + Kubernetes
 
 #### Data Storage
+
 - **Current**: File storage + In-memory cache
 - **Future**: PostgreSQL + Redis + Time-series database
 
 #### Monitoring System
+
 - **Current**: Prometheus + Grafana
 - **Future**: Complete observability platform (Metrics + Logs + Traces)
 
@@ -298,11 +321,13 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ### Open Source Community Building
 
 #### Current Status
+
 - GitHub project hosting
 - Basic documentation and examples
 - Issue tracking and discussion
 
 #### Development Goals
+
 - Active developer community
 - Regular community events and sharing
 - Contributor incentive mechanisms
@@ -311,11 +336,13 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ### Ecosystem
 
 #### Plugin Marketplace
+
 - Official plugin library
 - Third-party plugin certification
 - Plugin development tools and documentation
 
 #### Integration Ecosystem
+
 - Integration with mainstream frameworks (Spring, Django, Express)
 - Listing on cloud platform marketplaces
 - Container image repositories
@@ -323,11 +350,13 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ### Commercial Considerations
 
 #### Open Source Version
+
 - Core features permanently free
 - Community support
 - Basic documentation and tutorials
 
 #### Enterprise Version
+
 - Advanced features and performance optimization
 - Professional technical support
 - Custom development services
@@ -337,12 +366,14 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ### Development Contributions
 
 #### Code Contributions
+
 - Feature development and bug fixes
 - Performance optimization and refactoring
 - Test case writing
 - Code reviews
 
 #### Documentation Contributions
+
 - User documentation improvement
 - API documentation updates
 - Tutorial and example writing
@@ -351,12 +382,14 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ### Community Participation
 
 #### Feedback and Suggestions
+
 - Feature request suggestions
 - User experience feedback
 - Bug reports and reproduction
 - Performance testing and benchmarking
 
 #### Promotion and Outreach
+
 - Technical articles and blogs
 - Conference presentations and sharing
 - Social media promotion
@@ -365,11 +398,13 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ### Collaboration Opportunities
 
 #### Technical Collaboration
+
 - Joint development of new features
 - Technical standard setting
 - Open-source project integration
 
 #### Business Collaboration
+
 - Enterprise-level feature customization
 - Technical support services
 - Training and consulting services
@@ -377,16 +412,19 @@ Microservices architecture → Event-driven → Cloud-native deployment
 ## Risks and Challenges
 
 ### Technical Risks
+
 - **Performance Bottlenecks**: Performance challenges in large-scale deployments
 - **Compatibility**: Maintaining multi-version API compatibility
 - **Security**: Security vulnerabilities and attack protection
 
 ### Market Risks
+
 - **Increased Competition**: Competition from similar products
 - **Technology Changes**: Challenges from rapid AI technology development
 - **User Requirements**: Rapid changes in user needs
 
 ### Response Strategies
+
 - Continuous technical innovation and optimization
 - Active community building and maintenance
 - Flexible product strategy adjustments
@@ -397,16 +435,18 @@ Microservices architecture → Event-driven → Cloud-native deployment
 The JAiRouter project will continue to embrace the open-source spirit, striving to provide users with the best AI model service routing solutions. We welcome community participation and contributions to jointly promote the project's development and progress.
 
 ### Near-term Focus (2025)
-1. Improve security and authentication systems
-2. Enhance system intelligence
-3. Strengthen cloud-native support
-4. Build an active open-source community
+
+- Improve security and authentication systems
+- Enhance system intelligence
+- Strengthen cloud-native support
+- Build an active open-source community
 
 ### Long-term Vision (2026+)
-1. Become the standard in AI model routing
-2. Establish a complete ecosystem
-3. Achieve enterprise-level commercial success
-4. Drive industry technological development
+
+- Become the standard in AI model routing
+- Establish a complete ecosystem
+- Achieve enterprise-level commercial success
+- Drive industry technological development
 
 Let's work together to make JAiRouter a world-class open-source project!
 

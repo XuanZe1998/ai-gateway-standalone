@@ -7,8 +7,6 @@
 > **作者**: JAiRouter Team
 <!-- /版本信息 -->
 
-
-
 欢迎来到 JAiRouter 开发指南！本指南为开发者提供了完整的开发环境搭建、代码规范、测试策略和贡献流程。
 
 ## 📢 最新更新
@@ -48,6 +46,7 @@
 ## 核心开发流程
 
 ### 1. 环境准备
+
 ```bash
 # 克隆项目
 git clone https://github.com/Lincoln-cn/JAiRouter.git
@@ -61,11 +60,13 @@ cd jairouter
 ```
 
 ### 2. 开发规范
+
 - 遵循 [代码质量标准](code-quality.md) 中的编码规范
 - 使用 Checkstyle 和 SpotBugs 进行代码质量检查
 - 确保测试覆盖率不低于 80%
 
 ### 3. 提交流程
+
 - 创建功能分支进行开发
 - 编写单元测试和集成测试
 - 提交 Pull Request 进行代码审查
@@ -87,17 +88,20 @@ JAiRouter 采用模块化设计，主要包含以下核心模块：
 ## 开发工具集成
 
 ### 代码质量工具
+
 - **Checkstyle**: 代码风格检查
 - **SpotBugs**: 静态代码分析
 - **JaCoCo**: 代码覆盖率分析
 
 ### 测试框架
+
 - **JUnit 5**: 主要测试框架
 - **Mockito**: Mock 框架
 - **Spring Boot Test**: 集成测试支持
 - **Reactor Test**: 响应式流测试
 
 ### 构建和部署
+
 - **Maven**: 项目构建和依赖管理
 - **Docker**: 容器化部署
 - **GitHub Actions**: 持续集成和部署

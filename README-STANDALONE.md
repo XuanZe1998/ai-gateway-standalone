@@ -7,9 +7,6 @@
 > **作者**: GitHub Action
 <!-- /版本信息 -->
 
-
-
-
 从南通算力平台项目中独立抽取的 AI 网关。该目录可以单独构建、启动和持久化运行，不依赖商城后端、平台管理前端或南通平台数据库。
 
 ## 已保留的网关能力
@@ -239,4 +236,3 @@ java -jar target\ai-gateway-standalone-2.6.11.jar
 - `start.sh` / `stop.sh`：Linux/macOS 一键启停
 
 上游项目原 README 已保存到 `docs/README-UPSTREAM.md`。
-

@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档收集了 JAiRouter 使用过程中最常见的问题及其解决方案。
 
 ## 启动问题
@@ -16,11 +14,13 @@
 ### 问题 1: 应用启动失败
 
 #### 症状
+
 ```
 Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
 ```
 
 #### 可能原因
+
 1. 端口被占用
 2. 配置文件格式错误
 3. 依赖冲突
@@ -28,7 +28,8 @@ Error starting ApplicationContext. To display the conditions report re-run your 
 
 #### 解决方案
 
-**检查端口占用**
+##### 检查端口占用
+
 ```bash
 # Windows
 netstat -ano | findstr :8080
@@ -37,13 +38,15 @@ netstat -ano | findstr :8080
 lsof -i :8080
 ```
 
-**检查配置文件**
+##### 检查配置文件
+
 ```bash
 # 验证 YAML 格式
 ./mvnw spring-boot:run --debug
 ```
 
-**检查 Java 版本**
+##### 检查 Java 版本
+
 ```bash
 java -version
 # 确保使用 Java 17 或更高版本
@@ -52,11 +55,13 @@ java -version
 ### 问题 2: 配置文件加载失败
 
 #### 症状
+
 ```
 Could not resolve placeholder 'model.services.chat.instances[0].name' in value "${model.services.chat.instances[0].name}"
 ```
 
 #### 解决方案
+
 ```yaml
 # 确保 application.yml 格式正确
 model:
@@ -72,11 +77,13 @@ model:
 ### 问题 3: 内存不足
 
 #### 症状
+
 ```
 java.lang.OutOfMemoryError: Java heap space
 ```
 
 #### 解决方案
+
 ```bash
 # 增加堆内存大小
 java -Xms1g -Xmx2g -jar target/model-router-*.jar
@@ -90,11 +97,13 @@ export JAVA_OPTS="-Xms1g -Xmx2g"
 ### 问题 4: 后端服务连接失败
 
 #### 症状
+
 ```
 Connection refused: localhost/127.0.0.1:9090
 ```
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查后端服务是否运行
 curl -v http://localhost:9090/health
@@ -111,6 +120,7 @@ sudo iptables -L
 ```
 
 #### 解决方案
+
 1. 确保后端服务正常运行
 2. 检查服务配置中的 baseUrl 是否正确
 3. 验证网络连通性和防火墙设置
@@ -118,11 +128,13 @@ sudo iptables -L
 ### 问题 5: 请求超时
 
 #### 症状
+
 ```
 Read timeout on GET http://localhost:9090/v1/chat/completions
 ```
 
 #### 解决方案
+
 ```yaml
 # 调整超时配置
 spring:
@@ -139,11 +151,13 @@ model:
 ### 问题 6: SSL/TLS 连接问题
 
 #### 症状
+
 ```
 PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException
 ```
 
 #### 解决方案
+
 ```bash
 # 1. 信任所有证书（仅开发环境）
 java -Dcom.sun.net.ssl.checkRevocation=false \
@@ -159,10 +173,12 @@ keytool -import -alias backend-cert -file backend.crt -keystore $JAVA_HOME/lib/s
 ### 问题 7: 响应时间过长
 
 #### 症状
+
 - API 响应时间超过预期
 - 用户体验下降
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查应用性能指标
 curl http://localhost:8080/actuator/metrics/http.server.requests
@@ -178,7 +194,8 @@ time curl -X POST http://localhost:9090/v1/chat/completions \
 
 #### 解决方案
 
-**优化连接池配置**
+##### 优化连接池配置
+
 ```yaml
 spring:
   webflux:
@@ -188,7 +205,8 @@ spring:
         max-idle-time: 30s
 ```
 
-**调整负载均衡策略**
+##### 调整负载均衡策略
+
 ```yaml
 model:
   services:
@@ -200,10 +218,12 @@ model:
 ### 问题 8: 内存使用过高
 
 #### 症状
+
 - JVM 堆内存持续增长
 - 频繁的垃圾回收
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查内存使用情况
 curl http://localhost:8080/actuator/metrics/jvm.memory.used
@@ -218,7 +238,8 @@ java -XX:+PrintGC -XX:+PrintGCDetails -Xloggc:gc.log -jar target/model-router-*.
 
 #### 解决方案
 
-**优化 JVM 参数**
+##### 优化 JVM 参数
+
 ```bash
 java -Xms2g -Xmx4g \
      -XX:+UseG1GC \
@@ -226,7 +247,8 @@ java -Xms2g -Xmx4g \
      -jar target/model-router-*.jar
 ```
 
-**启用限流器清理**
+##### 启用限流器清理
+
 ```yaml
 model:
   rate-limit:
@@ -239,10 +261,12 @@ model:
 ### 问题 9: CPU 使用率过高
 
 #### 症状
+
 - CPU 使用率持续超过 80%
 - 系统响应缓慢
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查线程状态
 jstack <pid> > threads.dump
@@ -258,7 +282,8 @@ java -XX:+FlightRecorder \
 
 #### 解决方案
 
-**优化线程池配置**
+##### 优化线程池配置
+
 ```yaml
 spring:
   task:
@@ -269,7 +294,8 @@ spring:
         queue-capacity: 100
 ```
 
-**启用异步处理**
+##### 启用异步处理
+
 ```yaml
 model:
   async:
@@ -282,10 +308,12 @@ model:
 ### 问题 10: 动态配置不生效
 
 #### 症状
+
 - 通过 API 更新配置后不生效
 - 配置持久化失败
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查配置存储状态
 curl http://localhost:8080/api/config/store/status
@@ -299,7 +327,8 @@ tail -f logs/jairouter-debug.log | grep -i config
 
 #### 解决方案
 
-**检查存储配置**
+##### 检查存储配置
+
 ```yaml
 model:
   store:
@@ -308,7 +337,8 @@ model:
     auto-save: true
 ```
 
-**确保文件权限**
+##### 确保文件权限
+
 ```bash
 # 确保应用有写权限
 chmod 755 config/
@@ -318,10 +348,12 @@ chmod 644 config/*.json
 ### 问题 11: 负载均衡不均匀
 
 #### 症状
+
 - 某些后端实例负载过高
 - 其他实例空闲
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查实例权重配置
 curl http://localhost:8080/api/config/instance/type/chat
@@ -335,7 +367,8 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 
 #### 解决方案
 
-**调整权重配置**
+##### 调整权重配置
+
 ```yaml
 model:
   services:
@@ -349,7 +382,8 @@ model:
           weight: 1
 ```
 
-**更换负载均衡策略**
+##### 更换负载均衡策略
+
 ```yaml
 model:
   services:
@@ -361,10 +395,12 @@ model:
 ### 问题 12: 限流配置不当
 
 #### 症状
+
 - 正常请求被限流
 - 或者限流不起作用
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查限流配置
 curl http://localhost:8080/api/config/rate-limit/status
@@ -380,7 +416,8 @@ done
 
 #### 解决方案
 
-**调整限流参数**
+##### 调整限流参数
+
 ```yaml
 model:
   services:
@@ -392,7 +429,8 @@ model:
         client-ip-enable: true
 ```
 
-**检查客户端 IP 获取**
+##### 检查客户端 IP 获取
+
 ```yaml
 server:
   forward-headers-strategy: framework  # 支持代理头
@@ -403,10 +441,12 @@ server:
 ### 问题 13: 监控指标缺失
 
 #### 症状
+
 - Prometheus 无法抓取指标
 - Grafana 显示 "No data"
 
 #### 诊断步骤
+
 ```bash
 # 1. 检查监控端点
 curl http://localhost:8080/actuator/prometheus
@@ -420,7 +460,8 @@ telnet localhost 8080
 
 #### 解决方案
 
-**启用监控端点**
+##### 启用监控端点
+
 ```yaml
 management:
   endpoints:
@@ -432,7 +473,8 @@ management:
       enabled: true
 ```
 
-**检查 Prometheus 配置**
+##### 检查 Prometheus 配置
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -446,10 +488,12 @@ scrape_configs:
 ### 问题 14: 日志级别过高
 
 #### 症状
+
 - 日志文件过大
 - 重要信息被淹没
 
 #### 解决方案
+
 ```yaml
 # application.yml
 logging:
@@ -470,11 +514,13 @@ logging:
 ### 问题 15: Docker 容器启动失败
 
 #### 症状
+
 ```
 docker: Error response from daemon: driver failed programming external connectivity
 ```
 
 #### 解决方案
+
 ```bash
 # 1. 检查端口冲突
 docker ps -a
@@ -491,10 +537,12 @@ sudo systemctl restart docker
 ### 问题 16: 容器内存限制
 
 #### 症状
+
 - 容器被 OOM Killer 终止
 - 应用异常退出
 
 #### 解决方案
+
 ```yaml
 # docker-compose.yml
 services:
@@ -513,6 +561,7 @@ services:
 ## 故障排查工具
 
 ### 健康检查脚本
+
 ```bash
 #!/bin/bash
 # health-check.sh
@@ -548,6 +597,7 @@ echo "=== 健康检查完成 ==="
 ```
 
 ### 日志分析脚本
+
 ```bash
 #!/bin/bash
 # log-analysis.sh
@@ -586,6 +636,7 @@ echo "=== 日志分析完成 ==="
 4. **参与社区讨论**: 在项目讨论区寻求帮助
 
 ### 问题报告模板
+
 ```markdown
 ## 问题描述
 简要描述遇到的问题
@@ -609,7 +660,9 @@ echo "=== 日志分析完成 ==="
 
 ## 错误日志
 ```
+
 粘贴相关的错误日志
+
 ```
 
 ## 其他信息

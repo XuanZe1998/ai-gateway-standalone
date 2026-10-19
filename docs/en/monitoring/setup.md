@@ -7,13 +7,12 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document describes how to set up and configure the monitoring features of JAiRouter, including basic configuration, monitoring stack deployment, and verification steps.
 
 ## Environment Requirements
 
 ### System Requirements
+
 - **Operating System**: Windows 10+, Linux, macOS
 - **Java**: 17+
 - **Docker**: 20.10+ (for monitoring stack deployment)
@@ -21,6 +20,7 @@ This document describes how to set up and configure the monitoring features of J
 - **Disk**: At least 10GB available space
 
 ### Network Ports
+
 - **JAiRouter**: 8080 (application port), 8081 (management port)
 - **Prometheus**: 9090
 - **Grafana**: 3000
@@ -31,6 +31,7 @@ This document describes how to set up and configure the monitoring features of J
 ### Method 1: One-click Deployment Script
 
 #### Windows PowerShell
+
 ```powershell
 # Run deployment script
 .\scripts\setup-monitoring.ps1
@@ -40,6 +41,7 @@ This document describes how to set up and configure the monitoring features of J
 ```
 
 #### Linux/macOS
+
 ```bash
 # Give execution permission to script
 chmod +x scripts/setup-monitoring.sh
@@ -54,11 +56,13 @@ chmod +x scripts/setup-monitoring.sh
 ### Method 2: Manual Deployment
 
 #### 1. Create necessary directories
+
 ```bash
 mkdir -p monitoring/data/{prometheus,grafana,alertmanager}
 ```
 
 #### 2. Start monitoring stack
+
 ```bash
 # Start complete monitoring stack
 docker-compose -f docker-compose-monitoring.yml up -d
@@ -68,6 +72,7 @@ make compose-up-monitoring
 ```
 
 #### 3. Verify service status
+
 ```bash
 # Check service status
 docker-compose -f docker-compose-monitoring.yml ps
@@ -80,7 +85,7 @@ docker-compose -f docker-compose-monitoring.yml logs
 
 ### JAiRouter Application Configuration
 
-Enable monitoring in [application.yml](file://D:\IdeaProjects\model-router\target\classes\application.yml):
+Enable monitoring in [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/target/classes/application.yml):
 
 ```yaml
 # Monitoring metrics configuration
@@ -160,6 +165,7 @@ alerting:
 ### Grafana Configuration
 
 #### Data Source Auto Configuration
+
 Create `monitoring/grafana/provisioning/datasources/prometheus.yml`:
 
 ```yaml
@@ -175,6 +181,7 @@ datasources:
 ```
 
 #### Dashboard Auto Import
+
 Create `monitoring/grafana/provisioning/dashboards/jairouter-dashboards.yml`:
 
 ```yaml
@@ -196,7 +203,7 @@ providers:
 
 ### Complete Monitoring Stack Configuration
 
-Create [docker-compose-monitoring.yml](file://D:\IdeaProjects\model-router\docker-compose-monitoring.yml):
+Create `docker-compose-monitoring.yml`:
 
 ```yaml
 version: '3.8'
@@ -306,7 +313,7 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 
 ### 3. Verify Grafana Dashboard
 
-1. Visit http://localhost:3000
+1. Visit <http://localhost:3000>
 2. Log in with admin/jairouter2024
 3. Check data source connection status
 4. Verify dashboard displays data correctly
@@ -453,9 +460,11 @@ monitoring:
 ### Common Issues
 
 #### 1. Metrics Endpoint Unreachable
+
 **Symptom**: Accessing `/actuator/prometheus` returns 404
 
 **Solution**:
+
 ```yaml
 management:
   endpoints:
@@ -465,9 +474,11 @@ management:
 ```
 
 #### 2. Grafana Cannot Connect to Prometheus
+
 **Symptom**: Dashboard shows "No data"
 
 **Solution**:
+
 ```bash
 # Check network connectivity
 docker exec grafana curl http://prometheus:9090/api/v1/query?query=up
@@ -477,9 +488,11 @@ docker exec prometheus cat /etc/prometheus/prometheus.yml
 ```
 
 #### 3. Monitoring Data is Empty
+
 **Symptom**: Prometheus endpoint returns empty data
 
 **Solution**:
+
 ```yaml
 monitoring:
   metrics:

@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务实例管理、监控配置等功能。所有管理接口都使用 `/api` 前缀。
 
 ## 服务类型管理
@@ -16,9 +14,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ### 基础路径：`/api/config/type`
 
 #### `GET /api/config/type`
+
 获取当前系统的所有配置信息。
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -37,9 +37,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `GET /api/config/type/services`
+
 获取系统中所有可用的服务类型。
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -49,12 +51,15 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `GET /api/config/type/services/{serviceType}`
+
 获取指定服务类型的配置信息。
 
 **路径参数：**
+
 - `serviceType` (string): 服务类型，如 "chat"
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -77,9 +82,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/config/type/services/{serviceType}`
+
 创建新的服务类型配置。
 
 **请求体示例：**
+
 ```json
 {
   "loadBalancer": "round_robin",
@@ -97,15 +104,19 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `PUT /api/config/type/services/{serviceType}`
+
 更新指定服务类型的配置。
 
 #### `DELETE /api/config/type/services/{serviceType}`
+
 删除指定的服务类型及其所有配置。
 
 #### `GET /api/config/type/{serviceType}/models`
+
 获取指定服务类型下的所有可用模型。
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -115,6 +126,7 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/config/type/reset`
+
 将系统配置重置为默认值。
 
 ## 服务实例管理
@@ -122,9 +134,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ### 基础路径：`/api/config/instance`
 
 #### `GET /api/config/instance/type/{serviceType}`
+
 获取指定服务类型下的所有实例。
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -143,13 +157,16 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `GET /api/config/instance/info/{serviceType}`
+
 获取指定实例的详细信息。
 
 **查询参数：**
+
 - `modelName` (string): 模型名称
 - `baseUrl` (string): 基础URL
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -168,9 +185,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/config/instance/add/{serviceType}`
+
 为指定服务类型添加新实例。
 
 **请求体示例：**
+
 ```json
 {
   "name": "qwen2:7b",
@@ -183,9 +202,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `PUT /api/config/instance/update/{serviceType}`
+
 更新指定服务实例的配置。
 
 **请求体示例：**
+
 ```json
 {
   "instanceId": "qwen2:7b@http://localhost:8000",
@@ -201,9 +222,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `DELETE /api/config/instance/del/{serviceType}`
+
 删除指定的服务实例。
 
 **查询参数：**
+
 - `modelName` (string): 模型名称
 - `baseUrl` (string): 基础URL
 
@@ -212,9 +235,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ### 基础路径：`/api/monitoring`
 
 #### `GET /api/monitoring/config`
+
 获取当前监控配置。
 
 **响应示例：**
+
 ```json
 {
   "enabled": true,
@@ -237,9 +262,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `PUT /api/monitoring/config/enabled`
+
 更新监控启用状态。
 
 **请求体示例：**
+
 ```json
 {
   "enabled": true
@@ -247,9 +274,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `PUT /api/monitoring/config/prefix`
+
 更新指标前缀。
 
 **请求体示例：**
+
 ```json
 {
   "prefix": "jairouter_v2"
@@ -257,9 +286,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `PUT /api/monitoring/config/collection-interval`
+
 更新收集间隔。
 
 **请求体示例：**
+
 ```json
 {
   "interval": "PT60S"
@@ -267,9 +298,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `PUT /api/monitoring/config/categories`
+
 更新启用的监控类别。
 
 **请求体示例：**
+
 ```json
 {
   "categories": ["request", "system"]
@@ -277,9 +310,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `PUT /api/monitoring/config/custom-tags`
+
 更新自定义标签。
 
 **请求体示例：**
+
 ```json
 {
   "customTags": {
@@ -290,12 +325,15 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `GET /api/monitoring/config/snapshot`
+
 获取监控配置快照。
 
 #### `GET /api/monitoring/health`
+
 获取监控系统健康状态。
 
 **响应示例：**
+
 ```json
 {
   "status": "UP",
@@ -309,9 +347,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `GET /api/monitoring/overview`
+
 获取监控系统整体状态概览。
 
 **响应示例：**
+
 ```json
 {
   "enabled": true,
@@ -342,12 +382,15 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ### 错误处理管理
 
 #### `GET /api/monitoring/errors/stats`
+
 获取错误处理统计信息。
 
 #### `POST /api/monitoring/errors/reset`
+
 重置指定组件的错误状态。
 
 **请求体示例：**
+
 ```json
 {
   "component": "metricsCollector",
@@ -358,9 +401,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ### 降级策略管理
 
 #### `GET /api/monitoring/degradation/status`
+
 获取降级策略状态。
 
 **响应示例：**
+
 ```json
 {
   "level": "NORMAL",
@@ -373,9 +418,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/monitoring/degradation/level`
+
 设置降级级别。
 
 **请求体示例：**
+
 ```json
 {
   "level": "PARTIAL"
@@ -383,15 +430,18 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 **可用级别：**
+
 - `NORMAL` - 正常模式
 - `PARTIAL` - 部分降级
 - `MINIMAL` - 最小化模式
 - `DISABLED` - 禁用模式
 
 #### `POST /api/monitoring/degradation/auto-mode`
+
 启用/禁用降级策略自动模式。
 
 **请求体示例：**
+
 ```json
 {
   "enabled": false
@@ -399,14 +449,17 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/monitoring/degradation/force-recovery`
+
 强制恢复到正常模式。
 
 ### 缓存管理
 
 #### `GET /api/monitoring/cache/stats`
+
 获取缓存统计信息。
 
 **响应示例：**
+
 ```json
 {
   "currentSize": 150,
@@ -418,14 +471,17 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/monitoring/cache/clear`
+
 清空缓存。
 
 ### 熔断器管理
 
 #### `GET /api/monitoring/circuit-breaker/stats`
+
 获取熔断器统计信息。
 
 **响应示例：**
+
 ```json
 {
   "state": "CLOSED",
@@ -437,9 +493,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/monitoring/circuit-breaker/force-open`
+
 强制开启熔断器。
 
 #### `POST /api/monitoring/circuit-breaker/force-close`
+
 强制关闭熔断器。
 
 ## 模型信息查询
@@ -447,9 +505,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ### 基础路径：`/api/models`
 
 #### `GET /api/models`
+
 获取所有可用模型信息。
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -483,9 +543,11 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ### 基础路径：`/api/config/version`
 
 #### `GET /api/config/version`
+
 获取所有配置版本列表。
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -495,15 +557,19 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `GET /api/config/version/{version}`
+
 获取指定版本的配置详情。
 
 **路径参数：**
+
 - `version` (integer): 版本号
 
 #### `GET /api/config/version/current`
+
 获取当前配置版本号。
 
 **响应示例：**
+
 ```json
 {
   "success": true,
@@ -513,12 +579,15 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 #### `POST /api/config/version/rollback/{version}`
+
 回滚到指定版本的配置。
 
 #### `POST /api/config/version/apply/{version}`
+
 应用指定版本的配置。
 
 #### `DELETE /api/config/version/{version}`
+
 删除指定版本的配置（不能删除当前版本）。
 
 ## 通用响应格式
@@ -526,6 +595,7 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 所有管理 API 都使用统一的响应格式：
 
 ### 成功响应
+
 ```json
 {
   "success": true,
@@ -535,6 +605,7 @@ JAiRouter 提供完整的管理 API 接口，用于动态配置管理、服务�
 ```
 
 ### 错误响应
+
 ```json
 {
   "success": false,

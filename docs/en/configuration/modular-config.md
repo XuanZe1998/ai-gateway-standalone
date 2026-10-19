@@ -25,21 +25,21 @@ spring:
 ### Configuration Module Categories
 
 1. **Base Configuration Modules** (`config/base/`)
-   - [server-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/base/server-base.yml) - Server base configuration
-   - [model-services-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) - Model services configuration
-   - [monitoring-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/base/monitoring-base.yml) - Monitoring base configuration
+   - [server-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/server-base.yml) - Server base configuration
+   - [model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) - Model services configuration
+   - [monitoring-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/monitoring-base.yml) - Monitoring base configuration
 
 2. **Feature Configuration Modules** (`config/{feature}/`)
-   - [tracing/tracing-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/tracing/tracing-base.yml) - Tracing feature configuration
-   - [security/security-base.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/security/security-base.yml) - Security feature configuration
-   - [monitoring/slow-query-alerts.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/slow-query-alerts.yml) - Slow query alert configuration
-   - [monitoring/error-tracking.yml](file://d:/IdeaProjects/model-router/src/main/resources/config/monitoring/error-tracking.yml) - Error tracking configuration
+   - [tracing/tracing-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/tracing/tracing-base.yml) - Tracing feature configuration
+   - [security/security-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/security/security-base.yml) - Security feature configuration
+   - [monitoring/slow-query-alerts.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/slow-query-alerts.yml) - Slow query alert configuration
+   - [monitoring/error-tracking.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/monitor/error-tracking.yml) - Error tracking configuration
 
 3. **Environment Configuration Files** (`application-{profile}.yml`)
-   - [application-dev.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-dev.yml) - Development environment configuration
-   - [application-staging.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-staging.yml) - Staging environment configuration
-   - [application-prod.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-prod.yml) - Production environment configuration
-   - [application-legacy.yml](file://d:/IdeaProjects/model-router/src/main/resources/application-legacy.yml) - Legacy compatibility configuration
+   - [application-dev.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-dev.yml) - Development environment configuration
+   - [application-staging.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-staging.yml) - Staging environment configuration
+   - [application-prod.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-prod.yml) - Production environment configuration
+   - [application-legacy.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application-legacy.yml) - Legacy compatibility configuration
 
 ## Configuration Priority
 
@@ -253,7 +253,7 @@ java -jar app.jar --spring.profiles.active=legacy
 
 ### Modifying Configuration
 
-1. **Base Configuration Modification**: Edit corresponding files in the [config/base/](file://d:/IdeaProjects/model-router/src/main/resources/config/base/) directory
+1. **Base Configuration Modification**: Edit corresponding files in the [config/base/](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/) directory
 2. **Feature Enable/Disable**: Edit corresponding feature configuration files
 3. **Environment Differences**: Edit corresponding environment configuration files
 4. **Sensitive Configuration**: Use environment variables for injection

@@ -7,7 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
 本目录包含 JAiRouter 项目的完整文档。
 
 ## 文档管理工具
@@ -135,10 +134,12 @@ mkdocs serve
 启动本地开发服务器，支持热重载。
 
 **选项:**
+
 - `--host <地址>`: 监听地址 (默认: localhost)
 - `--port <端口>`: 监听端口 (默认: 8000)
 
 **示例:**
+
 ```bash
 .\scripts\docs\docs-manager.ps1 serve -HostAddress 0.0.0.0 -Port 3000
 ```
@@ -148,10 +149,12 @@ mkdocs serve
 检查文档中的所有链接，包括内部链接和外部链接。
 
 **选项:**
+
 - `--output <文件>`: 输出报告文件路径
 - `--fail-on-error`: 发现无效链接时退出码为1
 
 **示例:**
+
 ```bash
 .\scripts\docs\docs-manager.ps1 check-links -Output link-report.json -FailOnError
 ```
@@ -161,10 +164,12 @@ mkdocs serve
 基于链接检查报告，提供修复建议和自动修复功能。
 
 **选项:**
+
 - `--apply`: 应用修复建议
 - `--auto-fix`: 自动修复不询问确认
 
 **示例:**
+
 ```bash
 .\scripts\docs\docs-manager.ps1 fix-links -Apply -AutoFix
 ```
@@ -174,6 +179,7 @@ mkdocs serve
 管理文档版本信息，追踪文档变更。
 
 **选项:**
+
 - `--scan`: 扫描并更新版本信息
 - `--add-headers`: 添加版本头信息到文档
 - `--cleanup <天数>`: 清理指定天数前的变更记录
@@ -181,6 +187,7 @@ mkdocs serve
 - `--check-outdated <天数>`: 检查过期文档的天数阈值
 
 **示例:**
+
 ```bash
 .\scripts\docs\docs-manager.ps1 version -Scan -AddHeaders -Export version-data.json
 ```
@@ -190,10 +197,12 @@ mkdocs serve
 检查文档内容与代码的同步性，验证配置示例和API文档的准确性。
 
 **选项:**
+
 - `--output <文件>`: 输出报告文件路径
 - `--fail-on-error`: 发现严重问题时退出码为1
 
 **示例:**
+
 ```bash
 .\scripts\docs\docs-manager.ps1 check-sync -Output sync-report.md -FailOnError
 ```
@@ -203,6 +212,7 @@ mkdocs serve
 验证文档结构和MkDocs配置文件的正确性。
 
 **示例:**
+
 ```bash
 .\scripts\docs\docs-manager.ps1 validate
 ```
@@ -231,6 +241,7 @@ docs/
 ## 开发工作流
 
 1. **启动开发服务器**
+
    ```bash
    .\scripts\docs\docs-manager.ps1 serve
    ```
@@ -240,21 +251,25 @@ docs/
    - 保存后自动重新加载
 
 3. **检查链接有效性**
+
    ```bash
    .\scripts\docs\docs-manager.ps1 check-links
    ```
 
 4. **修复发现的问题**
+
    ```bash
    .\scripts\docs\docs-manager.ps1 fix-links -Apply
    ```
 
 5. **更新版本信息**
+
    ```bash
    .\scripts\docs\docs-manager.ps1 version -Scan -AddHeaders
    ```
 
 6. **验证文档结构**
+
    ```bash
    .\scripts\docs\docs-manager.ps1 validate
    ```
@@ -326,6 +341,7 @@ mkdocs gh-deploy
    - 内部链接检查文件路径是否正确
 
 4. **脚本执行权限问题 (Linux/macOS)**
+
    ```bash
    chmod +x scripts/docs/docs-manager.sh
    ```
@@ -335,6 +351,7 @@ mkdocs gh-deploy
 如果遇到问题，可以：
 
 1. 查看脚本帮助信息：
+
    ```bash
    .\scripts\docs\docs-manager.ps1 help
    ```

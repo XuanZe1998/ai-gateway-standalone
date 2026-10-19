@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## Overview
 
 This document describes how to test the automated deployment process for JAiRouter documentation, ensuring that documentation can be correctly built and published to GitHub Pages.
@@ -26,6 +24,7 @@ The project provides test scripts for multiple platforms:
 ### Windows Environment
 
 Using PowerShell:
+
 ```powershell
 # Full test
 .\scripts\test-deployment.ps1
@@ -41,6 +40,7 @@ Using PowerShell:
 ```
 
 Using CMD:
+
 ```cmd
 # Full test
 scripts\test-deployment.cmd
@@ -147,6 +147,7 @@ After testing completion, a detailed report is generated including:
 ### Build Failures
 
 1. **Dependency Issues**
+
    ```bash
    # Reinstall dependencies
    pip install --upgrade mkdocs-material
@@ -154,6 +155,7 @@ After testing completion, a detailed report is generated including:
    ```
 
 2. **Configuration Errors**
+
    ```bash
    # Validate configuration
    mkdocs config

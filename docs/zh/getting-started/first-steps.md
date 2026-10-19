@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 完成 [快速开始](quick-start.md) 后，本指南将帮助您深入了解 JAiRouter 的配置和使用，逐步构建生产就绪的 AI 服务网关。
 
 ## 🎯 学习路径
@@ -128,6 +126,7 @@ JAiRouter 支持四种负载均衡策略：
 ```
 
 **特点**：
+
 - 随机选择可用实例
 - 简单高效，适合实例性能相近的场景
 - 长期来看请求分布均匀
@@ -147,6 +146,7 @@ JAiRouter 支持四种负载均衡策略：
 ```
 
 **特点**：
+
 - 按顺序轮流分配请求
 - 保证每个实例都能获得请求
 - 适合实例性能相近的场景
@@ -166,6 +166,7 @@ JAiRouter 支持四种负载均衡策略：
 ```
 
 **特点**：
+
 - 选择当前连接数最少的实例
 - 适合请求处理时间差异较大的场景
 - 能够自动平衡负载
@@ -185,6 +186,7 @@ JAiRouter 支持四种负载均衡策略：
 ```
 
 **特点**：
+
 - 基于客户端 IP 的一致性哈希
 - 同一客户端总是路由到同一实例
 - 适合需要会话保持的场景
@@ -241,6 +243,7 @@ JAiRouter 支持四种限流算法：
 ```
 
 **参数说明**：
+
 - `capacity`: 桶容量（最大令牌数）
 - `refillRate`: 令牌补充速率（每秒）
 - `clientIpEnable`: 是否启用基于客户端 IP 的独立限流
@@ -262,6 +265,7 @@ JAiRouter 支持四种限流算法：
 ```
 
 **参数说明**：
+
 - `capacity`: 桶容量
 - `leakRate`: 漏出速率（每秒）
 
@@ -282,6 +286,7 @@ JAiRouter 支持四种限流算法：
 ```
 
 **参数说明**：
+
 - `windowSize`: 时间窗口大小（秒）
 - `maxRequests`: 窗口内最大请求数
 
@@ -303,6 +308,7 @@ JAiRouter 支持四种限流算法：
 ```
 
 **参数说明**：
+
 - `capacity`: 最终容量
 - `warmUpPeriod`: 预热时间（秒）
 - `coldFactor`: 冷启动因子
@@ -411,6 +417,7 @@ JAiRouter 支持两种配置存储方式：
 ```
 
 **特点**：
+
 - 配置存储在内存中
 - 重启后配置丢失
 - 适合开发和测试环境
@@ -427,6 +434,7 @@ JAiRouter 支持两种配置存储方式：
 ```
 
 **特点**：
+
 - 配置持久化到文件
 - 支持配置文件自动合并
 - 适合生产环境
@@ -627,6 +635,7 @@ logging:
 ### Q: 如何选择合适的负载均衡策略？
 
 **A:** 根据您的场景选择：
+
 - **性能相近的实例**：使用 Random 或 Round Robin
 - **性能差异较大**：使用 Least Connections
 - **需要会话保持**：使用 IP Hash
@@ -634,6 +643,7 @@ logging:
 ### Q: 如何选择合适的限流算法？
 
 **A:** 根据流量特征选择：
+
 - **平稳流量**：使用 Token Bucket
 - **突发流量**：使用 Leaky Bucket
 - **精确控制**：使用 Sliding Window
@@ -641,7 +651,8 @@ logging:
 
 ### Q: 配置更新后何时生效？
 
-**A:** 
+**A:**
+
 - **动态 API 配置**：立即生效
 - **配置文件更新**：需要重启服务
 
@@ -706,6 +717,7 @@ curl -X POST "http://localhost:8080/api/config/merge/backup"
 **问题**: 启动时报告 YAML 或 JSON 解析错误
 
 **解决方案**:
+
 - 使用 YAML/JSON 验证工具检查语法
 - 确保缩进正确（YAML）
 - 检查引号匹配（JSON）
@@ -715,6 +727,7 @@ curl -X POST "http://localhost:8080/api/config/merge/backup"
 **问题**: 修改配置后未生效
 
 **解决方案**:
+
 - 动态配置立即生效
 - 静态配置需要重启服务
 - 检查配置文件路径是否正确
@@ -726,6 +739,7 @@ curl -X POST "http://localhost:8080/api/config/merge/backup"
 **问题**: 某些实例请求过多，某些过少
 
 **解决方案**:
+
 - 检查权重配置是否合理
 - 确认健康检查是否正常工作
 - 考虑使用 Least Connections 策略
@@ -737,6 +751,7 @@ curl -X POST "http://localhost:8080/api/config/merge/backup"
 **问题**: 正常流量被限流
 
 **解决方案**:
+
 - 调整限流阈值
 - 检查是否启用客户端 IP 限流
 - 考虑使用滑动窗口算法
@@ -746,6 +761,7 @@ curl -X POST "http://localhost:8080/api/config/merge/backup"
 **问题**: 服务正常但熔断器开启
 
 **解决方案**:
+
 - 调整 failureThreshold 阈值
 - 检查后端服务响应时间
 - 增加 timeout 设置
@@ -757,6 +773,7 @@ curl -X POST "http://localhost:8080/api/config/merge/backup"
 **问题**: Prometheus 无法抓取指标
 
 **解决方案**:
+
 - 检查 management 端点配置
 - 确认网络连通性
 - 查看 `/actuator/prometheus` 是否正常返回

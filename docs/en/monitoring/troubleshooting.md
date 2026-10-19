@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document provides diagnosis and solutions for common issues in the JAiRouter monitoring system, helping to quickly locate and fix monitoring-related problems.
 
 ## Quick Diagnosis
@@ -51,10 +49,12 @@ curl http://localhost:9093/-/healthy
 #### Issue 1: Metrics Endpoint Unreachable
 
 **Symptoms**:
+
 - Accessing `/actuator/prometheus` returns 404
 - Prometheus targets page shows JAiRouter as down
 
 **Diagnosis Steps**:
+
 ```bash
 # Check application status
 curl http://localhost:8080/actuator/health
@@ -67,6 +67,7 @@ docker logs jairouter | grep -i actuator
 ```
 
 **Solution**:
+
 ```yaml
 # application.yml
 management:
@@ -83,10 +84,12 @@ management:
 #### Issue 2: Metrics Data Empty or Incomplete
 
 **Symptoms**:
+
 - Prometheus endpoint returns empty data
 - Some metrics are missing
 
 **Diagnosis Steps**:
+
 ```bash
 # Check monitoring configuration
 curl http://localhost:8080/actuator/configprops | jq '.contexts.application.beans.monitoringConfiguration'
@@ -100,7 +103,8 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 
 **Possible Causes and Solutions**:
 
-**Cause 1: Metrics collection disabled**
+##### Cause 1: Metrics collection disabled
+
 ```yaml
 monitoring:
   metrics:
@@ -111,7 +115,8 @@ monitoring:
       - infrastructure
 ```
 
-**Cause 2: Low sampling rate**
+##### Cause 2: Low sampling rate
+
 ```yaml
 monitoring:
   metrics:
@@ -120,7 +125,8 @@ monitoring:
       backend-metrics: 1.0
 ```
 
-**Cause 3: Async processing queue full**
+##### Cause 3: Async processing queue full
+
 ```yaml
 monitoring:
   metrics:
@@ -132,10 +138,12 @@ monitoring:
 #### Issue 3: Inaccurate Metrics Data
 
 **Symptoms**:
+
 - Metric values don't match actual conditions
 - Metrics update delay
 
 **Diagnosis Steps**:
+
 ```bash
 # Check time synchronization
 date
@@ -149,6 +157,7 @@ curl http://localhost:8080/actuator/jairouter-metrics/status
 ```
 
 **Solution**:
+
 ```yaml
 monitoring:
   metrics:
@@ -167,10 +176,12 @@ monitoring:
 #### Issue 4: Prometheus Cannot Scrape Metrics
 
 **Symptoms**:
+
 - Prometheus targets page shows errors
 - Metric queries return empty results
 
 **Diagnosis Steps**:
+
 ```bash
 # 1. Check Prometheus configuration
 cat monitoring/prometheus/prometheus.yml | grep -A 10 jairouter
@@ -185,6 +196,7 @@ docker logs prometheus | grep -i error
 **Solutions**:
 
 **Network Issues**:
+
 ```yaml
 # docker-compose-monitoring.yml
 networks:
@@ -201,6 +213,7 @@ services:
 ```
 
 **Configuration Issues**:
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -215,10 +228,12 @@ scrape_configs:
 #### Issue 5: Prometheus Storage Space Insufficient
 
 **Symptoms**:
+
 - Prometheus logs show storage errors
 - Query responses are slow
 
 **Diagnosis Steps**:
+
 ```bash
 # Check storage usage
 docker exec prometheus df -h /prometheus
@@ -228,6 +243,7 @@ docker exec prometheus cat /etc/prometheus/prometheus.yml | grep retention
 ```
 
 **Solution**:
+
 ```yaml
 # prometheus.yml or startup parameters
 command:
@@ -241,10 +257,12 @@ command:
 #### Issue 6: Grafana Dashboard Shows "No data"
 
 **Symptoms**:
+
 - Dashboard panels show "No data"
 - Queries return empty results
 
 **Diagnosis Steps**:
+
 ```bash
 # 1. Check data source connection
 curl http://localhost:3000/api/datasources/proxy/1/api/v1/query?query=up
@@ -259,6 +277,7 @@ curl "http://localhost:9090/api/v1/query?query=jairouter_requests_total"
 **Solutions**:
 
 **Data Source Configuration**:
+
 ```yaml
 # grafana/provisioning/datasources/prometheus.yml
 datasources:
@@ -270,6 +289,7 @@ datasources:
 ```
 
 **Query Optimization**:
+
 ```promql
 # Ensure query syntax is correct
 sum(rate(jairouter_requests_total[5m]))
@@ -281,10 +301,12 @@ label_values(jairouter_requests_total, service)
 #### Issue 7: Grafana Dashboard Loading Slow
 
 **Symptoms**:
+
 - Dashboard loading time is too long
 - Query timeouts
 
 **Diagnosis Steps**:
+
 ```bash
 # Check query complexity
 # View query execution time in Grafana Query Inspector
@@ -296,6 +318,7 @@ curl "http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_samples_appe
 **Solutions**:
 
 **Query Optimization**:
+
 ```promql
 # Use recording rules to pre-aggregate data
 # rules/jairouter-recording-rules.yml
@@ -307,6 +330,7 @@ groups:
 ```
 
 **Panel Optimization**:
+
 - Reduce panel count (< 20 panels)
 - Increase refresh interval
 - Use appropriate time ranges
@@ -316,10 +340,12 @@ groups:
 #### Issue 8: Alerts Not Triggered
 
 **Symptoms**:
+
 - Alert conditions met but no notifications received
 - Prometheus shows alerts but AlertManager doesn't receive them
 
 **Diagnosis Steps**:
+
 ```bash
 # 1. Check alert rule status
 curl http://localhost:9090/api/v1/rules
@@ -334,6 +360,7 @@ promtool check rules monitoring/prometheus/rules/jairouter-alerts.yml
 **Solutions**:
 
 **Rule Configuration**:
+
 ```yaml
 # prometheus.yml
 rule_files:
@@ -347,6 +374,7 @@ alerting:
 ```
 
 **Network Connection**:
+
 ```bash
 # Check connection from Prometheus to AlertManager
 docker exec prometheus curl http://alertmanager:9093/-/healthy
@@ -355,10 +383,12 @@ docker exec prometheus curl http://alertmanager:9093/-/healthy
 #### Issue 9: Alert Notifications Not Sent
 
 **Symptoms**:
+
 - AlertManager receives alerts but doesn't send notifications
 - Notification channels unresponsive
 
 **Diagnosis Steps**:
+
 ```bash
 # Check AlertManager configuration
 amtool config show
@@ -373,6 +403,7 @@ amtool silence query
 **Solutions**:
 
 **Email Configuration**:
+
 ```yaml
 # alertmanager.yml
 global:
@@ -383,6 +414,7 @@ global:
 ```
 
 **Routing Configuration**:
+
 ```yaml
 route:
   group_by: ['alertname']
@@ -397,11 +429,13 @@ route:
 ### Issue 10: Monitoring Affects Application Performance
 
 **Symptoms**:
+
 - Increased application response time
 - Rising CPU usage
 - Increased memory usage
 
 **Diagnosis Steps**:
+
 ```bash
 # Check monitoring overhead
 curl http://localhost:8080/actuator/metrics/jvm.gc.pause
@@ -415,6 +449,7 @@ curl http://localhost:8080/actuator/jairouter-metrics/performance
 **Solutions**:
 
 #### Performance Optimization Configuration
+
 ```yaml
 monitoring:
   metrics:
@@ -440,10 +475,12 @@ monitoring:
 ### Issue 11: Poor Prometheus Query Performance
 
 **Symptoms**:
+
 - Long query response times
 - Slow Grafana dashboard loading
 
 **Diagnosis Steps**:
+
 ```bash
 # Check Prometheus metrics
 curl "http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series"
@@ -455,6 +492,7 @@ curl "http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series"
 **Solutions**:
 
 **Optimize Prometheus Configuration**:
+
 ```yaml
 # monitoring/prometheus/prometheus.yml
 global:
@@ -467,6 +505,7 @@ scrape_configs:
 ```
 
 **Use Recording Rules**:
+
 ```yaml
 # rules/jairouter-recording-rules.yml
 groups:
@@ -485,10 +524,12 @@ groups:
 ### Issue 12: Inconsistent Metrics Data
 
 **Symptoms**:
+
 - Different results when querying the same metric at different times
 - Grafana and Prometheus show inconsistent data
 
 **Diagnosis Steps**:
+
 ```bash
 # Check time synchronization
 ntpdate -q pool.ntp.org
@@ -502,6 +543,7 @@ curl "http://localhost:9090/api/v1/query?query=up{job=\"jairouter\"}"
 **Solutions**:
 
 **Time Synchronization**:
+
 ```bash
 # Synchronize system time
 sudo ntpdate -s pool.ntp.org
@@ -511,6 +553,7 @@ sudo systemctl enable ntp
 ```
 
 **Cache Configuration**:
+
 ```yaml
 # application.yml
 management:
@@ -566,6 +609,7 @@ echo "Diagnostic information collected to ${LOG_DIR} directory"
 ### Log Analysis Techniques
 
 #### 1. JAiRouter Application Logs
+
 ```bash
 # View monitoring-related errors
 docker logs jairouter | grep -i "metric\|monitor\|prometheus"
@@ -578,6 +622,7 @@ docker logs jairouter | grep -i "config\|property"
 ```
 
 #### 2. Prometheus Logs
+
 ```bash
 # View scrape errors
 docker logs prometheus | grep -i "scrape\|target"
@@ -590,6 +635,7 @@ docker logs prometheus | grep -i "rule\|alert"
 ```
 
 #### 3. Grafana Logs
+
 ```bash
 # View data source connection issues
 docker logs grafana | grep -i "datasource\|proxy"
@@ -606,6 +652,7 @@ docker logs grafana | grep -i "auth\|login"
 ### Monitoring Service Recovery
 
 #### 1. Complete Monitoring Stack Restart
+
 ```bash
 # Stop all services
 docker-compose -f docker-compose-monitoring.yml down
@@ -618,6 +665,7 @@ docker-compose -f docker-compose-monitoring.yml up -d
 ```
 
 #### 2. Individual Service Restart
+
 ```bash
 # Restart JAiRouter
 docker-compose -f docker-compose-monitoring.yml restart jairouter
@@ -630,6 +678,7 @@ docker-compose -f docker-compose-monitoring.yml restart grafana
 ```
 
 #### 3. Configuration Reload
+
 ```bash
 # Reload Prometheus configuration
 curl -X POST http://localhost:9090/-/reload
@@ -641,6 +690,7 @@ curl -X POST http://localhost:9093/-/reload
 ### Data Recovery
 
 #### 1. Prometheus Data Recovery
+
 ```bash
 # Restore data from backup
 docker cp prometheus-backup.tar.gz prometheus:/tmp/
@@ -648,6 +698,7 @@ docker exec prometheus tar -xzf /tmp/prometheus-backup.tar.gz -C /prometheus/
 ```
 
 #### 2. Grafana Configuration Recovery
+
 ```bash
 # Restore dashboards
 docker cp grafana-dashboards-backup.tar.gz grafana:/tmp/
@@ -659,6 +710,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ### Monitoring the Monitoring System
 
 #### 1. Meta-Monitoring Configuration
+
 ```yaml
 # Monitor Prometheus itself
 - alert: PrometheusDown
@@ -677,6 +729,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ```
 
 #### 2. Monitoring Data Quality
+
 ```yaml
 # Monitor metrics collection delay
 - alert: MetricsCollectionDelay
@@ -692,6 +745,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ### Regular Maintenance
 
 #### 1. Health Check Schedule
+
 ```bash
 # Daily health check
 0 9 * * * /path/to/monitoring-health-check.sh
@@ -704,6 +758,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ```
 
 #### 2. Backup Schedule
+
 ```bash
 # Daily configuration backup
 0 2 * * * /path/to/backup-monitoring-config.sh

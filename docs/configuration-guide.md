@@ -130,19 +130,22 @@ SERVER_PORT=8080
 ### Docker 部署配置
 
 1. 创建外部配置目录：
-```bash
-mkdir -p config-external/auth config-external/router config-external/common
-```
+
+   ```bash
+   mkdir -p config-external/auth config-external/router config-external/common
+   ```
 
 2. 配置 Docker Compose：
-```yaml
-volumes:
-  - ./config-external:/app/config:ro
-  - ./logs:/app/logs
-  - ./data:/app/data
-```
+
+   ```yaml
+   volumes:
+     - ./config-external:/app/config:ro
+     - ./logs:/app/logs
+     - ./data:/app/data
+   ```
 
 3. 外部配置示例（`config-external/router/services.yml`）：
+
 ```yaml
 model:
   services:
@@ -238,6 +241,7 @@ curl http://localhost:8080/api/config/environment-variables
    - 强制使用环境变量
 
 4. **迁移步骤**
+
    ```bash
    # 1. 设置环境变量
    export JWT_SECRET="your-secret-key"
@@ -254,9 +258,9 @@ curl http://localhost:8080/api/config/environment-variables
 
 ## 相关文档
 
-- [外部配置使用指南](../config-external/README.md)
-- [环境变量模板](../.env.example)
-- [配置校验 API 文档](./config-validation-api.md)
+- [外部配置使用指南](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/config-external/README.md)
+- [环境变量模板](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/.env.example)
+- [配置校验 API 文档](zh/configuration/validation-rules.md)
 
 ---
 

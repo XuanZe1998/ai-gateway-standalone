@@ -300,6 +300,7 @@ token 提取统一用 JSON 路径：`data.usage.prompt_tokens` / `data.usage.com
 **原文**：`{ input_tokens, output_tokens }`
 
 **实际代码**（`ImageGenerateDTO.Response.Usage`）：
+
 ```java
 public record Usage(
     Integer total_tokens,

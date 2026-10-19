@@ -7,13 +7,12 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本指南将在 5 分钟内帮您快速体验 JAiRouter 的核心功能，无需复杂配置即可开始使用。
 
 ## 🎯 学习目标
 
 完成本指南后，您将能够：
+
 - ✅ 启动 JAiRouter 服务
 - ✅ 配置第一个 AI 模型服务
 - ✅ 发送 API 请求并获得响应
@@ -24,14 +23,17 @@
 选择以下任一方式：
 
 ### 方式一：Docker（推荐新手）
+
 - ✅ 已安装 Docker 20.10+
 - ✅ 无需安装 Java 环境
 
 ### 方式二：本地运行
+
 - ✅ 已安装 Java 17+
 - ✅ 下载了 JAiRouter JAR 文件
 
 ### 可选：AI 模型服务
+
 - 如果您已有 AI 模型服务（如 Ollama、GPUStack），可以直接配置
 - 如果没有，我们将在步骤中提供测试用的模拟服务
 
@@ -53,6 +55,7 @@ docker ps --filter "name=jairouter"
 ```
 
 **预期输出**：
+
 ```
 CONTAINER ID   IMAGE                           COMMAND                  CREATED         STATUS         PORTS                    NAMES
 abc123def456   sodlinken/jairouter:latest   "java -jar /app/mode…"   2 seconds ago   Up 1 second    0.0.0.0:8080->8080/tcp   jairouter
@@ -69,6 +72,7 @@ java -jar model-router.jar --spring.config.location=classpath:/application.yml
 ```
 
 **预期输出**：
+
 ```
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -93,6 +97,7 @@ curl http://localhost:8080/actuator/health
 ```
 
 **预期响应**：
+
 ```json
 {
   "status": "UP",
@@ -115,6 +120,7 @@ curl http://localhost:8080/actuator/info
 ```
 
 **预期响应**：
+
 ```json
 {
   "app": {
@@ -132,6 +138,7 @@ curl http://localhost:8080/actuator/info
 ### 访问 Swagger UI
 
 在浏览器中打开：
+
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
@@ -174,6 +181,7 @@ curl -X POST "http://localhost:8080/api/config/instance/add/chat" \
 ```
 
 **预期响应**：
+
 ```json
 {
   "success": true,
@@ -353,6 +361,7 @@ done
 ### Q: 服务启动失败怎么办？
 
 **A:** 检查以下几点：
+
 1. 端口 8080 是否被占用
 2. Java 版本是否为 17+
 3. 查看日志获取详细错误信息
@@ -367,6 +376,7 @@ docker logs jairouter
 ### Q: 无法连接到后端 AI 服务？
 
 **A:** 确认：
+
 1. 后端服务是否正常运行
 2. 网络连接是否正常
 3. 配置的 URL 和端口是否正确
@@ -379,6 +389,7 @@ curl http://localhost:11434/v1/models
 ### Q: API 调用返回错误？
 
 **A:** 检查：
+
 1. 请求格式是否正确
 2. 模型名称是否匹配
 3. 查看 JAiRouter 日志获取详细信息
@@ -407,11 +418,13 @@ curl http://localhost:11434/v1/models
 ### 📚 推荐学习路径
 
 **新手用户**：
+
 1. ✅ 快速开始（当前）
 2. 👉 [第一步指南](first-steps.md) - 学习核心配置
 3. 👉 [配置指南](../configuration/index.md) - 掌握高级配置
 
 **有经验用户**：
+
 1. ✅ 快速开始（当前）
 2. 👉 [API 参考](../api-reference/index.md) - 查看接口详情
 3. 👉 [部署指南](../deployment/index.md) - 生产环境部署

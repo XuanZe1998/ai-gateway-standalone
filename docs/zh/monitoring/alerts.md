@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档介绍如何配置和管理 JAiRouter 的告警系统，包括告警规则设置、通知配置和告警处理流程。
 
 ## 告警架构
@@ -640,6 +638,7 @@ for i in {1..100}; do curl http://localhost:8080/invalid-endpoint; done
 ```
 
 ### 告警规则验证
+
 ```shell
 # 验证告警规则语法
 promtool check rules monitoring/prometheus/rules/jairouter-alerts.yml
@@ -699,6 +698,7 @@ graph TD
 ### 告警处理检查清单
 
 #### 严重告警处理
+
 - [ ] 确认告警真实性
 - [ ] 评估业务影响范围
 - [ ] 通知相关团队
@@ -711,6 +711,7 @@ graph TD
 - [ ] 更新文档和流程
 
 #### 警告告警处理
+
 - [ ] 确认告警有效性
 - [ ] 评估潜在风险
 - [ ] 安排处理时间
@@ -719,6 +720,7 @@ graph TD
 - [ ] 记录处理结果
 
 #### 慢查询告警处理
+
 - [ ] 检查慢查询日志
 - [ ] 分析慢查询原因
 - [ ] 优化相关查询或操作
@@ -757,6 +759,7 @@ route:
 ### 减少告警噪音
 
 #### 1. 合理设置阈值
+
 ```yml
 # 避免过于敏感的阈值
 - alert: HighLatency
@@ -765,6 +768,7 @@ route:
 ```
 
 #### 2. 使用告警分组
+
 ```yml
 route:
   group_by: ['alertname', 'service', 'severity']
@@ -773,6 +777,7 @@ route:
 ```
 
 #### 3. 实施告警抑制
+
 ```yml
 inhibit_rules:
   - source_match:
@@ -785,6 +790,7 @@ inhibit_rules:
 ### 告警质量监控
 
 #### 告警指标收集
+
 ```yml
 # 收集告警相关指标
 - record: jairouter:alert_firing_count
@@ -795,6 +801,7 @@ inhibit_rules:
 ```
 
 #### 告警效果分析
+
 - 告警准确率：真实问题 / 总告警数
 - 告警覆盖率：发现的问题 / 实际问题数
 - 平均响应时间：从告警到开始处理的时间
@@ -805,16 +812,19 @@ inhibit_rules:
 ### 告警规则设计
 
 #### 1. 遵循 SLI/SLO 原则
+
 - 基于服务水平指标设置告警
 - 关注用户体验相关指标
 - 避免基于资源指标的告警
 
 #### 2. 使用分层告警
+
 - **症状告警**: 用户可感知的问题
 - **原因告警**: 导致症状的根本原因
 - **预测告警**: 可能导致问题的趋势
 
 #### 3. 告警命名规范
+
 ```yml
 # 好的告警命名
 - alert: JAiRouterHighLatency
@@ -830,17 +840,20 @@ inhibit_rules:
 ### 通知策略
 
 #### 1. 分级通知
+
 - **Critical**: 立即通知，多渠道
 - **Warning**: 延迟通知，单一渠道
 - **Info**: 仅记录，定期汇总
 
 #### 2. 通知内容优化
+
 - 包含足够的上下文信息
 - 提供处理手册链接
 - 使用清晰的描述语言
 - 避免技术术语过多
 
 #### 3. 通知时间管理
+
 - 工作时间和非工作时间不同策略
 - 避免深夜非紧急通知
 - 考虑时区差异
@@ -850,7 +863,9 @@ inhibit_rules:
 ### 常见问题
 
 #### 1. 告警规则不触发
+
 **检查步骤**:
+
 ```shell
 # 验证规则语法
 promtool check rules rules/jairouter-alerts.yml
@@ -863,7 +878,9 @@ curl "http://localhost:9090/api/v1/query?query=up{job=\"jairouter\"}"
 ```
 
 #### 2. 通知未发送
+
 **检查步骤**:
+
 ```shell
 # 检查 AlertManager 状态
 curl http://localhost:9093/api/v1/status
@@ -876,7 +893,9 @@ amtool config show
 ```
 
 #### 3. 告警风暴
+
 **处理方法**:
+
 ```shell
 # 创建临时静默
 amtool silence add alertname=".*" --duration="1h" --comment="告警风暴处理"

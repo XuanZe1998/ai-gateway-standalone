@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 欢迎使用 JAiRouter！本节将帮助您快速上手 JAiRouter，从安装到第一次 API 调用。
 
 ## 什么是 JAiRouter？

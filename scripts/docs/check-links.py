@@ -17,14 +17,18 @@ from datetime import datetime
 from typing import List, Dict, Tuple, Set
 from urllib.parse import urljoin, urlparse
 import argparse
+from html.parser import HTMLParser
+from urllib.parse import unquote
+import markdown
 
 
 class LinkChecker:
     def __init__(
-        self, base_dir: str = "docs", output_file: str = "link-check-report.json"
+        self, base_dir: str = "docs", output_file: str = "link-check-report.json", local_only: bool = False
     ):
-        self.base_dir = Path(base_dir)
+        self.base_dir = Path(base_dir).resolve()
         self.output_file = output_file
+        self.local_only = local_only
         self.checked_urls: Set[str] = set()
         self.results = {
             "timestamp": datetime.now().isoformat(),
@@ -50,7 +54,6 @@ class LinkChecker:
             r"^https://localhost",
             r"^http://127\.0\.0\.1",
             r"^https://127\.0\.0\.1",
-            r"\.(jpg|jpeg|png|gif|svg|ico|pdf)$",
         ]
 
         # HTTP 请求头
@@ -72,41 +75,21 @@ class LinkChecker:
 
     def extract_links_from_file(self, file_path: Path) -> List[Tuple[str, int]]:
         """从 Markdown 文件中提取所有链接"""
-        links = []
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read()
+        class Parser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.links = []
+            def handle_starttag(self, tag, attrs):
+                for key, value in attrs:
+                    if key in ("href", "src") and value:
+                        self.links.append(value)
 
-            # 匹配 Markdown 链接格式 [text](url)
-            markdown_links = re.finditer(r"\[([^\]]*)\]\(([^)]+)\)", content)
-            for match in markdown_links:
-                url = match.group(2)
-                line_num = content[: match.start()].count("\n") + 1
-                links.append((url, line_num))
-
-            # 匹配 HTML 链接格式 <a href="url">
-            html_links = re.finditer(
-                r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>', content, re.IGNORECASE
-            )
-            for match in html_links:
-                url = match.group(1)
-                line_num = content[: match.start()].count("\n") + 1
-                links.append((url, line_num))
-
-            # 匹配直接的 URL
-            url_pattern = r'https?://[^\s<>"\'`\[\](){}]+'
-            direct_urls = re.finditer(url_pattern, content)
-            for match in direct_urls:
-                url = match.group(0)
-                line_num = content[: match.start()].count("\n") + 1
-                # 避免重复添加已经在 Markdown 或 HTML 链接中的 URL
-                if not any(url in link[0] for link in links):
-                    links.append((url, line_num))
-
-        except Exception as e:
-            print(f"❌ 读取文件失败 {file_path}: {e}")
-
-        return links
+        content = file_path.read_text(encoding="utf-8")
+        parser = Parser()
+        parser.feed(markdown.markdown(content, extensions=["fenced_code", "tables"]))
+        # Parse rendered Markdown so code examples and inline literals are not links.
+        return [(url, content[:content.find(url)].count("\n") + 1)
+                for url in dict.fromkeys(parser.links)]
 
     def check_internal_link(self, url: str, current_file: Path) -> bool:
         """检查内部链接（相对路径）"""
@@ -188,7 +171,7 @@ class LinkChecker:
         url = url.strip()
 
         # 移除查询参数和锚点进行检查（但保留原始 URL 用于报告）
-        clean_url = url.split("?")[0].split("#")[0]
+        clean_url = unquote(url.split("?")[0].split("#")[0])
 
         if url.startswith(("http://", "https://")):
             return self.check_external_link(url)
@@ -198,6 +181,7 @@ class LinkChecker:
 
     def check_file(self, file_path: Path) -> Dict:
         """检查单个文件中的所有链接"""
+        file_path = file_path.resolve()
         print(f"📄 检查文件: {file_path}")
 
         file_result = {
@@ -210,7 +194,7 @@ class LinkChecker:
         file_result["summary"]["total"] = len(links)
 
         for url, line_num in links:
-            if self.should_ignore_link(url):
+            if self.should_ignore_link(url) or (self.local_only and url.startswith(("http://", "https://", "//"))):
                 file_result["summary"]["skipped"] += 1
                 file_result["links"].append(
                     {
@@ -251,7 +235,8 @@ class LinkChecker:
                 )
 
             # 添加延迟避免请求过快
-            time.sleep(0.5)
+            if url.startswith(("http://", "https://")):
+                time.sleep(0.5)
 
         return file_result
 
@@ -340,9 +325,10 @@ def main():
         "--fail-on-error", action="store_true", help="发现无效链接时退出码为1"
     )
 
+    parser.add_argument("--local-only", action="store_true", help="Check repository links without network access")
     args = parser.parse_args()
 
-    checker = LinkChecker(args.dir, args.output)
+    checker = LinkChecker(args.dir, args.output, local_only=args.local_only)
     success = checker.run()
 
     if args.fail_on_error and not success:

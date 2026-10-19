@@ -30,23 +30,33 @@
   ],
   "httpHeaders": [
     {
-      "urls": ["https://github.com"],
+      "urls": [
+        "https://github.com"
+      ],
       "headers": {
         "Accept-Encoding": "zstd, br, gzip, deflate",
         "User-Agent": "Mozilla/5.0 (compatible; LinkChecker)"
       }
     },
     {
-      "urls": ["https://api.github.com"],
+      "urls": [
+        "https://api.github.com"
+      ],
       "headers": {
         "Accept": "application/vnd.github.v3+json"
       }
     }
   ],
-  "timeout": "30s",
+  "timeout": "10s",
   "retryOn429": true,
-  "retryCount": 5,
-  "fallbackRetryDelay": "60s",
-  "aliveStatusCodes": [200, 206, 301, 302, 403],
+  "retryCount": 1,
+  "fallbackRetryDelay": "5s",
+  "aliveStatusCodes": [
+    200,
+    206,
+    301,
+    302,
+    403
+  ],
   "verbose": true
 }

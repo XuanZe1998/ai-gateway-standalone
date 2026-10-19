@@ -565,35 +565,39 @@ echo "Configuration validation completed"
 ### Enabling Persistence on Existing System
 
 1. **Backup Current Configuration**
-```bash
-cp application.yml application.yml.backup
-```
+
+   ```bash
+   cp application.yml application.yml.backup
+   ```
 
 2. **Update Configuration Gradually**
-```yaml
-# Start with memory-only persistence
-jairouter:
-  security:
-    jwt:
-      persistence:
-        enabled: true
-        primary-storage: memory
-        fallback-storage: memory
-```
+
+   ```yaml
+   # Start with memory-only persistence
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           enabled: true
+           primary-storage: memory
+           fallback-storage: memory
+   ```
 
 3. **Enable Redis After Testing**
-```yaml
-# Upgrade to Redis with memory fallback
-jairouter:
-  security:
-    jwt:
-      persistence:
-        enabled: true
-        primary-storage: redis
-        fallback-storage: memory
-```
+
+   ```yaml
+   # Upgrade to Redis with memory fallback
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           enabled: true
+           primary-storage: redis
+           fallback-storage: memory
+   ```
 
 4. **Enable Full Auditing**
+
 ```yaml
 # Enable comprehensive auditing
 jairouter:
@@ -611,25 +615,28 @@ jairouter:
 ### Security Best Practices
 
 1. **Never Log Sensitive Data**
-```yaml
-jairouter:
-  security:
-    audit:
-      jwt-operations:
-        log-token-details: false  # Never log full tokens
-      api-key-operations:
-        log-key-details: false   # Never log full keys
-```
+
+   ```yaml
+   jairouter:
+     security:
+       audit:
+         jwt-operations:
+           log-token-details: false  # Never log full tokens
+         api-key-operations:
+           log-key-details: false   # Never log full keys
+   ```
 
 2. **Use Strong Redis Security**
-```yaml
-spring:
-  redis:
-    password: ${REDIS_PASSWORD}  # Always use password
-    ssl: true                   # Use SSL in production
-```
+
+   ```yaml
+   spring:
+     redis:
+       password: ${REDIS_PASSWORD}  # Always use password
+       ssl: true                   # Use SSL in production
+   ```
 
 3. **Limit Memory Usage**
+
 ```yaml
 jairouter:
   security:
@@ -643,27 +650,30 @@ jairouter:
 ### Performance Best Practices
 
 1. **Optimize Cleanup Schedule**
-```yaml
-jairouter:
-  security:
-    jwt:
-      persistence:
-        cleanup:
-          schedule: "0 0 2 * * ?"  # Run during low-traffic hours
-          batch-size: 1000         # Balance memory and performance
-```
+
+   ```yaml
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           cleanup:
+             schedule: "0 0 2 * * ?"  # Run during low-traffic hours
+             batch-size: 1000         # Balance memory and performance
+   ```
 
 2. **Use Appropriate TTL**
-```yaml
-jairouter:
-  security:
-    jwt:
-      persistence:
-        redis:
-          default-ttl: 3600  # Match or exceed token expiration
-```
+
+   ```yaml
+   jairouter:
+     security:
+       jwt:
+         persistence:
+           redis:
+             default-ttl: 3600  # Match or exceed token expiration
+   ```
 
 3. **Monitor Performance**
+
 ```yaml
 jairouter:
   monitoring:

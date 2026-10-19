@@ -7,13 +7,12 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter uses SpringDoc OpenAPI 3 to automatically generate API documentation, providing an interactive API exploration and testing experience.
 
 ## Access Methods
 
 ### Swagger UI Interface
+
 When the JAiRouter service is running, you can access the interactive API documentation at the following address:
 
 ```
@@ -21,6 +20,7 @@ http://localhost:8080/swagger-ui.html
 ```
 
 ### OpenAPI JSON Specification
+
 Get the complete OpenAPI 3.0 JSON specification document:
 
 ```
@@ -28,6 +28,7 @@ http://localhost:8080/v3/api-docs
 ```
 
 ### OpenAPI YAML Specification
+
 Get the YAML format OpenAPI specification document:
 
 ```
@@ -36,7 +37,7 @@ http://localhost:8080/v3/api-docs.yaml
 
 ## Configuration Instructions
 
-JAiRouter's OpenAPI configuration is located in the [application-dev.yml](file://D:\IdeaProjects\model-router\target\classes\application-dev.yml) file:
+JAiRouter's OpenAPI configuration is located in the [application-dev.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/target/classes/application-dev.yml) file:
 
 ```yaml
 springdoc:
@@ -57,6 +58,7 @@ springdoc:
 JAiRouter's APIs are divided into the following main groups by function:
 
 ### 1. Universal Model Interface (Universal API)
+
 - **Tag**: `Universal Model Interface`
 - **Description**: Provides unified model service interfaces compatible with OpenAI format
 - **Path Prefix**: `/v1`
@@ -70,31 +72,37 @@ JAiRouter's APIs are divided into the following main groups by function:
   - Image Editing (`/v1/images/edits`)
 
 ### 2. Service Type Management
+
 - **Tag**: `Service Type Management`
 - **Description**: Provides CRUD interfaces for service types and related configuration management
 - **Path Prefix**: `/api/config/type`
 
 ### 3. Service Instance Management
+
 - **Tag**: `Service Instance Management`
 - **Description**: Provides CRUD interfaces for service instances
 - **Path Prefix**: `/api/config/instance`
 
 ### 4. Monitoring Management
+
 - **Tag**: `Monitoring Management`
 - **Description**: Provides query and dynamic update functions for monitoring configurations
 - **Path Prefix**: `/api/monitoring`
 
 ### 5. Model Information Interface
+
 - **Tag**: `Model Information Interface`
 - **Description**: Provides model information query interfaces
 - **Path Prefix**: `/api/models`
 
 ### 6. Configuration Version Management
+
 - **Tag**: `Configuration Version Management`
 - **Description**: Provides management interfaces for querying, rolling back, and deleting configuration versions
 - **Path Prefix**: `/api/config/version`
 
 ### 7. Metric Registration Management
+
 - **Tag**: `Metric Registration`
 - **Description**: Dynamic metric registration and management API
 - **Path Prefix**: `/api/monitoring/metrics`
@@ -102,28 +110,35 @@ JAiRouter's APIs are divided into the following main groups by function:
 ## Using Swagger UI
 
 ### 1. Interface Exploration
+
 - Visit `http://localhost:8080/swagger-ui.html`
 - Browse different API groups and interfaces
 - View detailed request parameters and response formats
 
 ### 2. Online Testing
+
 - Click the "Try it out" button for any interface
 - Fill in the required parameters
 - Click "Execute" to run the request
 - View the actual response results
 
 ### 3. Authentication Configuration
+
 For interfaces requiring authentication, you can configure authentication information in Swagger UI:
 
 1. Click the "Authorize" button in the top right corner of the page
 2. Enter the Bearer Token in the "Authorization" field:
+
    ```
    Bearer your-api-key
    ```
+
 3. Click "Authorize" to confirm
 
 ### 4. Models and Examples
+
 Swagger UI automatically displays:
+
 - Request and response data models
 - Example JSON data
 - Parameter types and constraints
@@ -132,6 +147,7 @@ Swagger UI automatically displays:
 ## Custom OpenAPI Configuration
 
 ### 1. Global Configuration
+
 You can customize OpenAPI information through Java configuration classes:
 
 ```java
@@ -167,6 +183,7 @@ public class OpenApiConfig {
 ```
 
 ### 2. Interface-Level Annotations
+
 Use OpenAPI annotations to enhance interface documentation:
 
 ```java
@@ -215,6 +232,7 @@ public Mono<ResponseEntity<?>> chatCompletions(
 ## Export and Integration
 
 ### 1. Exporting OpenAPI Specification
+
 You can export OpenAPI specification files in the following ways:
 
 ```bash
@@ -226,14 +244,17 @@ curl http://localhost:8080/v3/api-docs.yaml > jairouter-openapi.yaml
 ```
 
 ### 2. Integration with Documentation Sites
+
 Integrate OpenAPI specification into MkDocs documentation sites:
 
 #### Install Plugin
+
 ```bash
 pip install mkdocs-swagger-ui-tag
 ```
 
 #### Configure mkdocs.yml
+
 ```yaml
 plugins:
   - swagger-ui-tag
@@ -243,6 +264,7 @@ markdown_extensions:
 ```
 
 #### Embed in Documentation
+
 ```markdown
 # API Documentation
 
@@ -250,6 +272,7 @@ markdown_extensions:
 ```
 
 ### 3. Generate Client SDKs
+
 Use OpenAPI Generator to generate client SDKs in various languages:
 
 ```bash
@@ -280,22 +303,26 @@ openapi-generator-cli generate \
 ## Best Practices
 
 ### 1. Documentation Quality
+
 - Add detailed `@Operation` annotations for all public interfaces
 - Use `@Parameter` to describe all parameters
 - Provide complete `@ApiResponse` definitions
 - Add meaningful example data
 
 ### 2. Security
+
 - Add `@SecurityRequirement` for interfaces requiring authentication
 - Define security schemes in global configuration
 - Do not expose sensitive information in documentation
 
 ### 3. Version Management
+
 - Use semantic versioning
 - Update version for major changes
 - Maintain backward compatibility
 
 ### 4. Performance Optimization
+
 - Enable caching in production environment
 - Restrict documentation access permissions
 - Consider using CDN acceleration
@@ -314,12 +341,15 @@ openapi-generator-cli generate \
 **Solution**: Check DTO class annotations and field definitions
 
 ### 2. Debugging Tips
+
 - Enable SpringDoc debug logging:
+
   ```yaml
   logging:
     level:
       org.springdoc: DEBUG
   ```
+
 - Check the raw JSON output of the `/v3/api-docs` endpoint
 - Use browser developer tools to inspect network requests
 

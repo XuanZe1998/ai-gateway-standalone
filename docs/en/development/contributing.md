@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## Welcome Contributions
 
 Thank you for your interest in the JAiRouter project! We welcome all forms of contributions, including but not limited to:
@@ -31,18 +29,21 @@ Thank you for your interest in the JAiRouter project! We welcome all forms of co
 ### Environment Configuration
 
 1. **Clone the Project**
+
    ```bash
    git clone https://github.com/Lincoln-cn/JAiRouter.git
    cd jairouter
    ```
 
 2. **Verify Java Version**
+
    ```bash
    java -version
    # Ensure output shows Java 17 or higher
    ```
 
 3. **Build the Project**
+
    ```bash
    # For Chinese users (recommended)
    ./mvnw clean package -Pchina
@@ -52,12 +53,14 @@ Thank you for your interest in the JAiRouter project! We welcome all forms of co
    ```
 
 4. **Run Tests**
+
    ```bash
    # Skip code quality checks and run tests directly
    ./mvnw compiler:compile compiler:testCompile surefire:test
    ```
 
 5. **Start the Application**
+
    ```bash
    java -jar target/model-router-*.jar
    ```
@@ -72,7 +75,7 @@ Thank you for your interest in the JAiRouter project! We welcome all forms of co
 
 2. **Configure Code Style**
    - File → Settings → Editor → Code Style
-   - Import [checkstyle.xml](file://D:\IdeaProjects\model-router\checkstyle.xml) configuration from project root
+   - Import [checkstyle.xml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/checkstyle.xml) configuration from project root
 
 3. **Configure Maven**
    - File → Settings → Build → Build Tools → Maven
@@ -109,8 +112,8 @@ git checkout -b fix/issue-number-description
 #### Naming Conventions
 
 - **Class names**: PascalCase (e.g., `LoadBalancerFactory`)
-- **Method names**: camelCase (e.g., [selectInstance](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\loadbalancer\LoadBalancer.java#L21-L21))
-- **Constants**: UPPER_SNAKE_CASE (e.g., [DEFAULT_TIMEOUT](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\circuitbreaker\CircuitBreakerManager.java#L20-L20))
+- **Method names**: camelCase (e.g., [selectInstance](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/router/loadbalancer/LoadBalancer.java))
+- **Constants**: UPPER_SNAKE_CASE (e.g., [DEFAULT_TIMEOUT](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/router/circuitbreaker/CircuitBreakerManager.java))
 - **Package names**: lowercase, dot-separated (e.g., `org.unreal.modelrouter.adapter`)
 
 #### Comment Standards
@@ -207,6 +210,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) specification:
 ```
 
 **Types (type):**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation update
@@ -216,6 +220,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) specification:
 - `chore`: Build process or auxiliary tool changes
 
 **Example:**
+
 ```bash
 feat(loadbalancer): Add consistent hash load balancing algorithm
 
@@ -231,6 +236,7 @@ Closes #123
 #### Submit Pull Request
 
 1. **Push Branch**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -241,6 +247,7 @@ Closes #123
    - Link related Issues
 
 3. **PR Description Template**
+
    ```markdown
    ## Change Description
    
@@ -275,6 +282,7 @@ Closes #123
 #### Code Review Focus Points
 
 **Reviewer Focus Areas:**
+
 - Code logic correctness
 - Performance impact
 - Security considerations
@@ -282,6 +290,7 @@ Closes #123
 - Documentation updates
 
 **Common Issues:**
+
 - Unhandled exceptions
 - Resource leaks
 - Concurrency safety issues
@@ -292,6 +301,7 @@ Closes #123
 ### Adding New Adapters
 
 1. **Create Adapter Class**
+
    ```java
    @Component
    public class NewServiceAdapter extends BaseAdapter {
@@ -303,6 +313,7 @@ Closes #123
    ```
 
 2. **Register Adapter**
+
    ```java
    @Configuration
    public class AdapterConfiguration {
@@ -316,6 +327,7 @@ Closes #123
    ```
 
 3. **Add Tests**
+
    ```java
    @ExtendWith(MockitoExtension.class)
    class NewServiceAdapterTest {
@@ -326,6 +338,7 @@ Closes #123
 ### Adding New Load Balancing Strategies
 
 1. **Implement Interface**
+
    ```java
    @Component
    public class CustomLoadBalancer implements LoadBalancer {
@@ -337,6 +350,7 @@ Closes #123
    ```
 
 2. **Register Strategy**
+
    ```java
    @Component
    public class LoadBalancerFactory {
@@ -353,6 +367,7 @@ Closes #123
 ### Adding New Rate Limiting Algorithms
 
 1. **Implement Interface**
+
    ```java
    @Component
    public class CustomRateLimiter implements RateLimiter {
@@ -364,6 +379,7 @@ Closes #123
    ```
 
 2. **Configuration Support**
+
    ```yaml
    model:
      services:

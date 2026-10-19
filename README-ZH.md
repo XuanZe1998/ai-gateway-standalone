@@ -7,9 +7,6 @@
 > **作者**: GitHub Action
 <!-- /版本信息 -->
 
-
-
-
 <p align="center">
   <img src="logo/JAiRouterLogo.png" alt="JAiRouter Logo" width="400">
 </p>
@@ -25,7 +22,6 @@ Chat、Embedding、Rerank、TTS 等），支持多种负载均衡策略、限流
 > ⚠️ **LTS 版本公告**：`v2.6.11` 为最终长期支持版本，后续不再添加新特性。v3.0 因需求有限无限期推迟。该分支将在 24 个月内持续提供安全补丁、关键缺陷修复与依赖更新。
 
 ---
-
 
 ## 🧭 功能概览（Web 控制台）
 
@@ -101,7 +97,7 @@ docker pull sodlinken/jairouter:latest
 
 **v1.8.0+ 新增密钥生成工具**，支持自动生成安全的 JWT 密钥和管理员密码：
 
-**方式一：使用 Docker 运行（推荐）**
+#### 方式一：使用 Docker 运行（推荐）
 
 ```bash
 # 生成 JWT 密钥（Base64 编码，至少 32 字符）
@@ -120,7 +116,7 @@ docker run --rm sodlinken/jairouter:latest java -jar /app/modelrouter.jar --gene
 # 密码强度：强
 ```
 
-**方式二：使用 OpenSSL（无需 jar 包）**
+#### 方式二：使用 OpenSSL（无需 jar 包）
 
 ```bash
 # 生成 JWT 密钥
@@ -132,7 +128,7 @@ openssl rand -base64 24 | tr -dc 'A-Za-z0-9!@#$%^&*' | head -c 16
 
 ### 3. 运行容器
 
-**方式一：使用生成的密钥（推荐）**
+#### 方式一：使用生成的密钥（推荐）
 
 ```bash
 # 设置环境变量
@@ -149,7 +145,7 @@ docker run -d \
   sodlinken/jairouter:latest
 ```
 
-**方式二：使用默认密码（仅限开发环境）**
+#### 方式二：使用默认密码（仅限开发环境）
 
 ```bash
 docker run -d \
@@ -167,9 +163,8 @@ docker run -d \
 curl http://localhost:8080/admin/login
 ```
 
-![](./docs/capture/login.png)
-
 **默认登录凭证**：
+
 - 用户名：`admin`
 - 密码：启动时设置的 `INITIAL_ADMIN_PASSWORD` 环境变量值
   - 如果未设置，开发环境使用默认密码（见启动日志）
@@ -177,15 +172,12 @@ curl http://localhost:8080/admin/login
 
 登录成功后，即可进入 Web 界面进行服务配置、管理、追踪与性能分析等操作。
 
-![](./docs/capture/dashboard.png)
-
-
 ## 📘 API 文档
 
 启动项目后，可通过以下地址访问自动生成的 API 文档：
 
-- **Swagger UI**: http://127.0.0.1:8080/swagger-ui/index.html
-- **OpenAPI JSON**: http://127.0.0.1:8080/v3/api-docs
+- **Swagger UI**: <http://127.0.0.1:8080/swagger-ui/index.html>
+- **OpenAPI JSON**: <http://127.0.0.1:8080/v3/api-docs>
 
 ## 📌 开发计划（更新状态）
 

@@ -30,6 +30,7 @@ GET /actuator/health
 ```
 
 **响应：**
+
 ```json
 {
   "status": "UP",
@@ -67,6 +68,7 @@ GET /actuator/health/detailed
 ```
 
 **响应：**
+
 ```json
 {
   "status": "UP",
@@ -149,6 +151,7 @@ GET /actuator/prometheus
 ```
 
 **响应：**
+
 ```
 # HELP jvm_memory_used_bytes 已使用内存量
 # TYPE jvm_memory_used_bytes gauge
@@ -190,6 +193,7 @@ GET /actuator/metrics
 ```
 
 **响应：**
+
 ```json
 {
   "names": [
@@ -215,6 +219,7 @@ GET /actuator/metrics/model.router.requests.total
 ```
 
 **响应：**
+
 ```json
 {
   "name": "model.router.requests.total",
@@ -254,6 +259,7 @@ GET /actuator/info
 ```
 
 **响应：**
+
 ```json
 {
   "app": {
@@ -291,6 +297,7 @@ GET /actuator/env
 ```
 
 **响应：**
+
 ```json
 {
   "activeProfiles": ["default"],
@@ -332,6 +339,7 @@ GET /api/monitoring/instances
 ```
 
 **响应：**
+
 ```json
 {
   "services": {
@@ -388,6 +396,7 @@ GET /api/monitoring/load-balancer
 ```
 
 **响应：**
+
 ```json
 {
   "services": {
@@ -436,6 +445,7 @@ GET /api/monitoring/rate-limit
 ```
 
 **响应：**
+
 ```json
 {
   "services": {
@@ -475,6 +485,7 @@ GET /api/monitoring/circuit-breaker
 ```
 
 **响应：**
+
 ```json
 {
   "instances": [

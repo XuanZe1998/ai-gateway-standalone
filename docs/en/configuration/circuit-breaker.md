@@ -13,10 +13,10 @@ JAiRouter has a built-in circuit breaker mechanism to prevent service avalanches
 
 Starting from v1.0.0, JAiRouter adopts a modular configuration structure with circuit breaker related configurations moved to separate configuration files:
 
-- Main configuration file: [application.yml](file://D:/IdeaProjects/model-router/src/main/resources/application.yml)
-- Model services base configuration: [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml)
+- Main configuration file: [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- Model services base configuration: [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml)
 
-You can find all circuit breaker related configurations in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file, including global configurations, service type configurations, and instance configurations.
+You can find all circuit breaker related configurations in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file, including global configurations, service type configurations, and instance configurations.
 
 ## Circuit Breaker Overview
 
@@ -49,16 +49,16 @@ stateDiagram-v2
 
 | Parameter | Description | Default Value |
 |------|------|--------|
-| [failureThreshold](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\circuitbreaker\DefaultCircuitBreaker.java#L10-L10) | Failure threshold, circuit breaker trips after exceeding | 5 |
+| [failureThreshold](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/router/circuitbreaker/DefaultCircuitBreaker.java) | Failure threshold, circuit breaker trips after exceeding | 5 |
 | `recoveryTimeout` | Recovery detection interval (milliseconds) | 60000 |
-| [successThreshold](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\circuitbreaker\DefaultCircuitBreaker.java#L12-L12) | Success threshold, circuit breaker closes after reaching | 3 |
-| [timeout](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\circuitbreaker\DefaultCircuitBreaker.java#L11-L11) | Request timeout (milliseconds) | 30000 |
+| [successThreshold](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/router/circuitbreaker/DefaultCircuitBreaker.java) | Success threshold, circuit breaker closes after reaching | 3 |
+| [timeout](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/java/org/unreal/modelrouter/router/circuitbreaker/DefaultCircuitBreaker.java) | Request timeout (milliseconds) | 30000 |
 
 ## Global Circuit Breaker Configuration
 
 ### Basic Configuration
 
-Configure global circuit breaker in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file:
+Configure global circuit breaker in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file:
 
 ```yaml
 # config/base/model-services-base.yml
@@ -123,7 +123,7 @@ model:
 
 ### YAML Configuration
 
-Configure circuit breaker for each service type in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file:
+Configure circuit breaker for each service type in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file:
 
 ```yaml
 model:
@@ -182,7 +182,7 @@ JAiRouter also supports updating circuit breaker configurations via the dynamic 
 
 ### Independent Instance Circuit Breaking
 
-Configure instance-level circuit breaker in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file:
+Configure instance-level circuit breaker in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file:
 
 ```yaml
 model:
@@ -242,7 +242,7 @@ JAiRouter also supports updating instance-level circuit breaker configurations v
 
 ### Basic Fallback Configuration
 
-Configure global and service-level fallback strategies in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file:
+Configure global and service-level fallback strategies in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file:
 
 ```yaml
 model:
@@ -634,6 +634,7 @@ model:
 **Symptom**: Service frequently trips, affecting normal usage
 
 **Troubleshooting**:
+
 ```bash
 # Check failure rate
 curl "http://localhost:8080/actuator/metrics/jairouter.circuitbreaker.calls"
@@ -643,6 +644,7 @@ curl "http://localhost:8080/actuator/metrics/jairouter.circuitbreaker.opened"
 ```
 
 **Solution**:
+
 ```yaml
 # Adjust parameters
 circuit-breaker:
@@ -656,6 +658,7 @@ circuit-breaker:
 **Symptom**: Circuit breaker does not open when service fails
 
 **Troubleshooting**:
+
 ```bash
 # Check circuit breaker configuration
 curl "http://localhost:8080/actuator/configprops" | jq '.model.circuit-breaker'
@@ -665,6 +668,7 @@ curl "http://localhost:8080/actuator/metrics/jairouter.circuitbreaker.state"
 ```
 
 **Solution**:
+
 ```yaml
 # Ensure circuit breaker is enabled
 circuit-breaker:
@@ -678,6 +682,7 @@ circuit-breaker:
 **Symptom**: Incorrect fallback response format when circuit breaker trips
 
 **Troubleshooting**:
+
 ```bash
 # Test fallback response
 curl -X POST "http://localhost:8080/v1/chat/completions" \
@@ -686,6 +691,7 @@ curl -X POST "http://localhost:8080/v1/chat/completions" \
 ```
 
 **Solution**:
+
 ```yaml
 # Correct fallback response format
 fallback:
@@ -794,7 +800,7 @@ experimental-services:
 
 After completing circuit breaker configuration, you can continue to learn about:
 
-- **[Monitoring Guide](../../monitoring/index.md)** - Setting up circuit breaker monitoring and alerts
+- **[Monitoring Guide](../monitoring/index.md)** - Setting up circuit breaker monitoring and alerts
 - **[Troubleshooting](../troubleshooting/index.md)** - Circuit breaker problem diagnosis
 - **[API Reference](../api-reference/index.md)** - Circuit breaker related APIs
-- **[Deployment Guide](../../deployment/index.md)** - Production environment circuit breaker configuration
+- **[Deployment Guide](../deployment/index.md)** - Production environment circuit breaker configuration

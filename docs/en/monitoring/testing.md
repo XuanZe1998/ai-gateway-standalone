@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document describes how to test the JAiRouter monitoring system functionalities, including unit testing, integration testing, performance testing, and end-to-end testing.
 
 ## Test Overview
@@ -26,7 +24,7 @@ JAiRouter monitoring system testing is divided into the following layers:
 
 ### Test Configuration
 
-Create a test-specific configuration [application-test.yml](file://D:\IdeaProjects\model-router\target\classes\application-test.yml):
+Create a test-specific configuration [application-test.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/target/classes/application-test.yml):
 
 ```yaml
 # Test environment monitoring configuration

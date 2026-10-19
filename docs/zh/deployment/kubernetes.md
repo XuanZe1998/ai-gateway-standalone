@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 JAiRouter 支持在 Kubernetes 集群中部署，提供高可用、自动扩缩容和滚动更新等企业级特性。本文档详细介绍如何在 K8s 环境中部署 JAiRouter.
 
 ## Kubernetes 部署概述
@@ -1226,7 +1224,6 @@ data:
         key-store-type: PKCS12
         key-alias: jairouter
 ```
-
 
 ```
 

@@ -13,10 +13,10 @@ JAiRouter provides four load balancing strategies, supporting configuration at g
 
 Starting from v1.0.0, JAiRouter adopts a modular configuration structure with load balancing related configurations moved to separate configuration files:
 
-- Main configuration file: [application.yml](file://D:/IdeaProjects/model-router/src/main/resources/application.yml)
-- Load balancing base configuration: [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml)
+- Main configuration file: [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- Load balancing base configuration: [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml)
 
-You can find all load balancing related configurations in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file, including global configurations, service type configurations, and instance configurations.
+You can find all load balancing related configurations in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file, including global configurations, service type configurations, and instance configurations.
 
 ## Load Balancing Overview
 
@@ -49,7 +49,7 @@ graph TB
 
 ### Basic Configuration
 
-Configure global load balancing strategies in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file:
+Configure global load balancing strategies in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file:
 
 ```yaml
 # config/base/model-services-base.yml
@@ -108,7 +108,7 @@ model:
 
 ### YAML Configuration Method
 
-Configure load balancing strategies for each service type in the [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) file:
+Configure load balancing strategies for each service type in the [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) file:
 
 ```yaml
 model:
@@ -220,23 +220,27 @@ model:
 #### Features and Use Cases
 
 **Features**:
+
 - Simple algorithm with minimal performance overhead
 - Supports weight configuration
 - Uniform request distribution over time
 - Stateless, easy to scale
 
 **Use Cases**:
+
 - Instances with similar performance
 - Relatively stable request processing time
 - High-concurrency scenarios
 - Stateless services
 
 **Weight Calculation**:
+
 ```
 Instance selection probability = Instance weight / Total weight
 ```
 
 Example selection probabilities:
+
 - model-1: 1/4 = 25%
 - model-2: 2/4 = 50%
 - model-3: 1/4 = 25%
@@ -266,12 +270,14 @@ model:
 #### Features and Use Cases
 
 **Features**:
+
 - Ensures each instance receives requests
 - Supports weighted round-robin
 - Predictable request distribution
 - Suitable for batch processing scenarios
 
 **Use Cases**:
+
 - Instances with similar performance
 - Need for uniform request distribution
 - Batch data processing
@@ -308,18 +314,21 @@ model:
 #### Features and Use Cases
 
 **Features**:
+
 - Automatically balances load
 - Adapts to instance performance differences
 - Requires maintaining connection state
 - Dynamically adjusts request allocation
 
 **Use Cases**:
+
 - Large performance differences between instances
 - Variable request processing time
 - Long-connection services
 - Need for precise load balancing
 
 **Selection Algorithm**:
+
 ```
 Selected instance = min(current connections / weight)
 ```
@@ -363,12 +372,14 @@ model:
 #### Features and Use Cases
 
 **Features**:
+
 - Same client always routed to the same instance
 - Supports session persistence
 - Instance changes affect routing
 - May cause load imbalance
 
 **Use Cases**:
+
 - Session persistence required
 - Stateful services
 - Localized caching
@@ -686,5 +697,5 @@ After completing load balancing configuration, you can continue to learn about:
 
 - **[Rate Limiting Configuration](rate-limiting.md)** - Setting up traffic control and protection
 - **[Circuit Breaker Configuration](circuit-breaker.md)** - Configuring fault protection mechanisms
-- **[Monitoring Guide](../../monitoring/index.md)** - Setting up load balancing monitoring
+- **[Monitoring Guide](../monitoring/index.md)** - Setting up load balancing monitoring
 - **[Troubleshooting](../troubleshooting/index.md)** - Load balancing issue diagnosis

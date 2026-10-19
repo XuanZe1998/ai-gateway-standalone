@@ -7,15 +7,13 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 This document provides a complete configuration reference for the JAiRouter monitoring system, including detailed descriptions, default values, and usage examples for all configuration options.
 
 ## Configuration File Structure
 
 ### Main Configuration File
 
-JAiRouter monitoring configuration is primarily defined in [application.yml](file://D:\IdeaProjects\model-router\target\classes\application.yml):
+JAiRouter monitoring configuration is primarily defined in [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/target/classes/application.yml):
 
 ```yaml
 # Monitoring configuration
@@ -145,6 +143,7 @@ monitoring:
 ```
 
 **Available Values**:
+
 - `system`: System metrics such as JVM memory, GC, HTTP requests
 - `business`: Business metrics such as model calls, user sessions, business processes
 - `infrastructure`: Infrastructure metrics such as load balancing, rate limiting, circuit breaking, health checks
@@ -169,6 +168,7 @@ monitoring:
 ```
 
 **Notes**:
+
 - Tag values support Spring expressions and placeholders
 - Avoid using high-cardinality tags (such as user ID, IP address)
 - It is recommended that the number of tags does not exceed 10
@@ -192,12 +192,14 @@ monitoring:
 ```
 
 **Sampling Rate Explanation**:
+
 - `1.0`: 100% sampling, collect all metrics
 - `0.5`: 50% sampling, randomly collect half of the metrics
 - `0.1`: 10% sampling, randomly collect one-tenth of the metrics
 - `0.0`: 0% sampling, do not collect metrics
 
 **Environment-Specific Configuration**:
+
 ```yaml
 # Development environment - full sampling for debugging
 monitoring:

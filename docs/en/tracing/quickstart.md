@@ -121,6 +121,7 @@ curl -X POST http://localhost:8080/api/v1/chat/completions \
 Depending on your configured exporter type:
 
 #### Log Export
+
 Check tracing information in application logs:
 
 ```bash
@@ -129,9 +130,11 @@ tail -f logs/application.log | grep traceId
 ```
 
 #### Jaeger UI
+
 Open browser and visit `http://localhost:16686`, search for service name "jairouter".
 
 #### OTLP Collector
+
 Check your OTEL collector configuration and backend storage.
 
 ## Configure Sampling Strategy
@@ -247,6 +250,7 @@ Visit `http://localhost:8080/actuator/prometheus` to view tracing-related metric
 ### Q: Tracing data is not exported
 
 **Check items:**
+
 1. Confirm `jairouter.tracing.enabled=true`
 2. Check if exporter configuration is correct
 3. Verify network connection (Jaeger/OTLP endpoint)
@@ -255,6 +259,7 @@ Visit `http://localhost:8080/actuator/prometheus` to view tracing-related metric
 ### Q: Performance impact is too large
 
 **Optimization suggestions:**
+
 1. Reduce sampling rate: `sampling.ratio: 0.1`
 2. Enable async export
 3. Adjust batch size
@@ -263,6 +268,7 @@ Visit `http://localhost:8080/actuator/prometheus` to view tracing-related metric
 ### Q: Tracing context is lost
 
 **Troubleshooting steps:**
+
 1. Check if async operations correctly propagate context
 2. Confirm the execution order of custom filters
 3. Verify WebFlux configuration

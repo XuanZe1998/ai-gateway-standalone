@@ -3,11 +3,9 @@
 <!-- Version Information -->
 > **Document Version**: 1.0.0  
 > **Last Updated**: 2025-08-19  
-> **Git Commit**:   
-> **Author**: 
+> **Git Commit**:
+> **Author**:
 <!-- /Version Information -->
-
-
 
 ## Overview
 
@@ -27,7 +25,7 @@ The API Key authentication feature of JAiRouter provides a secure access control
 
 ### 1. Enable API Key Authentication
 
-Enable security features in [application.yml](file://D:\IdeaProjects\model-router\target\classes\application.yml):
+Enable security features in [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/target/classes/application.yml):
 
 ```yaml
 jairouter:
@@ -71,7 +69,7 @@ curl -H "X-API-Key: your-api-key-here" \
 
 | Parameter | Type | Default Value | Description |
 |-----------|------|---------------|-------------|
-| [enabled](file://D:\IdeaProjects\model-router\src\main\java\org\unreal\modelrouter\ratelimit\RateLimitConfig.java#L7-L7) | boolean | true | Whether to enable API Key authentication |
+| `enabled` | boolean | true | Whether to enable API Key authentication |
 | `header-name` | string | "X-API-Key" | Name of the API Key request header |
 | `default-expiration-days` | int | 365 | Default number of days until expiration |
 | `cache-enabled` | boolean | true | Whether to enable caching |
@@ -400,12 +398,14 @@ jairouter:
 The system logs the following API Key and JWT events:
 
 #### API Key Events
+
 - **Key Created**: When a new API key is generated
 - **Key Used**: When an API key is used for authentication
 - **Key Revoked**: When an API key is revoked
 - **Key Expired**: When an API key expires
 
 #### JWT Token Events
+
 - **Token Issued**: When a new JWT token is created
 - **Token Refreshed**: When an access token is refreshed
 - **Token Revoked**: When a token is manually revoked
@@ -413,6 +413,7 @@ The system logs the following API Key and JWT events:
 - **Token Expired**: When a token naturally expires
 
 #### Security Events
+
 - **Suspicious Activity**: Unusual authentication patterns
 - **Failed Authentication**: Failed login attempts
 - **Bulk Operations**: Mass token/key operations
@@ -450,6 +451,7 @@ curl -X GET "http://localhost:8080/api/security/audit/report?from=2025-01-01&to=
 ```
 
 Response includes:
+
 - Total API Key and JWT operations
 - Failed authentication statistics
 - Suspicious activity alerts
@@ -492,12 +494,14 @@ Response includes:
 **Issue**: Client receives 401 Unauthorized error
 
 **Possible Causes**:
+
 - Incorrect API Key
 - Expired API Key
 - Disabled API Key
 - Incorrect request header name
 
 **Solutions**:
+
 1. Check if the API Key is correct
 2. Check if the API Key has expired
 3. Check the `header-name` setting in configuration
@@ -508,10 +512,12 @@ Response includes:
 **Issue**: Client receives 403 Forbidden error
 
 **Possible Causes**:
+
 - Insufficient API Key permissions
 - Accessed an interface requiring higher permissions
 
 **Solutions**:
+
 1. Check API Key permission configuration
 2. Add necessary permissions to the API Key
 3. Use an API Key with sufficient permissions
@@ -521,11 +527,13 @@ Response includes:
 **Issue**: Authentication response time is too long
 
 **Possible Causes**:
+
 - Cache not enabled or improperly configured
 - Redis connection issues
 - Too many API Keys
 
 **Solutions**:
+
 1. Enable and properly configure caching
 2. Check Redis connection status
 3. Optimize API Key configuration
@@ -550,6 +558,7 @@ tail -f logs/security-audit.log | grep authentication
 #### 3. Monitor Metrics
 
 Access the Prometheus metrics endpoint:
+
 ```
 http://localhost:8080/actuator/prometheus
 ```
@@ -557,6 +566,7 @@ http://localhost:8080/actuator/prometheus
 #### 4. Health Check
 
 Check system health status:
+
 ```
 http://localhost:8080/actuator/health
 ```

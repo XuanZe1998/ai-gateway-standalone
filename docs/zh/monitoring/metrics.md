@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档详细描述了 JAiRouter 系统中所有可用的监控指标，包括指标定义、标签说明、使用场景和查询示例。
 
 ## 指标分类
@@ -26,11 +24,13 @@ JAiRouter 监控指标按功能分为以下几个类别：
 ## HTTP 请求指标
 
 ### jairouter_requests_total
+
 **类型**: Counter  
 **描述**: HTTP 请求总数统计  
 **单位**: 次数
 
 **标签**:
+
 - `service`: 服务类型 (chat, embedding, rerank, tts, stt, image)
 - `method`: HTTP 方法 (GET, POST, PUT, DELETE)
 - `status`: HTTP 状态码 (200, 400, 404, 500 等)
@@ -38,11 +38,13 @@ JAiRouter 监控指标按功能分为以下几个类别：
 - `client_type`: 客户端类型 (web, mobile, api)
 
 **使用场景**:
+
 - 计算请求率和吞吐量
 - 分析服务使用模式
 - 监控错误率
 
 **查询示例**:
+
 ```promql
 # 总请求率 (RPS)
 sum(rate(jairouter_requests_total[5m]))
@@ -58,11 +60,13 @@ sum(rate(jairouter_requests_total{status=~"2.."}[5m])) / sum(rate(jairouter_requ
 ```
 
 ### jairouter_request_duration_seconds
+
 **类型**: Histogram  
 **描述**: HTTP 请求响应时间分布  
 **单位**: 秒
 
 **标签**:
+
 - `service`: 服务类型
 - `method`: HTTP 方法
 - `status`: HTTP 状态码
@@ -70,11 +74,13 @@ sum(rate(jairouter_requests_total{status=~"2.."}[5m])) / sum(rate(jairouter_requ
 **Buckets**: 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, +Inf
 
 **使用场景**:
+
 - 监控响应时间性能
 - 设置 SLA 告警
 - 性能趋势分析
 
 **查询示例**:
+
 ```promql
 # P95 响应时间
 histogram_quantile(0.95, sum(rate(jairouter_request_duration_seconds_bucket[5m])) by (le))
@@ -90,17 +96,20 @@ sum(rate(jairouter_request_duration_seconds_bucket{le="2"}[5m])) / sum(rate(jair
 ```
 
 ### jairouter_request_size_bytes
+
 **类型**: Histogram  
 **描述**: HTTP 请求大小分布  
 **单位**: 字节
 
 **标签**:
+
 - `service`: 服务类型
 - `method`: HTTP 方法
 
 **Buckets**: 100, 1000, 10000, 100000, 1000000, 10000000, +Inf
 
 **查询示例**:
+
 ```promql
 # P95 请求大小
 histogram_quantile(0.95, sum(rate(jairouter_request_size_bytes_bucket[5m])) by (le))
@@ -113,15 +122,18 @@ sum(rate(jairouter_request_size_bytes_bucket{le="1000000"}[5m])) / sum(rate(jair
 ```
 
 ### jairouter_response_size_bytes
+
 **类型**: Histogram  
 **描述**: HTTP 响应大小分布  
 **单位**: 字节
 
 **标签**:
+
 - `service`: 服务类型
 - `status`: HTTP 状态码
 
 **查询示例**:
+
 ```promql
 # P95 响应大小
 histogram_quantile(0.95, sum(rate(jairouter_response_size_bytes_bucket[5m])) by (le))
@@ -133,22 +145,26 @@ sum by (service) (rate(jairouter_response_size_bytes_sum[5m])) / sum by (service
 ## 业务指标
 
 ### jairouter_model_calls_total
+
 **类型**: Counter  
 **描述**: AI 模型调用总数  
 **单位**: 次数
 
 **标签**:
+
 - `model_type`: 模型类型 (chat, embedding, rerank)
 - `model_name`: 具体模型名称
 - `provider`: 模型提供商
 - `status`: 调用状态 (success, error, timeout)
 
 **使用场景**:
+
 - 监控模型使用情况
 - 分析模型性能
 - 计算成功率
 
 **查询示例**:
+
 ```promql
 # 模型调用率
 sum(rate(jairouter_model_calls_total[5m]))
@@ -164,11 +180,13 @@ topk(5, sum by (model_name) (rate(jairouter_model_calls_total[5m])))
 ```
 
 ### jairouter_model_call_duration_seconds
+
 **类型**: Histogram  
 **描述**: 模型调用响应时间分布  
 **单位**: 秒
 
 **标签**:
+
 - `model_type`: 模型类型
 - `model_name`: 模型名称
 - `provider`: 模型提供商
@@ -176,6 +194,7 @@ topk(5, sum by (model_name) (rate(jairouter_model_calls_total[5m])))
 **Buckets**: 0.1, 0.5, 1, 2, 5, 10, 30, 60, 120, +Inf
 
 **查询示例**:
+
 ```promql
 # 模型调用 P95 响应时间
 histogram_quantile(0.95, sum(rate(jairouter_model_call_duration_seconds_bucket[5m])) by (le))
@@ -188,15 +207,18 @@ bottomk(5, sum by (model_name) (rate(jairouter_model_call_duration_seconds_sum[5
 ```
 
 ### jairouter_user_sessions_active
+
 **类型**: Gauge  
 **描述**: 当前活跃用户会话数  
 **单位**: 个数
 
 **标签**:
+
 - `service`: 服务类型
 - `region`: 地理区域
 
 **查询示例**:
+
 ```promql
 # 总活跃会话数
 sum(jairouter_user_sessions_active)
@@ -209,15 +231,18 @@ rate(jairouter_user_sessions_active[5m])
 ```
 
 ### jairouter_user_sessions_total
+
 **类型**: Counter  
 **描述**: 用户会话总数  
 **单位**: 次数
 
 **标签**:
+
 - `service`: 服务类型
 - `session_type`: 会话类型 (new, returning)
 
 **查询示例**:
+
 ```promql
 # 新会话创建率
 sum(rate(jairouter_user_sessions_total{session_type="new"}[5m]))
@@ -231,16 +256,19 @@ sum(rate(jairouter_user_sessions_total{session_type="returning"}[5m])) / sum(rat
 ### 负载均衡指标
 
 #### jairouter_loadbalancer_selections_total
+
 **类型**: Counter  
 **描述**: 负载均衡器选择后端实例的总次数  
 **单位**: 次数
 
 **标签**:
+
 - `service`: 服务名称
 - `strategy`: 负载均衡策略 (random, round_robin, least_connections, ip_hash)
 - `selected_instance`: 被选中的实例
 
 **查询示例**:
+
 ```promql
 # 负载均衡选择率
 sum(rate(jairouter_loadbalancer_selections_total[5m]))
@@ -258,16 +286,19 @@ topk(5, sum by (selected_instance) (rate(jairouter_loadbalancer_selections_total
 ### 限流器指标
 
 #### jairouter_rate_limit_events_total
+
 **类型**: Counter  
 **描述**: 限流事件总数  
 **单位**: 次数
 
 **标签**:
+
 - `service`: 服务名称
 - `algorithm`: 限流算法 (token_bucket, leaky_bucket, sliding_window)
 - `result`: 限流结果 (allowed, denied)
 
 **查询示例**:
+
 ```promql
 # 限流通过率
 sum(rate(jairouter_rate_limit_events_total{result="allowed"}[5m])) / sum(rate(jairouter_rate_limit_events_total[5m])) * 100
@@ -280,15 +311,18 @@ sum by (algorithm) (rate(jairouter_rate_limit_events_total{result="denied"}[5m])
 ```
 
 #### jairouter_rate_limit_tokens
+
 **类型**: Gauge  
 **描述**: 限流器当前可用令牌数  
 **单位**: 个数
 
 **标签**:
+
 - `service`: 服务名称
 - `algorithm`: 限流算法
 
 **查询示例**:
+
 ```promql
 # 可用令牌数
 jairouter_rate_limit_tokens
@@ -303,20 +337,24 @@ jairouter_rate_limit_tokens == 0
 ### 熔断器指标
 
 #### jairouter_circuit_breaker_state
+
 **类型**: Gauge  
 **描述**: 熔断器当前状态  
 **单位**: 状态值
 
 **标签**:
+
 - `service`: 服务名称
 - `circuit_breaker`: 熔断器名称
 
 **值定义**:
+
 - 0: CLOSED (正常状态)
 - 1: OPEN (熔断开启)
 - 2: HALF_OPEN (半开状态)
 
 **查询示例**:
+
 ```promql
 # 熔断器状态
 jairouter_circuit_breaker_state
@@ -329,16 +367,19 @@ jairouter_circuit_breaker_state == 2
 ```
 
 #### jairouter_circuit_breaker_events_total
+
 **类型**: Counter  
 **描述**: 熔断器事件总数  
 **单位**: 次数
 
 **标签**:
+
 - `service`: 服务名称
 - `circuit_breaker`: 熔断器名称
 - `event`: 事件类型 (success, error, timeout, circuit_open, circuit_close)
 
 **查询示例**:
+
 ```promql
 # 熔断器成功率
 sum(rate(jairouter_circuit_breaker_events_total{event="success"}[5m])) / sum(rate(jairouter_circuit_breaker_events_total{event=~"success|error"}[5m])) * 100
@@ -351,15 +392,18 @@ sum(rate(jairouter_circuit_breaker_events_total{event="circuit_close"}[5m]))
 ```
 
 #### jairouter_circuit_breaker_failure_rate
+
 **类型**: Gauge  
 **描述**: 熔断器当前失败率  
 **单位**: 百分比
 
 **标签**:
+
 - `service`: 服务名称
 - `circuit_breaker`: 熔断器名称
 
 **查询示例**:
+
 ```promql
 # 失败率
 jairouter_circuit_breaker_failure_rate
@@ -374,20 +418,24 @@ rate(jairouter_circuit_breaker_failure_rate[5m])
 ## 后端服务指标
 
 ### jairouter_backend_health
+
 **类型**: Gauge  
 **描述**: 后端服务健康状态  
 **单位**: 状态值
 
 **标签**:
+
 - `adapter`: 适配器类型 (gpustack, ollama, vllm)
 - `instance`: 实例名称
 - `base_url`: 后端服务 URL
 
 **值定义**:
+
 - 1: 健康
 - 0: 不健康
 
 **查询示例**:
+
 ```promql
 # 健康的后端实例数
 sum(jairouter_backend_health)
@@ -403,17 +451,20 @@ sum(jairouter_backend_health) / count(jairouter_backend_health) * 100
 ```
 
 ### jairouter_backend_calls_total
+
 **类型**: Counter  
 **描述**: 后端适配器调用总数  
 **单位**: 次数
 
 **标签**:
+
 - `adapter`: 适配器类型 (gpustack, ollama, vllm, xinference, localai, openai)
 - `instance`: 实例名称
 - `method`: 调用方法
 - `status`: 调用状态 (success, error, timeout)
 
 **查询示例**:
+
 ```promql
 # 后端调用率
 sum(rate(jairouter_backend_calls_total[5m]))
@@ -429,11 +480,13 @@ topk(5, sum by (instance) (rate(jairouter_backend_calls_total[5m])))
 ```
 
 ### jairouter_backend_call_duration_seconds
+
 **类型**: Histogram  
 **描述**: 后端调用响应时间分布  
 **单位**: 秒
 
 **标签**:
+
 - `adapter`: 适配器类型
 - `instance`: 实例名称
 - `method`: 调用方法
@@ -441,6 +494,7 @@ topk(5, sum by (instance) (rate(jairouter_backend_calls_total[5m])))
 **Buckets**: 0.1, 0.5, 1, 2, 5, 10, 30, 60, 120, +Inf
 
 **查询示例**:
+
 ```promql
 # 后端调用 P95 响应时间
 histogram_quantile(0.95, sum(rate(jairouter_backend_call_duration_seconds_bucket[5m])) by (le))
@@ -457,15 +511,18 @@ bottomk(3, sum by (adapter) (rate(jairouter_backend_call_duration_seconds_sum[5m
 ### 内存指标
 
 #### jvm_memory_used_bytes
+
 **类型**: Gauge  
 **描述**: JVM 内存使用量  
 **单位**: 字节
 
 **标签**:
+
 - `area`: 内存区域 (heap, nonheap)
 - `id`: 内存池 ID
 
 **查询示例**:
+
 ```promql
 # 堆内存使用量
 jvm_memory_used_bytes{area="heap"}
@@ -478,6 +535,7 @@ rate(jvm_memory_used_bytes[5m])
 ```
 
 #### jvm_memory_max_bytes
+
 **类型**: Gauge  
 **描述**: JVM 最大内存容量  
 **单位**: 字节
@@ -485,15 +543,18 @@ rate(jvm_memory_used_bytes[5m])
 ### 垃圾回收指标
 
 #### jvm_gc_pause_seconds
+
 **类型**: Timer  
 **描述**: GC 暂停时间  
 **单位**: 秒
 
 **标签**:
+
 - `action`: GC 动作
 - `cause`: GC 原因
 
 **查询示例**:
+
 ```promql
 # 平均 GC 暂停时间
 sum(rate(jvm_gc_pause_seconds_sum[5m])) / sum(rate(jvm_gc_pause_seconds_count[5m]))
@@ -508,11 +569,13 @@ sum(rate(jvm_gc_pause_seconds_sum[5m])) / 60 * 100
 ### 线程指标
 
 #### jvm_threads_live_threads
+
 **类型**: Gauge  
 **描述**: 当前活跃线程数  
 **单位**: 个数
 
 **查询示例**:
+
 ```promql
 # 活跃线程数
 jvm_threads_live_threads
@@ -524,15 +587,18 @@ rate(jvm_threads_live_threads[5m])
 ## 连接池指标
 
 ### jairouter_backend_connection_pool_active
+
 **类型**: Gauge  
 **描述**: 后端连接池活跃连接数  
 **单位**: 个数
 
 **标签**:
+
 - `adapter`: 适配器类型
 - `instance`: 实例名称
 
 **查询示例**:
+
 ```promql
 # 连接池使用情况
 jairouter_backend_connection_pool_active

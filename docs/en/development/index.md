@@ -7,8 +7,6 @@
 > **Author**: JAiRouter Team
 <!-- /Version Info -->
 
-
-
 Welcome to the JAiRouter Development Guide! This guide provides developers with comprehensive information on setting up the development environment, coding standards, testing strategies, and contribution processes.
 
 ## 📢 Latest Updates
@@ -44,6 +42,7 @@ If you are new to JAiRouter development, it is recommended to read the following
 ## Core Development Workflow
 
 ### 1. Environment Setup
+
 ```bash
 # Clone the project
 git clone https://github.com/Lincoln-cn/JAiRouter.git
@@ -57,11 +56,13 @@ cd jairouter
 ```
 
 ### 2. Development Standards
+
 - Follow the coding standards outlined in [Code Quality Standards](code-quality.md)
 - Use Checkstyle and SpotBugs for code quality checks
 - Ensure test coverage is no less than 80%
 
 ### 3. Submission Process
+
 - Create a feature branch for development
 - Write unit tests and integration tests
 - Submit a Pull Request for code review
@@ -83,17 +84,20 @@ For detailed information, please refer to [Architecture Overview](architecture.m
 ## Development Tool Integration
 
 ### Code Quality Tools
+
 - **Checkstyle**: Code style checking
 - **SpotBugs**: Static code analysis
 - **JaCoCo**: Code coverage analysis
 
 ### Testing Frameworks
+
 - **JUnit 5**: Main testing framework
 - **Mockito**: Mock framework
 - **Spring Boot Test**: Integration testing support
 - **Reactor Test**: Reactive stream testing
 
 ### Build and Deployment
+
 - **Maven**: Project building and dependency management
 - **Docker**: Containerized deployment
 - **GitHub Actions**: Continuous integration and deployment

@@ -133,6 +133,7 @@
 **文件**: `PlatformDataSyncService.java:345`、`StreamingRequestProcessor.java:321-327`、`NonStreamingRequestProcessor.java:380-387`
 
 **问题**:
+
 - `log.info("模型[{}] 渠道超时: {}s", ...)` 在每个模型翻译时都打 INFO → 200 个模型每次刷新产生 200 条日志
 - `getTimeoutDuration()` 中 `log.info(...)` 在**每个请求**都打 → 高频场景下海量日志
 
@@ -378,6 +379,7 @@ ECB 模式对相同明文产生相同密文，存在模式分析风险。但需�
 ## 审查方法论
 
 本次审查基于以下方法：
+
 1. **文档对照**: 以 CLAUDE.md 描述的核心链路为基准，逐层验证实现是否符合设计
 2. **数据流追踪**: 从 HTTP 入口 → 认证 → 路由 → 适配器 → 上游 → 计费 → 余额扣减，追踪完整请求生命周期
 3. **并发分析**: 识别 WebFlux 响应式上下文中的线程安全、竞态条件和可见性问题

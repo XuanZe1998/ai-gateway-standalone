@@ -241,6 +241,7 @@ docker-compose stop redis
 ### 常见问题
 
 1. **Redis 连接失败**
+
    ```bash
    # 检查 Redis 状态
    docker-compose ps redis
@@ -251,6 +252,7 @@ docker-compose stop redis
    ```
 
 2. **JWT 持久化不工作**
+
    ```bash
    # 检查应用日志
    docker-compose logs jairouter | grep -i jwt
@@ -260,6 +262,7 @@ docker-compose stop redis
    ```
 
 3. **高内存使用**
+
    ```bash
    # 检查内存指标
    curl http://localhost:8080/actuator/metrics/jvm.memory.used
@@ -269,6 +272,7 @@ docker-compose stop redis
    ```
 
 4. **安全审计问题**
+
    ```bash
    # 检查审计日志
    tail -f logs/security-audit.log

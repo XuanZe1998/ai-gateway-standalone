@@ -241,6 +241,7 @@ For planned rollback:
 ### Common Issues
 
 1. **Redis Connection Failed**
+
    ```bash
    # Check Redis status
    docker-compose ps redis
@@ -251,6 +252,7 @@ For planned rollback:
    ```
 
 2. **JWT Persistence Not Working**
+
    ```bash
    # Check application logs
    docker-compose logs jairouter | grep -i jwt
@@ -260,6 +262,7 @@ For planned rollback:
    ```
 
 3. **High Memory Usage**
+
    ```bash
    # Check memory metrics
    curl http://localhost:8080/actuator/metrics/jvm.memory.used
@@ -269,6 +272,7 @@ For planned rollback:
    ```
 
 4. **Security Audit Issues**
+
    ```bash
    # Check audit logs
    tail -f logs/security-audit.log

@@ -30,6 +30,7 @@ GET /actuator/health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "UP",
@@ -67,6 +68,7 @@ GET /actuator/health/detailed
 ```
 
 **Response:**
+
 ```json
 {
   "status": "UP",
@@ -149,6 +151,7 @@ GET /actuator/prometheus
 ```
 
 **Response:**
+
 ```
 # HELP jvm_memory_used_bytes The amount of used memory
 # TYPE jvm_memory_used_bytes gauge
@@ -190,6 +193,7 @@ GET /actuator/metrics
 ```
 
 **Response:**
+
 ```json
 {
   "names": [
@@ -215,6 +219,7 @@ GET /actuator/metrics/model.router.requests.total
 ```
 
 **Response:**
+
 ```json
 {
   "name": "model.router.requests.total",
@@ -254,6 +259,7 @@ GET /actuator/info
 ```
 
 **Response:**
+
 ```json
 {
   "app": {
@@ -291,6 +297,7 @@ GET /actuator/env
 ```
 
 **Response:**
+
 ```json
 {
   "activeProfiles": ["default"],
@@ -332,6 +339,7 @@ GET /api/monitoring/instances
 ```
 
 **Response:**
+
 ```json
 {
   "services": {
@@ -388,6 +396,7 @@ GET /api/monitoring/load-balancer
 ```
 
 **Response:**
+
 ```json
 {
   "services": {
@@ -436,6 +445,7 @@ GET /api/monitoring/rate-limit
 ```
 
 **Response:**
+
 ```json
 {
   "services": {
@@ -475,6 +485,7 @@ GET /api/monitoring/circuit-breaker
 ```
 
 **Response:**
+
 ```json
 {
   "instances": [

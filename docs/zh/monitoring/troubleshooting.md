@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档提供 JAiRouter 监控系统常见问题的诊断和解决方案，帮助快速定位和修复监控相关问题。
 
 ## 快速诊断
@@ -51,10 +49,12 @@ curl http://localhost:9093/-/healthy
 #### 问题 1: 指标端点无法访问
 
 **症状**:
+
 - 访问 `/actuator/prometheus` 返回 404
 - Prometheus targets 页面显示 JAiRouter 为 down 状态
 
 **诊断步骤**:
+
 ```bash
 # 检查应用状态
 curl http://localhost:8080/actuator/health
@@ -67,6 +67,7 @@ docker logs jairouter | grep -i actuator
 ```
 
 **解决方案**:
+
 ```yaml
 # application.yml
 management:
@@ -83,10 +84,12 @@ management:
 #### 问题 2: 指标数据为空或不完整
 
 **症状**:
+
 - Prometheus 端点返回空数据
 - 某些指标缺失
 
 **诊断步骤**:
+
 ```bash
 # 检查监控配置
 curl http://localhost:8080/actuator/configprops | jq '.contexts.application.beans.monitoringConfiguration'
@@ -100,7 +103,8 @@ curl http://localhost:8080/actuator/metrics/jairouter.requests.total
 
 **可能原因和解决方案**:
 
-**原因 1: 指标收集被禁用**
+##### 原因 1: 指标收集被禁用
+
 ```yaml
 monitoring:
   metrics:
@@ -111,7 +115,8 @@ monitoring:
       - infrastructure
 ```
 
-**原因 2: 采样率过低**
+##### 原因 2: 采样率过低
+
 ```yaml
 monitoring:
   metrics:
@@ -120,7 +125,8 @@ monitoring:
       backend-metrics: 1.0
 ```
 
-**原因 3: 异步处理队列满**
+##### 原因 3: 异步处理队列满
+
 ```yaml
 monitoring:
   metrics:
@@ -132,10 +138,12 @@ monitoring:
 #### 问题 3: 指标数据不准确
 
 **症状**:
+
 - 指标值与实际情况不符
 - 指标更新延迟
 
 **诊断步骤**:
+
 ```bash
 # 检查时间同步
 date
@@ -149,6 +157,7 @@ curl http://localhost:8080/actuator/jairouter-metrics/status
 ```
 
 **解决方案**:
+
 ```yaml
 monitoring:
   metrics:
@@ -167,10 +176,12 @@ monitoring:
 #### 问题 4: Prometheus 无法抓取指标
 
 **症状**:
+
 - Prometheus targets 页面显示错误
 - 指标查询返回空结果
 
 **诊断步骤**:
+
 ```bash
 # 1. 检查 Prometheus 配置
 cat monitoring/prometheus/prometheus.yml | grep -A 10 jairouter
@@ -185,6 +196,7 @@ docker logs prometheus | grep -i error
 **解决方案**:
 
 **网络问题**:
+
 ```yaml
 # docker-compose-monitoring.yml
 networks:
@@ -201,6 +213,7 @@ services:
 ```
 
 **配置问题**:
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -215,10 +228,12 @@ scrape_configs:
 #### 问题 5: Prometheus 存储空间不足
 
 **症状**:
+
 - Prometheus 日志显示存储错误
 - 查询响应缓慢
 
 **诊断步骤**:
+
 ```bash
 # 检查存储使用情况
 docker exec prometheus df -h /prometheus
@@ -228,6 +243,7 @@ docker exec prometheus cat /etc/prometheus/prometheus.yml | grep retention
 ```
 
 **解决方案**:
+
 ```yaml
 # prometheus.yml 或启动参数
 command:
@@ -241,10 +257,12 @@ command:
 #### 问题 6: Grafana 仪表板显示 "No data"
 
 **症状**:
+
 - 仪表板面板显示 "No data"
 - 查询返回空结果
 
 **诊断步骤**:
+
 ```bash
 # 1. 检查数据源连接
 curl http://localhost:3000/api/datasources/proxy/1/api/v1/query?query=up
@@ -259,6 +277,7 @@ curl "http://localhost:9090/api/v1/query?query=jairouter_requests_total"
 **解决方案**:
 
 **数据源配置**:
+
 ```yaml
 # grafana/provisioning/datasources/prometheus.yml
 datasources:
@@ -270,6 +289,7 @@ datasources:
 ```
 
 **查询优化**:
+
 ```promql
 # 确保查询语法正确
 sum(rate(jairouter_requests_total[5m]))
@@ -281,10 +301,12 @@ label_values(jairouter_requests_total, service)
 #### 问题 7: Grafana 仪表板加载缓慢
 
 **症状**:
+
 - 仪表板加载时间过长
 - 查询超时
 
 **诊断步骤**:
+
 ```bash
 # 检查查询复杂度
 # 在 Grafana Query Inspector 中查看查询执行时间
@@ -296,6 +318,7 @@ curl "http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_samples_appe
 **解决方案**:
 
 **查询优化**:
+
 ```promql
 # 使用 recording rules 预聚合数据
 # rules/jairouter-recording-rules.yml
@@ -307,6 +330,7 @@ groups:
 ```
 
 **面板优化**:
+
 - 减少面板数量（< 20 个）
 - 增加刷新间隔
 - 使用合适的时间范围
@@ -316,10 +340,12 @@ groups:
 #### 问题 8: 告警未触发
 
 **症状**:
+
 - 满足告警条件但未收到通知
 - Prometheus 显示告警但 AlertManager 未收到
 
 **诊断步骤**:
+
 ```bash
 # 1. 检查告警规则状态
 curl http://localhost:9090/api/v1/rules
@@ -334,6 +360,7 @@ promtool check rules monitoring/prometheus/rules/jairouter-alerts.yml
 **解决方案**:
 
 **规则配置**:
+
 ```yaml
 # prometheus.yml
 rule_files:
@@ -347,6 +374,7 @@ alerting:
 ```
 
 **网络连接**:
+
 ```bash
 # 检查 Prometheus 到 AlertManager 的连接
 docker exec prometheus curl http://alertmanager:9093/-/healthy
@@ -355,10 +383,12 @@ docker exec prometheus curl http://alertmanager:9093/-/healthy
 #### 问题 9: 告警通知未发送
 
 **症状**:
+
 - AlertManager 收到告警但未发送通知
 - 通知渠道无响应
 
 **诊断步骤**:
+
 ```bash
 # 检查 AlertManager 配置
 amtool config show
@@ -373,6 +403,7 @@ amtool silence query
 **解决方案**:
 
 **邮件配置**:
+
 ```yaml
 # alertmanager.yml
 global:
@@ -383,6 +414,7 @@ global:
 ```
 
 **路由配置**:
+
 ```yaml
 route:
   group_by: ['alertname']
@@ -397,11 +429,13 @@ route:
 ### 问题 10: 监控影响应用性能
 
 **症状**:
+
 - 应用响应时间增加
 - CPU 使用率上升
 - 内存使用量增加
 
 **诊断步骤**:
+
 ```bash
 # 检查监控开销
 curl http://localhost:8080/actuator/metrics/jvm.gc.pause
@@ -415,6 +449,7 @@ curl http://localhost:8080/actuator/jairouter-metrics/performance
 **解决方案**:
 
 #### 性能优化配置
+
 ```yaml
 monitoring:
   metrics:
@@ -440,10 +475,12 @@ monitoring:
 ### 问题 11: Prometheus 查询性能差
 
 **症状**:
+
 - 查询响应时间长
 - Grafana 仪表板加载缓慢
 
 **诊断步骤**:
+
 ```bash
 # 检查 Prometheus 指标
 curl "http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series"
@@ -455,6 +492,7 @@ curl "http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series"
 **解决方案**:
 
 **优化 Prometheus 配置**:
+
 ```yaml
 # monitoring/prometheus/prometheus.yml
 global:
@@ -467,6 +505,7 @@ scrape_configs:
 ```
 
 **使用 Recording Rules**:
+
 ```yaml
 # rules/jairouter-recording-rules.yml
 groups:
@@ -485,10 +524,12 @@ groups:
 ### 问题 12: 指标数据不一致
 
 **症状**:
+
 - 不同时间查询同一指标结果不同
 - Grafana 和 Prometheus 显示数据不一致
 
 **诊断步骤**:
+
 ```bash
 # 检查时间同步
 ntpdate -q pool.ntp.org
@@ -502,6 +543,7 @@ curl "http://localhost:9090/api/v1/query?query=up{job=\"jairouter\"}"
 **解决方案**:
 
 **时间同步**:
+
 ```bash
 # 同步系统时间
 sudo ntpdate -s pool.ntp.org
@@ -511,6 +553,7 @@ sudo systemctl enable ntp
 ```
 
 **缓存配置**:
+
 ```yaml
 # application.yml
 management:
@@ -566,6 +609,7 @@ echo "诊断信息已收集到 ${LOG_DIR} 目录"
 ### 日志分析技巧
 
 #### 1. JAiRouter 应用日志
+
 ```bash
 # 查看监控相关错误
 docker logs jairouter | grep -i "metric\|monitor\|prometheus"
@@ -578,6 +622,7 @@ docker logs jairouter | grep -i "config\|property"
 ```
 
 #### 2. Prometheus 日志
+
 ```bash
 # 查看抓取错误
 docker logs prometheus | grep -i "scrape\|target"
@@ -590,6 +635,7 @@ docker logs prometheus | grep -i "rule\|alert"
 ```
 
 #### 3. Grafana 日志
+
 ```bash
 # 查看数据源连接问题
 docker logs grafana | grep -i "datasource\|proxy"
@@ -606,6 +652,7 @@ docker logs grafana | grep -i "auth\|login"
 ### 监控服务恢复
 
 #### 1. 完全重启监控栈
+
 ```bash
 # 停止所有服务
 docker-compose -f docker-compose-monitoring.yml down
@@ -618,6 +665,7 @@ docker-compose -f docker-compose-monitoring.yml up -d
 ```
 
 #### 2. 单个服务重启
+
 ```bash
 # 重启 JAiRouter
 docker-compose -f docker-compose-monitoring.yml restart jairouter
@@ -630,6 +678,7 @@ docker-compose -f docker-compose-monitoring.yml restart grafana
 ```
 
 #### 3. 配置重载
+
 ```bash
 # 重载 Prometheus 配置
 curl -X POST http://localhost:9090/-/reload
@@ -641,6 +690,7 @@ curl -X POST http://localhost:9093/-/reload
 ### 数据恢复
 
 #### 1. Prometheus 数据恢复
+
 ```bash
 # 从备份恢复数据
 docker cp prometheus-backup.tar.gz prometheus:/tmp/
@@ -648,6 +698,7 @@ docker exec prometheus tar -xzf /tmp/prometheus-backup.tar.gz -C /prometheus/
 ```
 
 #### 2. Grafana 配置恢复
+
 ```bash
 # 恢复仪表板
 docker cp grafana-dashboards-backup.tar.gz grafana:/tmp/
@@ -659,6 +710,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ### 监控监控系统
 
 #### 1. 元监控配置
+
 ```yaml
 # 监控 Prometheus 自身
 - alert: PrometheusDown
@@ -677,6 +729,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ```
 
 #### 2. 监控数据质量
+
 ```yaml
 # 监控指标收集延迟
 - alert: MetricsCollectionDelay
@@ -692,6 +745,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ### 定期维护
 
 #### 1. 健康检查计划
+
 ```bash
 # 每日健康检查
 0 9 * * * /path/to/monitoring-health-check.sh
@@ -704,6 +758,7 @@ docker exec grafana tar -xzf /tmp/grafana-dashboards-backup.tar.gz -C /var/lib/g
 ```
 
 #### 2. 备份计划
+
 ```bash
 # 每日配置备份
 0 2 * * * /path/to/backup-monitoring-config.sh

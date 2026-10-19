@@ -13,10 +13,10 @@ JAiRouter 提供多种限流算法，支持全局、服务级别和实例级别�
 
 从 v1.0.0 版本开始，JAiRouter 采用模块化配置结构，限流相关配置已移至独立的配置文件中：
 
-- 主配置文件: [application.yml](file://D:/IdeaProjects/model-router/src/main/resources/application.yml)
-- 模型服务基础配置: [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml)
+- 主配置文件: [application.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/application.yml)
+- 模型服务基础配置: [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml)
 
-您可以在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中找到所有限流相关配置，包括全局配置、各服务类型配置和实例配置。
+您可以在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中找到所有限流相关配置，包括全局配置、各服务类型配置和实例配置。
 
 ## 限流概述
 
@@ -53,7 +53,7 @@ graph TB
 
 ### 基础配置
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置全局限流：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置全局限流：
 
 ```yaml
 # config/base/model-services-base.yml
@@ -124,7 +124,7 @@ graph LR
 
 #### 配置示例
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置令牌桶算法：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置令牌桶算法：
 
 ```yaml
 model:
@@ -205,7 +205,7 @@ graph TB
 
 #### 配置示例
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置漏桶算法：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置漏桶算法：
 
 ```yaml
 model:
@@ -269,7 +269,7 @@ graph LR
 
 #### 配置示例
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置滑动窗口算法：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置滑动窗口算法：
 
 ```yaml
 model:
@@ -334,7 +334,7 @@ graph LR
 
 #### 配置示例
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置预热算法：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置预热算法：
 
 ```yaml
 model:
@@ -388,7 +388,7 @@ JAiRouter 也支持通过动态配置 API 更新限流配置：
 
 ### 基础配置
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置客户端 IP 限流：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置客户端 IP 限流：
 
 ```yaml
 model:
@@ -456,7 +456,7 @@ curl "http://localhost:8080/actuator/metrics/jairouter.ratelimit.cleanup"
 
 ### 分层限流策略
 
-在 [config/base/model-services-base.yml](file://D:/IdeaProjects/model-router/src/main/resources/config/base/model-services-base.yml) 文件中配置多层限流：
+在 [config/base/model-services-base.yml](https://github.com/XuanZe1998/ai-gateway-standalone/blob/main/src/main/resources/config/base/model-services-base.yml) 文件中配置多层限流：
 
 ```yaml
 model:
@@ -732,6 +732,7 @@ model:
 ### 常见问题
 
 1. **限流过于严格**
+
    ```bash
    # 检查拒绝率
    curl "http://localhost:8080/actuator/metrics/jairouter.ratelimit.rejected.total"
@@ -740,6 +741,7 @@ model:
    ```
 
 2. **内存使用过高**
+
    ```bash
    # 检查客户端数量
    curl "http://localhost:8080/actuator/metrics/jairouter.ratelimit.clients.active"
@@ -748,6 +750,7 @@ model:
    ```
 
 3. **限流不生效**
+
    ```bash
    # 检查配置是否正确加载
    curl "http://localhost:8080/api/config/instance/type/chat"

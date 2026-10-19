@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 本文档介绍如何优化 JAiRouter 监控系统的性能，减少监控对应用性能的影响，并提高监控系统本身的效率。
 
 ## 性能影响评估
@@ -27,6 +25,7 @@
 ### 性能基准测试
 
 #### 测试环境配置
+
 ```yaml
 # 测试配置
 monitoring:
@@ -42,6 +41,7 @@ monitoring:
 ```
 
 #### 基准测试结果
+
 ```bash
 # 运行性能测试
 ./mvnw test -Dtest=MonitoringPerformanceBenchmarkTest
@@ -57,6 +57,7 @@ monitoring:
 ### 采样策略优化
 
 #### 1. 分层采样配置
+
 ```yaml
 monitoring:
   metrics:
@@ -74,6 +75,7 @@ monitoring:
 ```
 
 #### 2. 动态采样率调整
+
 ```yaml
 monitoring:
   metrics:
@@ -87,6 +89,7 @@ monitoring:
 ```
 
 #### 3. 条件采样
+
 ```java
 @Component
 public class ConditionalMetricsCollector {
@@ -113,6 +116,7 @@ public class ConditionalMetricsCollector {
 ### 异步处理优化
 
 #### 1. 异步处理配置
+
 ```yaml
 monitoring:
   metrics:
@@ -135,6 +139,7 @@ monitoring:
 ```
 
 #### 2. 异步处理实现
+
 ```java
 @Component
 public class AsyncMetricsProcessor {
@@ -171,6 +176,7 @@ public class AsyncMetricsProcessor {
 ### 内存优化
 
 #### 1. 内存使用配置
+
 ```yaml
 monitoring:
   metrics:
@@ -190,6 +196,7 @@ monitoring:
 ```
 
 #### 2. 内存监控和自适应
+
 ```java
 @Component
 public class MemoryAwareMetricsCollector {
@@ -220,6 +227,7 @@ public class MemoryAwareMetricsCollector {
 ### 抓取配置优化
 
 #### 1. 抓取间隔优化
+
 ```yaml
 # prometheus.yml
 global:
@@ -247,6 +255,7 @@ scrape_configs:
 ```
 
 #### 2. 存储优化
+
 ```yaml
 # prometheus.yml 启动参数
 command:
@@ -262,6 +271,7 @@ command:
 ### Recording Rules 优化
 
 #### 1. 预聚合常用查询
+
 ```yaml
 # rules/jairouter-recording-rules.yml
 groups:
@@ -287,6 +297,7 @@ groups:
 ```
 
 #### 2. 分层 Recording Rules
+
 ```yaml
 groups:
   # 高频率基础规则
@@ -322,6 +333,7 @@ groups:
 ### 查询优化
 
 #### 1. 使用 Recording Rules
+
 ```promql
 # 优化前：复杂查询
 sum(rate(jairouter_requests_total{status=~"4..|5.."}[5m])) / sum(rate(jairouter_requests_total[5m])) * 100
@@ -331,6 +343,7 @@ jairouter:error_rate_5m * 100
 ```
 
 #### 2. 查询缓存配置
+
 ```yaml
 # grafana.ini
 [caching]
@@ -343,6 +356,7 @@ max_cache_size_mb = 100
 ```
 
 #### 3. 面板优化
+
 ```json
 {
   "targets": [
@@ -365,11 +379,13 @@ max_cache_size_mb = 100
 ### 仪表板优化
 
 #### 1. 面板数量控制
+
 - 每个仪表板不超过 20 个面板
 - 使用行折叠功能组织面板
 - 避免在单个面板中显示过多数据系列
 
 #### 2. 刷新间隔优化
+
 ```json
 {
   "refresh": "30s",  // 增加刷新间隔
@@ -385,6 +401,7 @@ max_cache_size_mb = 100
 ### 指标传输优化
 
 #### 1. 压缩配置
+
 ```yaml
 # prometheus.yml
 scrape_configs:
@@ -396,6 +413,7 @@ scrape_configs:
 ```
 
 #### 2. 批量传输
+
 ```java
 @Component
 public class BatchMetricsExporter {
@@ -416,6 +434,7 @@ public class BatchMetricsExporter {
 ### 网络连接优化
 
 #### 1. 连接池配置
+
 ```yaml
 monitoring:
   metrics:
@@ -427,6 +446,7 @@ monitoring:
 ```
 
 #### 2. 本地缓存
+
 ```java
 @Component
 public class CachedMetricsCollector {
@@ -453,6 +473,7 @@ public class CachedMetricsCollector {
 ### 监控性能指标
 
 #### 1. 监控开销指标
+
 ```yaml
 # 添加监控系统自身的指标
 - record: monitoring:collection_duration_seconds
@@ -466,6 +487,7 @@ public class CachedMetricsCollector {
 ```
 
 #### 2. 性能告警
+
 ```yaml
 groups:
   - name: monitoring.performance
@@ -486,6 +508,7 @@ groups:
 ### 自动性能调优
 
 #### 1. 自适应配置
+
 ```java
 @Component
 public class AdaptiveMonitoringConfig {
@@ -565,6 +588,7 @@ monitoring:
 ### 基准测试
 
 #### 1. 性能测试脚本
+
 ```bash
 #!/bin/bash
 
@@ -585,6 +609,7 @@ python analyze_performance.py baseline.txt monitoring.txt
 ```
 
 #### 2. 性能分析脚本
+
 ```python
 import re
 
@@ -612,6 +637,7 @@ def analyze_performance(baseline_file, monitoring_file):
 ### 持续性能监控
 
 #### 1. 性能回归检测
+
 ```yaml
 # 在 CI/CD 中添加性能检查
 - name: Performance Regression Test
@@ -624,6 +650,7 @@ def analyze_performance(baseline_file, monitoring_file):
 ```
 
 #### 2. 性能趋势监控
+
 ```promql
 # 监控性能趋势
 increase(jairouter_request_duration_seconds_sum[24h]) / increase(jairouter_request_duration_seconds_count[24h])

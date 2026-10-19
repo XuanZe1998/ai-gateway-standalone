@@ -34,12 +34,14 @@ JAiRouter provides a complete Dockerized deployment solution, supporting multi-e
 | **China Optimized** | `china`, `v1.7.0-china` | ~440MB | China Users | `Dockerfile.china` |
 
 **Optimized Image Features**:
+
 - ✅ Uses `eclipse-temurin:17-jre-alpine` base image (~40% smaller than standard JRE)
 - ✅ Multi-stage build + Spring Boot layertools layered extraction
 - ✅ Image size reduced from 440MB to **281MB** (36% reduction)
 - ✅ Maintains full functionality and non-root user security practices
 
 **JLink Image Features**:
+
 - 🔬 Based on Alpine + multi-stage build + JVM parameter optimization
 - 🔬 Attempts to use jlink for custom JRE modules (uses Alpine JRE due to Spring Boot 3.x compatibility)
 - 🔬 Same image size as optimized version (281MB), provided as experimental option
@@ -174,7 +176,6 @@ docker build -f Dockerfile -t sodlinken/jairouter:prod .
 # Build China optimized image
 docker build -f Dockerfile.china -t sodlinken/jairouter:china .
 ```
-
 
 ## Security Configuration
 

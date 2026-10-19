@@ -3,7 +3,7 @@
 > 安全更新：后续发布继续要求旧网关 Key 失效。不得使用本记录最初上线前的 legacy 镜像回滚；以 `docs/model-square-deployment-20260928.md` 中兼容回滚为准。
 
 - 状态：已上线，容器健康检查 healthy，应用健康 UP。
-- 公网入口：https://gordanshop.com/admin/me
+- 公网入口：<https://gordanshop.com/admin/me>
 - 发布镜像：sha256:5a9d1d9adbb6257ecfb8f74d1026f42414b2afd5a00a981a691e98854a8fd5b5
 - 发布标签：ai-gateway-standalone:release-20260928-095501-r2（local 指向相同镜像）。
 - 最终镜像启动时间（UTC）：2026-09-28T01:04:12.87908673Z

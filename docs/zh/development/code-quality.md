@@ -7,8 +7,6 @@
 > **作者**: Lincoln
 <!-- /版本信息 -->
 
-
-
 ## 概述
 
 JAiRouter 项目采用严格的代码质量标准，通过自动化工具和人工审查相结合的方式，确保代码的可读性、可维护性和安全性。
@@ -18,18 +16,21 @@ JAiRouter 项目采用严格的代码质量标准，通过自动化工具和人�
 ### 1. Checkstyle
 
 #### 配置文件
+
 - **配置文件**: `checkstyle.xml`
 - **规则集**: 基于 Google Java Style Guide，结合项目特点定制
 
 #### 主要规则
 
-**格式规范**
+##### 格式规范
+
 - 使用 4 个空格缩进，禁用 Tab
 - 行长度不超过 120 字符
 - 文件长度不超过 2000 行
 - 方法长度不超过 150 行
 
-**命名规范**
+##### 命名规范
+
 ```java
 // 类名：PascalCase
 public class LoadBalancerFactory { }
@@ -44,7 +45,8 @@ public static final int DEFAULT_TIMEOUT = 30;
 package org.unreal.modelrouter.adapter;
 ```
 
-**导入规范**
+##### 导入规范
+
 ```java
 // 正确的导入顺序
 import java.util.List;           // Java 标准库
@@ -56,6 +58,7 @@ import org.unreal.modelrouter.*; // 项目内部包
 ```
 
 #### 运行 Checkstyle
+
 ```bash
 # 检查代码风格
 ./mvnw checkstyle:check
@@ -68,28 +71,33 @@ open target/site/checkstyle.html
 ### 2. SpotBugs
 
 #### 配置文件
+
 - **包含规则**: `spotbugs-security-include.xml`
 - **排除规则**: `spotbugs-security-exclude.xml`
 
 #### 检查类别
 
-**安全问题**
+##### 安全问题
+
 - SQL 注入风险
 - XSS 攻击风险
 - 路径遍历漏洞
 - 不安全的随机数生成
 
-**性能问题**
+##### 性能问题
+
 - 低效的字符串操作
 - 不必要的对象创建
 - 资源泄漏风险
 
-**并发问题**
+##### 并发问题
+
 - 线程安全问题
 - 死锁风险
 - 竞态条件
 
 #### 运行 SpotBugs
+
 ```bash
 # 运行 SpotBugs 检查
 ./mvnw spotbugs:check
@@ -105,16 +113,19 @@ open target/site/spotbugs.html
 ### 3. JaCoCo
 
 #### 覆盖率要求
+
 - **最低覆盖率**: 60% (复杂度覆盖率)
 - **推荐覆盖率**: 80%
 - **核心模块**: 90% 以上
 
 #### 覆盖率类型
+
 - **行覆盖率**: 代码行的执行覆盖
 - **分支覆盖率**: 条件分支的覆盖
 - **复杂度覆盖率**: 圈复杂度的覆盖
 
 #### 生成覆盖率报告
+
 ```bash
 # 运行测试并生成覆盖率报告
 ./mvnw clean test jacoco:report
@@ -128,6 +139,7 @@ open target/site/jacoco/index.html
 ### 1. 类设计原则
 
 #### 单一职责原则
+
 ```java
 // 好的例子：职责单一
 public class TokenBucketRateLimiter implements RateLimiter {
@@ -141,6 +153,7 @@ public class ServiceManager {
 ```
 
 #### 开闭原则
+
 ```java
 // 好的例子：对扩展开放，对修改关闭
 public abstract class BaseAdapter {
@@ -156,6 +169,7 @@ public abstract class BaseAdapter {
 ### 2. 方法设计
 
 #### 方法长度
+
 - 单个方法不超过 50 行
 - 复杂方法拆分为多个小方法
 - 使用有意义的方法名
@@ -179,6 +193,7 @@ private ServiceInstance doSelect(List<ServiceInstance> instances, String clientI
 ```
 
 #### 参数设计
+
 - 方法参数不超过 5 个
 - 使用对象封装多个相关参数
 - 避免使用 boolean 参数
@@ -199,6 +214,7 @@ public LoadBalancer createLoadBalancer(String type, int weight, boolean enabled,
 ### 3. 异常处理
 
 #### 异常分类
+
 ```java
 // 业务异常：可恢复的错误
 public class ServiceUnavailableException extends RuntimeException {
@@ -216,6 +232,7 @@ public class ConfigurationException extends RuntimeException {
 ```
 
 #### 异常处理最佳实践
+
 ```java
 // 好的例子：具体的异常处理
 public Mono<String> processRequest(String requestBody, ServiceInstance instance) {
@@ -239,12 +256,14 @@ public Mono<String> processRequest(String requestBody, ServiceInstance instance)
 ### 4. 日志规范
 
 #### 日志级别
+
 - **ERROR**: 系统错误，需要立即处理
 - **WARN**: 警告信息，可能影响功能
 - **INFO**: 重要的业务信息
 - **DEBUG**: 调试信息，开发环境使用
 
 #### 日志格式
+
 ```java
 // 好的例子：结构化日志
 log.info("Load balancer selected instance: type={}, instance={}, clientInfo={}", 
@@ -259,6 +278,7 @@ log.error("Error occurred", ex);
 ```
 
 #### 敏感信息处理
+
 ```java
 // 好的例子：脱敏处理
 log.info("User request: userId={}, requestId={}", 
@@ -275,6 +295,7 @@ private String maskUserId(String userId) {
 ### 5. 注释规范
 
 #### 类注释
+
 ```java
 /**
  * 负载均衡器工厂类
@@ -300,6 +321,7 @@ public class LoadBalancerFactory {
 ```
 
 #### 方法注释
+
 ```java
 /**
  * 根据配置创建负载均衡器实例
@@ -319,6 +341,7 @@ public LoadBalancer createLoadBalancer(LoadBalanceConfig config) {
 ```
 
 #### 复杂逻辑注释
+
 ```java
 public ServiceInstance selectByLeastConnections(List<ServiceInstance> instances) {
     // 使用最少连接算法选择实例
@@ -347,30 +370,35 @@ public ServiceInstance selectByLeastConnections(List<ServiceInstance> instances)
 ### 审查检查清单
 
 #### 功能性
+
 - [ ] 代码实现是否符合需求
 - [ ] 边界条件是否正确处理
 - [ ] 异常情况是否妥善处理
 - [ ] 业务逻辑是否正确
 
 #### 性能
+
 - [ ] 是否存在性能瓶颈
 - [ ] 资源使用是否合理
 - [ ] 是否有内存泄漏风险
 - [ ] 算法复杂度是否合理
 
 #### 安全性
+
 - [ ] 输入验证是否充分
 - [ ] 是否存在安全漏洞
 - [ ] 敏感信息是否正确处理
 - [ ] 权限控制是否到位
 
 #### 可维护性
+
 - [ ] 代码结构是否清晰
 - [ ] 命名是否有意义
 - [ ] 注释是否充分
 - [ ] 是否遵循设计模式
 
 #### 测试
+
 - [ ] 单元测试是否充分
 - [ ] 测试用例是否覆盖边界条件
 - [ ] 集成测试是否完整
@@ -388,12 +416,14 @@ public ServiceInstance selectByLeastConnections(List<ServiceInstance> instances)
 ### 质量指标监控
 
 #### 代码质量指标
+
 - 代码覆盖率趋势
 - 代码复杂度分布
 - 技术债务统计
 - 缺陷密度分析
 
 #### 工具集成
+
 ```yaml
 # GitHub Actions 质量检查
 name: Code Quality
@@ -431,16 +461,19 @@ jobs:
 ### 质量改进计划
 
 #### 短期目标 (1-3个月)
+
 - 提高测试覆盖率到 85%
 - 消除所有 SpotBugs 高优先级问题
 - 统一代码风格，消除 Checkstyle 警告
 
 #### 中期目标 (3-6个月)
+
 - 引入 SonarQube 进行深度代码分析
 - 建立代码质量门禁机制
 - 完善代码审查流程
 
 #### 长期目标 (6-12个月)
+
 - 建立代码质量文化
 - 持续重构和优化
 - 技术债务管理
@@ -450,6 +483,7 @@ jobs:
 ### IDE 配置
 
 #### IntelliJ IDEA
+
 ```xml
 <!-- .idea/codeStyles/Project.xml -->
 <component name="ProjectCodeStyleConfiguration">
@@ -474,6 +508,7 @@ jobs:
 ```
 
 #### VS Code
+
 ```json
 {
   "java.format.settings.url": "checkstyle.xml",
@@ -488,6 +523,7 @@ jobs:
 ### Maven 配置优化
 
 #### 快速构建配置
+
 ```xml
 <!-- pom.xml -->
 <profiles>
@@ -504,6 +540,7 @@ jobs:
 ```
 
 #### 质量检查配置
+
 ```xml
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>

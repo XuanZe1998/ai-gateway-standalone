@@ -132,6 +132,7 @@ Content-Type: application/json
 ```
 
 Request Body:
+
 ```json
 {
   "type": "IP",
@@ -142,6 +143,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -165,12 +167,14 @@ Authorization: Bearer {token}
 ```
 
 Query Parameters:
+
 - `type`: Blacklist type filter (IP/USER/TOKEN)
 - `page`: Page number, default 0
 - `size`: Page size, default 20
 - `status`: Status filter (ACTIVE/EXPIRED)
 
 Response:
+
 ```json
 {
   "success": true,
@@ -210,6 +214,7 @@ Content-Type: application/json
 ```
 
 Request Body:
+
 ```json
 {
   "reason": "Updated reason",
@@ -233,6 +238,7 @@ Content-Type: application/json
 ```
 
 Request Body:
+
 ```json
 {
   "entries": [
@@ -244,6 +250,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -264,6 +271,7 @@ Authorization: Bearer {token}
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -295,6 +303,7 @@ Authorization: Bearer {token}
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -410,30 +419,36 @@ jairouter:
 #### 1. IP Blacklist Not Working
 
 **Possible Causes**:
+
 - IP extraction incorrect in proxy environment
 - CIDR format incorrect
 
 **Solution**:
+
 1. Check `X-Forwarded-For` or `X-Real-IP` header configuration
 2. Verify IP format is correct
 
 #### 2. Blacklist Entry Cannot Be Added
 
 **Possible Causes**:
+
 - Duplicate entry already exists
 - Blacklist not synced to validation service
 
 **Solution**:
+
 1. Check if entry already exists
 2. Clear cache if needed
 
 #### 3. Too Many Blacklist Entries
 
 **Possible Causes**:
+
 - Automated attacks generating many entries
 - No expiration time set
 
 **Solution**:
+
 1. Run auto cleanup
 2. Set appropriate expiration
 3. Use CIDR networks instead of individual IPs
@@ -443,4 +458,4 @@ jairouter:
 - [API Key Management Guide](api-key-management.md)
 - [JWT Authentication Configuration](jwt-authentication.md)
 - [Security Troubleshooting Guide](troubleshooting.md)
-- [Audit Log Management](audit-log-management.md)
+- [Audit Log Management](../../zh/security/index.md)
