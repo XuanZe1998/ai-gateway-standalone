@@ -3,22 +3,22 @@
 ## 版本统计
 
 - 总文档数: 184
-- 近7天变更: 185
+- 近7天变更: 193
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-10-19 09:07:57
+- 最后扫描: 2026-10-20 07:23:12
 
 ## 最近变更
 
+- **MODIFIED**: docs/zh/index.md (1.0.4 → 1.0.5) - 2026-10-20
+- **MODIFIED**: docs/en/index.md (1.0.4 → 1.0.5) - 2026-10-20
+- **MODIFIED**: docs-version-report.md (1.0.35 → 1.0.36) - 2026-10-20
+- **MODIFIED**: README.md (1.0.16 → 1.0.17) - 2026-10-20
+- **MODIFIED**: README-ZH.md (1.0.8 → 1.0.9) - 2026-10-20
+- **MODIFIED**: README-STANDALONE.md (1.0.3 → 1.0.4) - 2026-10-20
+- **MODIFIED**: QWEN.md (1.0.5 → 1.0.6) - 2026-10-20
+- **MODIFIED**: CLAUDE.md (1.0.3 → 1.0.4) - 2026-10-20
 - **MODIFIED**: docs/zh/troubleshooting/performance.md (1.0.1 → 1.0.2) - 2026-10-19
 - **MODIFIED**: docs/zh/troubleshooting/issue-fixes.md (1.0.0 → 1.0.1) - 2026-10-19
-- **MODIFIED**: docs/zh/troubleshooting/index.md (1.0.1 → 1.0.2) - 2026-10-19
-- **MODIFIED**: docs/zh/troubleshooting/debugging.md (1.0.2 → 1.0.3) - 2026-10-19
-- **MODIFIED**: docs/zh/troubleshooting/common-issues.md (1.0.2 → 1.0.3) - 2026-10-19
-- **MODIFIED**: docs/zh/tracing/usage-guide.md (1.0.0 → 1.0.1) - 2026-10-19
-- **MODIFIED**: docs/zh/tracing/troubleshooting.md (1.0.0 → 1.0.1) - 2026-10-19
-- **MODIFIED**: docs/zh/tracing/quickstart.md (1.0.0 → 1.0.1) - 2026-10-19
-- **MODIFIED**: docs/zh/tracing/performance-tuning.md (1.0.0 → 1.0.1) - 2026-10-19
-- **MODIFIED**: docs/zh/tracing/operations-guide.md (1.0.0 → 1.0.1) - 2026-10-19
 
 ## 依赖关系分析
 
@@ -559,6 +559,14 @@
 
 ## 所有文档版本
 
+- **docs/zh/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
+- **docs/en/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
+- **docs-version-report.md**: v1.0.36 - 2026-10-20 (c356ab75)
+- **README.md**: v1.0.17 - 2026-10-20 (c356ab75)
+- **README-ZH.md**: v1.0.9 - 2026-10-20 (c356ab75)
+- **README-STANDALONE.md**: v1.0.4 - 2026-10-20 (c356ab75)
+- **QWEN.md**: v1.0.6 - 2026-10-20 (c356ab75)
+- **CLAUDE.md**: v1.0.4 - 2026-10-20 (c356ab75)
 - **docs/zh/troubleshooting/performance.md**: v1.0.2 - 2026-10-19 (9e418449)
 - **docs/zh/troubleshooting/issue-fixes.md**: v1.0.1 - 2026-10-19 (9e418449)
 - **docs/zh/troubleshooting/index.md**: v1.0.2 - 2026-10-19 (9e418449)
@@ -596,7 +604,6 @@
 - **docs/zh/monitoring/configuration.md**: v1.0.2 - 2026-10-19 (9e418449)
 - **docs/zh/monitoring/alerts.md**: v1.0.2 - 2026-10-19 (9e418449)
 - **docs/zh/monitoring/alert_rules_guide.md**: v1.0.2 - 2026-10-19 (9e418449)
-- **docs/zh/index.md**: v1.0.4 - 2026-10-19 (9e418449)
 - **docs/zh/getting-started/quick-start.md**: v1.0.3 - 2026-10-19 (9e418449)
 - **docs/zh/getting-started/quick-start-v1.8.md**: v1.0.2 - 2026-10-19 (9e418449)
 - **docs/zh/getting-started/installation.md**: v1.0.4 - 2026-10-19 (9e418449)
@@ -685,7 +692,6 @@
 - **docs/en/monitoring/configuration.md**: v1.0.2 - 2026-10-19 (9e418449)
 - **docs/en/monitoring/alerts.md**: v1.0.2 - 2026-10-19 (9e418449)
 - **docs/en/monitoring/alert_rules_guide.md**: v1.0.1 - 2026-10-19 (9e418449)
-- **docs/en/index.md**: v1.0.4 - 2026-10-19 (9e418449)
 - **docs/en/getting-started/quick-start.md**: v1.0.2 - 2026-10-19 (9e418449)
 - **docs/en/getting-started/installation.md**: v1.0.3 - 2026-10-19 (9e418449)
 - **docs/en/getting-started/index.md**: v1.0.2 - 2026-10-19 (9e418449)
@@ -731,12 +737,6 @@
 - **docs/README.md**: v1.0.3 - 2026-10-19 (9e418449)
 - **docs/README-UPSTREAM.md**: v1.0.1 - 2026-10-19 (9e418449)
 - **docs/CHANGELOG-v2.5.x.md**: v1.0.1 - 2026-10-19 (9e418449)
-- **docs-version-report.md**: v1.0.35 - 2026-10-19 (9e418449)
-- **README.md**: v1.0.16 - 2026-10-19 (9e418449)
-- **README-ZH.md**: v1.0.8 - 2026-10-19 (9e418449)
-- **README-STANDALONE.md**: v1.0.3 - 2026-10-19 (9e418449)
-- **QWEN.md**: v1.0.5 - 2026-10-19 (9e418449)
-- **CLAUDE.md**: v1.0.3 - 2026-10-19 (9e418449)
 - **docs/zh/troubleshooting/campus-cas-login-not-found.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/zh/deployment/vm-capacity-sizing-30000-users.md**: v1.0.0 - 2026-09-28 (05931b92)
 - **docs/zh/deployment/production-readiness.md**: v1.0.0 - 2026-09-28 (05931b92)

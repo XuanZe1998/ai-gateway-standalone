@@ -2,11 +2,11 @@
   "versions": {
     "README.md": {
       "FilePath": "README.md",
-      "Version": "1.0.16",
-      "LastModified": "2026-10-19T09:07:56.910544",
-      "ContentHash": "19c48d4c31d4b043",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.17",
+      "LastModified": "2026-10-20T07:23:12.421318",
+      "ContentHash": "63d3c596aa16fc62",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
@@ -374,11 +374,11 @@
     },
     "docs/en/index.md": {
       "FilePath": "docs/en/index.md",
-      "Version": "1.0.4",
-      "LastModified": "2026-10-19T09:07:57.007058",
-      "ContentHash": "7af4fcfe9a200236",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.5",
+      "LastModified": "2026-10-20T07:23:12.505808",
+      "ContentHash": "d73e1586e1d2ec12",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": [
         "docs/en/configuration/index.md",
@@ -1001,11 +1001,11 @@
     },
     "docs/zh/index.md": {
       "FilePath": "docs/zh/index.md",
-      "Version": "1.0.4",
-      "LastModified": "2026-10-19T09:07:57.216191",
-      "ContentHash": "43ef44281fa21204",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.5",
+      "LastModified": "2026-10-20T07:23:12.685195",
+      "ContentHash": "d29bf4196ad099a2",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": [
         "docs/zh/configuration/index.md",
@@ -1806,11 +1806,11 @@
     },
     "README-ZH.md": {
       "FilePath": "README-ZH.md",
-      "Version": "1.0.8",
-      "LastModified": "2026-10-19T09:07:56.908720",
-      "ContentHash": "fbf1bc6c3fa2fbdb",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.9",
+      "LastModified": "2026-10-20T07:23:12.419714",
+      "ContentHash": "c782498e36190103",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": [
         "README.md"
@@ -1832,11 +1832,11 @@
     },
     "QWEN.md": {
       "FilePath": "QWEN.md",
-      "Version": "1.0.5",
-      "LastModified": "2026-10-19T09:07:56.904809",
-      "ContentHash": "6f42a9649d795b13",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.6",
+      "LastModified": "2026-10-20T07:23:12.416214",
+      "ContentHash": "03aac3e3768f2c7c",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
@@ -2112,31 +2112,31 @@
     },
     "docs-version-report.md": {
       "FilePath": "docs-version-report.md",
-      "Version": "1.0.35",
-      "LastModified": "2026-10-19T09:07:56.912616",
-      "ContentHash": "68f55a2a6db5ceea",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.36",
+      "LastModified": "2026-10-20T07:23:12.423360",
+      "ContentHash": "362040fd40a0d90a",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
     "CLAUDE.md": {
       "FilePath": "CLAUDE.md",
-      "Version": "1.0.3",
-      "LastModified": "2026-10-19T09:07:56.902762",
-      "ContentHash": "068c0d31a8168c3d",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.4",
+      "LastModified": "2026-10-20T07:23:12.414389",
+      "ContentHash": "8dd6f1e131a4d7d5",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
     "README-STANDALONE.md": {
       "FilePath": "README-STANDALONE.md",
-      "Version": "1.0.3",
-      "LastModified": "2026-10-19T09:07:56.906745",
-      "ContentHash": "bf6c6b980e8a77e7",
-      "GitCommit": "9e418449",
-      "Author": "XuanZe1998",
+      "Version": "1.0.4",
+      "LastModified": "2026-10-20T07:23:12.417892",
+      "ContentHash": "d7462b87569beb31",
+      "GitCommit": "c356ab75",
+      "Author": "GitHub Action",
       "ChangeSummary": "",
       "Dependencies": []
     },
@@ -4327,7 +4327,71 @@
       "ChangeType": "MODIFIED",
       "Timestamp": "2026-10-19T09:07:57.300482",
       "Description": "文档modified"
+    },
+    {
+      "FilePath": "CLAUDE.md",
+      "OldVersion": "1.0.3",
+      "NewVersion": "1.0.4",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.414398",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "QWEN.md",
+      "OldVersion": "1.0.5",
+      "NewVersion": "1.0.6",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.416218",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "README-STANDALONE.md",
+      "OldVersion": "1.0.3",
+      "NewVersion": "1.0.4",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.417896",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "README-ZH.md",
+      "OldVersion": "1.0.8",
+      "NewVersion": "1.0.9",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.419718",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "README.md",
+      "OldVersion": "1.0.16",
+      "NewVersion": "1.0.17",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.421322",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs-version-report.md",
+      "OldVersion": "1.0.35",
+      "NewVersion": "1.0.36",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.423364",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs/en/index.md",
+      "OldVersion": "1.0.4",
+      "NewVersion": "1.0.5",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.505819",
+      "Description": "文档modified"
+    },
+    {
+      "FilePath": "docs/zh/index.md",
+      "OldVersion": "1.0.4",
+      "NewVersion": "1.0.5",
+      "ChangeType": "MODIFIED",
+      "Timestamp": "2026-10-20T07:23:12.685203",
+      "Description": "文档modified"
     }
   ],
-  "last_updated": "2026-10-19T09:07:57.445776"
+  "last_updated": "2026-10-20T07:23:12.846064"
 }
