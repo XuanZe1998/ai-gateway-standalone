@@ -14,11 +14,15 @@ public final class ModelSquareDtos {
                          List<PriceLine> lines, List<String> notes) {}
     public record Card(String serviceType, String modelId, String displayName, String description,
                        List<String> tags, List<String> vendors, int schemeCount, String priceStatus,
-                       List<PriceLine> priceSummary, boolean freeQuotaApplicable, boolean overridden) {}
+                       List<PriceLine> priceSummary, boolean freeQuotaApplicable, boolean overridden, String iconId) {}
     public record Access(String method, String path, String contentType, String queryPath, String note) {}
     public record Detail(Card model, List<Scheme> schemes, Access access, List<String> notes) {}
     public record Content(String serviceType, String modelId, String displayName, String description,
-                          List<String> tags) {}
+                          List<String> tags, String iconId) {
+        public Content(String serviceType, String modelId, String displayName, String description, List<String> tags) {
+            this(serviceType, modelId, displayName, description, tags, null);
+        }
+    }
     public record ContentView(Card model, String defaultName, String defaultDescription,
                               List<String> defaultTags, Content override, LocalDateTime updatedAt,
                               String updatedBy) {}
