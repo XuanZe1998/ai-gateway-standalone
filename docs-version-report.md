@@ -5,17 +5,26 @@
 - 总文档数: 184
 - 近7天变更: 7
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-10-28 08:12:54
+- 最后扫描: 2026-10-29 08:18:35
 
 ## 最近变更
 
+- **MODIFIED**: docs-version-report.md (1.0.44 → 1.0.45) - 2026-10-29
 - **MODIFIED**: docs-version-report.md (1.0.43 → 1.0.44) - 2026-10-28
 - **MODIFIED**: docs-version-report.md (1.0.42 → 1.0.43) - 2026-10-27
 - **MODIFIED**: docs-version-report.md (1.0.41 → 1.0.42) - 2026-10-26
 - **MODIFIED**: docs-version-report.md (1.0.40 → 1.0.41) - 2026-10-25
 - **MODIFIED**: docs-version-report.md (1.0.39 → 1.0.40) - 2026-10-24
 - **MODIFIED**: docs-version-report.md (1.0.38 → 1.0.39) - 2026-10-23
-- **MODIFIED**: docs-version-report.md (1.0.37 → 1.0.38) - 2026-10-22
+
+## 过期文档 (30天未更新)
+
+- docs/model-square-deployment-20260928.md (版本: 1.0.0, 最后更新: 2026-09-28)
+- docs/superpowers/specs/2026-07-01-stream-options-injection-design.md (版本: 1.0.0, 最后更新: 2026-09-28)
+- docs/weekly-report-2026-09-14-to-09-18.md (版本: 1.0.0, 最后更新: 2026-09-28)
+- docs/zh/deployment/production-readiness.md (版本: 1.0.0, 最后更新: 2026-09-28)
+- docs/zh/deployment/vm-capacity-sizing-30000-users.md (版本: 1.0.0, 最后更新: 2026-09-28)
+- docs/zh/troubleshooting/campus-cas-login-not-found.md (版本: 1.0.0, 最后更新: 2026-09-28)
 
 ## 依赖关系分析
 
@@ -556,7 +565,7 @@
 
 ## 所有文档版本
 
-- **docs-version-report.md**: v1.0.44 - 2026-10-28 (c06d0ebe)
+- **docs-version-report.md**: v1.0.45 - 2026-10-29 (4933468d)
 - **docs/zh/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
 - **docs/en/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
 - **README.md**: v1.0.17 - 2026-10-20 (c356ab75)
