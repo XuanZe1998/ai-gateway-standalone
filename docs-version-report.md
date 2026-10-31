@@ -5,17 +5,17 @@
 - 总文档数: 184
 - 近7天变更: 7
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-10-30 08:26:32
+- 最后扫描: 2026-10-31 08:16:10
 
 ## 最近变更
 
+- **MODIFIED**: docs-version-report.md (1.0.46 → 1.0.47) - 2026-10-31
 - **MODIFIED**: docs-version-report.md (1.0.45 → 1.0.46) - 2026-10-30
 - **MODIFIED**: docs-version-report.md (1.0.44 → 1.0.45) - 2026-10-29
 - **MODIFIED**: docs-version-report.md (1.0.43 → 1.0.44) - 2026-10-28
 - **MODIFIED**: docs-version-report.md (1.0.42 → 1.0.43) - 2026-10-27
 - **MODIFIED**: docs-version-report.md (1.0.41 → 1.0.42) - 2026-10-26
 - **MODIFIED**: docs-version-report.md (1.0.40 → 1.0.41) - 2026-10-25
-- **MODIFIED**: docs-version-report.md (1.0.39 → 1.0.40) - 2026-10-24
 
 ## 过期文档 (30天未更新)
 
@@ -565,7 +565,7 @@
 
 ## 所有文档版本
 
-- **docs-version-report.md**: v1.0.46 - 2026-10-30 (6cf3c20b)
+- **docs-version-report.md**: v1.0.47 - 2026-10-31 (b49ee95e)
 - **docs/zh/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
 - **docs/en/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
 - **README.md**: v1.0.17 - 2026-10-20 (c356ab75)
