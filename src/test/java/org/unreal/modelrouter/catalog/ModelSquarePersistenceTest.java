@@ -24,9 +24,10 @@ class ModelSquarePersistenceTest {
         var repo=new JpaRepositoryFactory(em).getRepository(ModelSquareContentRepository.class);
         var tx=new TransactionTemplate(new JpaTransactionManager(emf));
         try {
-            tx.executeWithoutResult(s->{var e=new ModelSquareContentEntity();e.setContentKey("chat:persistence-probe");e.setServiceType("chat");e.setModelId("persistence-probe");e.setDisplayName("测试展示名");e.setDescription("<b>纯文本</b>");e.setTags("[\"测试标签\"]");e.setUpdatedBy("rehearsal-only");e.setUpdatedAt(LocalDateTime.now());repo.saveAndFlush(e);});
-            tx.executeWithoutResult(s->{var e=repo.findById("chat:persistence-probe").orElseThrow();assertEquals("测试展示名",e.getDisplayName());assertEquals("[\"测试标签\"]",e.getTags());assertEquals("<b>纯文本</b>",e.getDescription());e.setDisplayName("已更新");repo.saveAndFlush(e);});
-            tx.executeWithoutResult(s->{assertEquals("已更新",repo.findById("chat:persistence-probe").orElseThrow().getDisplayName());repo.deleteById("chat:persistence-probe");repo.flush();});
+            tx.executeWithoutResult(s->{var e=new ModelSquareContentEntity();e.setContentKey("chat:persistence-probe");e.setServiceType("chat");e.setModelId("persistence-probe");e.setDisplayName("测试展示名");e.setDescription("<b>纯文本</b>");e.setTags("[\"测试标签\"]");e.setIconId("deepseek");e.setUpdatedBy("rehearsal-only");e.setUpdatedAt(LocalDateTime.now());repo.saveAndFlush(e);});
+            tx.executeWithoutResult(s->{var e=repo.findById("chat:persistence-probe").orElseThrow();assertEquals("测试展示名",e.getDisplayName());assertEquals("[\"测试标签\"]",e.getTags());assertEquals("<b>纯文本</b>",e.getDescription());assertEquals("deepseek",e.getIconId());e.setDisplayName("已更新");e.setIconId("qwen");repo.saveAndFlush(e);});
+            tx.executeWithoutResult(s->{var e=repo.findById("chat:persistence-probe").orElseThrow();assertEquals("已更新",e.getDisplayName());assertEquals("qwen",e.getIconId());e.setIconId(null);repo.saveAndFlush(e);});
+            tx.executeWithoutResult(s->{assertNull(repo.findById("chat:persistence-probe").orElseThrow().getIconId());repo.deleteById("chat:persistence-probe");repo.flush();});
             tx.executeWithoutResult(s->assertTrue(repo.findById("chat:persistence-probe").isEmpty()));
         } finally {factory.destroy();}
     }

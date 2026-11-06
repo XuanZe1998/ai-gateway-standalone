@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "type-check": "vue-tsc --noEmit",
-    "test:model-square": "node --test tests/modelSquare.test.mjs"
+    "test:model-square": "node --test tests/modelSquare.test.mjs tests/modelIcons.test.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
