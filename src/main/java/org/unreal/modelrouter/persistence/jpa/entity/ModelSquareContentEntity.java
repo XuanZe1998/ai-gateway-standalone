@@ -13,6 +13,7 @@ public class ModelSquareContentEntity {
     @Column(name = "model_id", nullable = false, length = 255) private String modelId;
     @Column(name = "display_name", length = 100) private String displayName;
     @Column(name = "description", length = 2000) private String description;
+    @Column(name = "icon_id", length = 64) private String iconId;
     @Column(name = "tags", nullable = false, columnDefinition = "text") private String tags;
     @Column(name = "updated_at", nullable = false) private LocalDateTime updatedAt;
     @Column(name = "updated_by", nullable = false, length = 255) private String updatedBy;
