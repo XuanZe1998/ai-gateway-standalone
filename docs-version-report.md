@@ -5,20 +5,21 @@
 - 总文档数: 184
 - 近7天变更: 7
 - 版本文件: /home/runner/work/ai-gateway-standalone/ai-gateway-standalone/docs/docs-versions.json
-- 最后扫描: 2026-11-18 09:58:28
+- 最后扫描: 2026-11-19 10:06:41
 
 ## 最近变更
 
+- **MODIFIED**: docs-version-report.md (1.0.65 → 1.0.66) - 2026-11-19
 - **MODIFIED**: docs-version-report.md (1.0.64 → 1.0.65) - 2026-11-18
 - **MODIFIED**: docs-version-report.md (1.0.63 → 1.0.64) - 2026-11-17
 - **MODIFIED**: docs-version-report.md (1.0.62 → 1.0.63) - 2026-11-16
 - **MODIFIED**: docs-version-report.md (1.0.61 → 1.0.62) - 2026-11-15
 - **MODIFIED**: docs-version-report.md (1.0.60 → 1.0.61) - 2026-11-14
 - **MODIFIED**: docs-version-report.md (1.0.59 → 1.0.60) - 2026-11-13
-- **MODIFIED**: docs-version-report.md (1.0.58 → 1.0.59) - 2026-11-12
 
 ## 过期文档 (30天未更新)
 
+- README.md (版本: 1.0.17, 最后更新: 2026-10-20)
 - docs/README.md (版本: 1.0.3, 最后更新: 2026-10-19)
 - docs/en/api-reference/index.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/en/api-reference/management-api.md (版本: 1.0.3, 最后更新: 2026-10-19)
@@ -47,6 +48,7 @@
 - docs/en/getting-started/index.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/en/getting-started/installation.md (版本: 1.0.3, 最后更新: 2026-10-19)
 - docs/en/getting-started/quick-start.md (版本: 1.0.2, 最后更新: 2026-10-19)
+- docs/en/index.md (版本: 1.0.5, 最后更新: 2026-10-20)
 - docs/en/monitoring/alerts.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/en/monitoring/configuration.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/en/monitoring/dashboards.md (版本: 1.0.2, 最后更新: 2026-10-19)
@@ -92,6 +94,7 @@
 - docs/zh/getting-started/index.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/zh/getting-started/installation.md (版本: 1.0.4, 最后更新: 2026-10-19)
 - docs/zh/getting-started/quick-start.md (版本: 1.0.3, 最后更新: 2026-10-19)
+- docs/zh/index.md (版本: 1.0.5, 最后更新: 2026-10-20)
 - docs/zh/monitoring/alert_rules_guide.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/zh/monitoring/alerts.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/zh/monitoring/configuration.md (版本: 1.0.2, 最后更新: 2026-10-19)
@@ -151,7 +154,9 @@
 - docs/zh/configuration/version-management.md (版本: 1.0.2, 最后更新: 2026-10-19)
 - docs/en/configuration/jwt-persistence.md (版本: 1.0.1, 最后更新: 2026-10-19)
 - docs/en/deployment/jwt-persistence-deployment-checklist.md (版本: 1.0.1, 最后更新: 2026-10-19)
+- README-ZH.md (版本: 1.0.9, 最后更新: 2026-10-20)
 - docs/zh/reference/adapter-updates.md (版本: 1.0.1, 最后更新: 2026-10-19)
+- QWEN.md (版本: 1.0.6, 最后更新: 2026-10-20)
 - docs/en/deployment/docker-optimized.md (版本: 1.0.1, 最后更新: 2026-10-19)
 - docs/en/development/V1.4.1-changelog.md (版本: 1.0.1, 最后更新: 2026-10-19)
 - docs/en/monitoring/alert_rules_guide.md (版本: 1.0.1, 最后更新: 2026-10-19)
@@ -172,6 +177,8 @@
 - docs/en/configuration/state-persistence.md (版本: 1.0.1, 最后更新: 2026-10-19)
 - docs/zh/configuration/state-persistence.md (版本: 1.0.1, 最后更新: 2026-10-19)
 - docs/zh/development/v2.7.x-package-refactoring.md (版本: 1.0.1, 最后更新: 2026-10-19)
+- CLAUDE.md (版本: 1.0.4, 最后更新: 2026-10-20)
+- README-STANDALONE.md (版本: 1.0.4, 最后更新: 2026-10-20)
 - docs/CHANGELOG-v2.5.x.md (版本: 1.0.1, 最后更新: 2026-10-19)
 - docs/README-UPSTREAM.md (版本: 1.0.1, 最后更新: 2026-10-19)
 - docs/campus-deployment-20260928.md (版本: 1.0.1, 最后更新: 2026-10-19)
@@ -735,7 +742,7 @@
 
 ## 所有文档版本
 
-- **docs-version-report.md**: v1.0.65 - 2026-11-18 (914ba5f1)
+- **docs-version-report.md**: v1.0.66 - 2026-11-19 (8a430c94)
 - **docs/zh/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
 - **docs/en/index.md**: v1.0.5 - 2026-10-20 (c356ab75)
 - **README.md**: v1.0.17 - 2026-10-20 (c356ab75)
