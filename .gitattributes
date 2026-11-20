@@ -1,0 +1,2 @@
+# Preserve downloaded SVG hashes across Windows and Unix checkouts.
+src/main/resources/static/model-icons/*.svg text eol=lf

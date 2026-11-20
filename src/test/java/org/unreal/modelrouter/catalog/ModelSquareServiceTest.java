@@ -89,6 +89,21 @@ class ModelSquareServiceTest {
         assertThrows(ResponseStatusException.class,()->service.save(new Content("chat","real-model",null,null,List.of("1","2","3","4","5","6","7")),"actor"));
         assertThrows(ResponseStatusException.class,()->service.save(new Content("chat","unknown",null,null,List.of()),"actor")); verify(content,never()).saveAndFlush(any());
     }
+    @Test void iconOverridePersistsAndClearingRestoresAutomaticIcon() {
+        when(content.saveAndFlush(any())).thenAnswer(i -> i.getArgument(0));
+        var result = service.save(new Content("chat", "real-model", null, null, List.of(), "deepseek"), "actor");
+        assertEquals("deepseek", result.model().iconId());
+        assertEquals("deepseek", result.override().iconId());
+        var capture = org.mockito.ArgumentCaptor.forClass(ModelSquareContentEntity.class);
+        verify(content).saveAndFlush(capture.capture());
+        when(content.findAll()).thenReturn(List.of(capture.getValue()));
+        assertEquals("deepseek", service.list(UserIdentity.SYSTEM).get(0).iconId());
+        var cleared = service.save(new Content("chat", "real-model", null, null, List.of(), " "), "actor");
+        assertNull(cleared.override().iconId());
+        assertEquals("generic-chat", cleared.model().iconId());
+        assertThrows(ResponseStatusException.class, () -> service.save(
+                new Content("chat", "real-model", null, null, List.of(), "https://example.com/icon.svg"), "actor"));
+    }
     @Test void everyServiceUsesItsRealEndpointAndUploadContentType() {
         var map=new EnumMap<ServiceType,List<ModelInstance>>(ServiceType.class); for(var type:ServiceType.values())map.put(type,List.of(instance("local-model",null)));
         when(registry.getAllInstances()).thenReturn(map); when(models.findAll()).thenReturn(List.of());

@@ -1,0 +1,624 @@
+{
+  "inventoryDate": "2026-10-11",
+  "configurationDate": "2026-10-14",
+  "models": [
+    {
+      "modelId": "qwen3.5-122b-a10b",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "krx_lm_45_std_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "krx_lm_46_std_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "krx_lm_47_std_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3.7-plus",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "orb_base_60_ultra_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb_base_60_std_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb_base_02_vis",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "ntk_core_45_lite",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb_base_54_std",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3-max",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "Minimax-M2.5",
+      "serviceType": "chat",
+      "iconId": "minimax",
+      "status": "configured"
+    },
+    {
+      "modelId": "orb_base_56_lite",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "glm-5.1",
+      "serviceType": "chat",
+      "iconId": "zhipu",
+      "status": "configured"
+    },
+    {
+      "modelId": "minimax-m2.7",
+      "serviceType": "chat",
+      "iconId": "minimax",
+      "status": "configured"
+    },
+    {
+      "modelId": "minimax-m3",
+      "serviceType": "chat",
+      "iconId": "minimax",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3.6-plus",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "DeepSeek-R1",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "vlt_mm_30_visultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "glm-5.2",
+      "serviceType": "chat",
+      "iconId": "zhipu",
+      "status": "configured"
+    },
+    {
+      "modelId": "kimi-k2.7-code",
+      "serviceType": "chat",
+      "iconId": "kimi",
+      "status": "configured"
+    },
+    {
+      "modelId": "deepseek-v4-pro-0813",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "glm-5.3",
+      "serviceType": "chat",
+      "iconId": "zhipu",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3.5-397b-a17b",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_55_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3.6-flash",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "deepseek-v3.2",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "deepseek-v4-pro-0813-new",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "glm-5.3-flashx",
+      "serviceType": "chat",
+      "iconId": "zhipu",
+      "status": "configured"
+    },
+    {
+      "modelId": "Doubao-Seed-2.0-Pro",
+      "serviceType": "chat",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "orb_base_56_ultra_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3.5-flash",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_51_gen",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "glm-5-turbo",
+      "serviceType": "chat",
+      "iconId": "zhipu",
+      "status": "configured"
+    },
+    {
+      "modelId": "orb_base_56_std",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3.5-35b-a3b",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "kimi-k3-guan",
+      "serviceType": "chat",
+      "iconId": "kimi",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_48_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "deepseek-v4.1-flash-new",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "GLM-5.0",
+      "serviceType": "chat",
+      "iconId": "zhipu",
+      "status": "configured"
+    },
+    {
+      "modelId": "vlt_mm_31_vis",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb_base_60_lite_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3-coder-plus",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "agnes-2.5-pro-beta",
+      "serviceType": "chat",
+      "iconId": "agnes",
+      "status": "configured"
+    },
+    {
+      "modelId": "glm-5.3-flash",
+      "serviceType": "chat",
+      "iconId": "zhipu",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3.8-flash",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "deepseek-v4-flash-0731",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "vlt_mm_25_vis",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb_base_56_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "agnes-2.5-flash",
+      "serviceType": "chat",
+      "iconId": "agnes",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3.6-27b",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "vlt_mm_31_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "ntk_core_5_std",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "vlt_mm_25_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen-plus",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "kimi-k3",
+      "serviceType": "chat",
+      "iconId": "kimi",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_47_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "deepseek-v4-flash-0731-new",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_46_std",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb2_base_56_std_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb_base_60_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "Doubao-Seed-2.1-Turbo",
+      "serviceType": "chat",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "Doubao-Seed-2.0-lite",
+      "serviceType": "chat",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "DeepSeek-R1-0528",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "Doubao-Seed-2.0-Mini",
+      "serviceType": "chat",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "deepseek-v4.1-flash",
+      "serviceType": "chat",
+      "iconId": "deepseek",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3.5-plus",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_5_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3.6-35b-a3b",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3.7-flash",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_5_gen",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "Doubao-Seed-2.1-Pro",
+      "serviceType": "chat",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "kimi-k2.5",
+      "serviceType": "chat",
+      "iconId": "kimi",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3.7-max",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "kimi-k2.6",
+      "serviceType": "chat",
+      "iconId": "kimi",
+      "status": "configured"
+    },
+    {
+      "modelId": "ntk_core_46_ultra",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "qwen3.8-max",
+      "serviceType": "chat",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "orb_base_56_lite_zj",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "orb2_base_56_std",
+      "serviceType": "chat",
+      "iconId": "generic-chat",
+      "status": "deferred"
+    },
+    {
+      "modelId": "text-embedding-v3",
+      "serviceType": "embedding",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "text-embedding-v4",
+      "serviceType": "embedding",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "gte-rerank-v2",
+      "serviceType": "rerank",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen3-rerank",
+      "serviceType": "rerank",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "Doubao-seedream-4.5",
+      "serviceType": "imgGen",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "Doubao-Seedream-5.0-lite",
+      "serviceType": "imgGen",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen-image-2.0-pro",
+      "serviceType": "imgGen",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "Doubao-seedream-4.0",
+      "serviceType": "imgGen",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "wan2.6-image",
+      "serviceType": "imgGen",
+      "iconId": "wan",
+      "status": "configured"
+    },
+    {
+      "modelId": "doubao-seedream-5.0-pro-0724",
+      "serviceType": "imgGen",
+      "iconId": "doubao",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen-image-edit-max",
+      "serviceType": "imgEdit",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen-image-edit-plus",
+      "serviceType": "imgEdit",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "qwen-image-edit",
+      "serviceType": "imgEdit",
+      "iconId": "qwen",
+      "status": "configured"
+    },
+    {
+      "modelId": "MiniMax-H3",
+      "serviceType": "vidGen",
+      "iconId": "minimax",
+      "status": "configured"
+    },
+    {
+      "modelId": "wan2.7-i2v",
+      "serviceType": "vidGen",
+      "iconId": "wan",
+      "status": "configured"
+    },
+    {
+      "modelId": "happyhorse-1.0-video-edit",
+      "serviceType": "vidGen",
+      "iconId": "happyhorse",
+      "status": "configured"
+    },
+    {
+      "modelId": "wan2.7-t2v",
+      "serviceType": "vidGen",
+      "iconId": "wan",
+      "status": "configured"
+    },
+    {
+      "modelId": "happyhorse-1.0-t2v",
+      "serviceType": "vidGen",
+      "iconId": "happyhorse",
+      "status": "configured"
+    },
+    {
+      "modelId": "wan2.7-r2v",
+      "serviceType": "vidGen",
+      "iconId": "wan",
+      "status": "configured"
+    },
+    {
+      "modelId": "happyhorse-1.0-r2v",
+      "serviceType": "vidGen",
+      "iconId": "happyhorse",
+      "status": "configured"
+    },
+    {
+      "modelId": "wan3.0-video",
+      "serviceType": "vidGen",
+      "iconId": "wan",
+      "status": "configured"
+    },
+    {
+      "modelId": "happyhorse-1.0-i2v",
+      "serviceType": "vidGen",
+      "iconId": "happyhorse",
+      "status": "configured"
+    },
+    {
+      "modelId": "wan2.6-t2v",
+      "serviceType": "vidGen",
+      "iconId": "wan",
+      "status": "configured"
+    },
+    {
+      "modelId": "wan3.0-video-prime",
+      "serviceType": "vidGen",
+      "iconId": "wan",
+      "status": "configured"
+    }
+  ]
+}
