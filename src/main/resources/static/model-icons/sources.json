@@ -1,0 +1,192 @@
+[
+  {
+    "id": "deepseek",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/deepseek-color.svg",
+    "sha256": "deba5f98a5c1796e20fcac3149bcd7eb8a32f0bdd04d048819400b1f28bd1439"
+  },
+  {
+    "id": "qwen",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/qwen-color.svg",
+    "sha256": "77f5768c66d08ce1d3d14e73373975c1bc0454be88c81523ddd0ffd7e2974029"
+  },
+  {
+    "id": "doubao",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/doubao-color.svg",
+    "sha256": "3cd31ba03ae44b8c29561597a3b863809efecb13fcdfd08407a086df86a69b55"
+  },
+  {
+    "id": "kimi",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/kimi-color.svg",
+    "sha256": "74a7292aeb0220445d14c5d397d75760e2e8c6ed6a9e5fe4f3023471bf62a9ff"
+  },
+  {
+    "id": "minimax",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/minimax-color.svg",
+    "sha256": "7f7187fa6d9b341ac5f22f6c5a970523afb439dc45566d64eb4f4b9b604d6b01"
+  },
+  {
+    "id": "zhipu",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/zhipu-color.svg",
+    "sha256": "8174e65ff71647d5c705c920c953a82bd723d9e3e42887bdd4ffc9dfe51207a0"
+  },
+  {
+    "id": "wan",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/alibaba-color.svg",
+    "sha256": "48ee796c5b1da5f5f11dbd70c5c64a3f7efcb9eeb9022ae687d81fc813e942ee"
+  },
+  {
+    "id": "happyhorse",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/happyhorse.svg",
+    "sha256": "069bd7ba693f05b8d728d4c652b84ec0d2d15ede8c8c0bbc881932eb5618e991"
+  },
+  {
+    "id": "agnes",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/agnesai.svg",
+    "sha256": "990c7870a70be159e2ecb7c882868a4a404449e936a4989fdae964bbea6d507d"
+  },
+  {
+    "id": "openai",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/openai.svg",
+    "sha256": "1c80e39b54dd24a578e4b4b0cd37e4513fa7946695f701cd3f3752f04f5978b7"
+  },
+  {
+    "id": "claude",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/claude-color.svg",
+    "sha256": "a3101f3047a119aa11825ad9369510f0c472428c8c52d420e31bc62db44a8364"
+  },
+  {
+    "id": "gemini",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/gemini-color.svg",
+    "sha256": "8ab0a9bafec11f7e69bcb9fc4ffd8f1bc927d1ddcbbb6ff36dee5ae8b5a9d602"
+  },
+  {
+    "id": "grok",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/grok.svg",
+    "sha256": "235fb93e1dd31e08464b29697005823dba10424a41c8a0e05791f2bdbdd06372"
+  },
+  {
+    "id": "hunyuan",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/hunyuan-color.svg",
+    "sha256": "510e7bb438506b5aadfaf8b9551d1606efd5b4171161a64a64204c72a453658a"
+  },
+  {
+    "id": "wenxin",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/wenxin-color.svg",
+    "sha256": "9fb88d8b6f7be470ddb07f0574ec276b08a35ba96d73ec5f2f3b6fc338da5cb6"
+  },
+  {
+    "id": "spark",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/spark-color.svg",
+    "sha256": "4068581452b808e4d9f8c5b43b42d324512d6801de26e57cf848125c28db85bc"
+  },
+  {
+    "id": "baichuan",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/baichuan-color.svg",
+    "sha256": "7d49311206402734850ed9dc112759780429bb363dcee31eccb5a92f428532a6"
+  },
+  {
+    "id": "yi",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/yi-color.svg",
+    "sha256": "d6c4ccd3d186a569ab08318b0334676115958ec35cb24f081334a26feb1470af"
+  },
+  {
+    "id": "stepfun",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/stepfun-color.svg",
+    "sha256": "f55afc0e6004c8854f76bd5bbcc0fce9fc0ed9316691d54fb02d088c24fab40d"
+  },
+  {
+    "id": "internlm",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/internlm-color.svg",
+    "sha256": "0e84741d3fb76e65fd86a57d18b6e31f31fa2e6156166c4bfa2487db894221a6"
+  },
+  {
+    "id": "meta",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/meta-color.svg",
+    "sha256": "adf9f2c1a646ccd3a37ca8c2e7e5985d64630cd633f4b95fba393d1d44e0578c"
+  },
+  {
+    "id": "mistral",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/mistral-color.svg",
+    "sha256": "722f74b289d95486b43662fe24fa883b333701296f618406cd0ed502299170b6"
+  },
+  {
+    "id": "cohere",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/cohere-color.svg",
+    "sha256": "84d0ee3cbe66f030e5a18cb2c86da9166ab2137c7a98781693bb1fbf31e392b9"
+  },
+  {
+    "id": "jina",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/jina.svg",
+    "sha256": "667fb86faeb958ed9ab9986e0bef8bef78834d8a0ed2a576d12a66f562d13168"
+  },
+  {
+    "id": "baai",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/baai.svg",
+    "sha256": "ec3119ca431920cb34a161a1b9d8fc855f1bcdc28cfd8e3e00c5cc07867aac5d"
+  },
+  {
+    "id": "flux",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/flux.svg",
+    "sha256": "aa8f15a0e2df21ad4a7224d5bb033ffc7fcf46978c2daa0581d228b5e379a1ee"
+  },
+  {
+    "id": "stability",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/stability-color.svg",
+    "sha256": "61c4593effe20b4fa1f0811861bb6ac199348d955b21a5c3f719bc07c9d27d3a"
+  },
+  {
+    "id": "perplexity",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/perplexity-color.svg",
+    "sha256": "8353f3ab20822f1a933224b0ea32cc39f0c32d5740f4af8c254b0f418e0a3a70"
+  },
+  {
+    "id": "nvidia",
+    "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/nvidia-color.svg",
+    "sha256": "8c941e4eb8b782eccaaea1240c059d20be33ab8eda28d7c9ed9b53ac802fe683"
+  },
+  {
+    "id": "generic-chat",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/message-circle.svg",
+    "sha256": "3aa3603e4b4bf4b7a96fa4e5873bb8ecc857c852e8cd75e7bcaa7f0e1965a17f"
+  },
+  {
+    "id": "generic-embedding",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/scan-text.svg",
+    "sha256": "468e9bee259e75ce67e3f1858d64cf2bb82da9f6c1a1bc3f6f11ebf99a1acd82"
+  },
+  {
+    "id": "generic-rerank",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/list-filter.svg",
+    "sha256": "601c632e75ce8f9c7cbfa28b6882471f7700f2e47edaa3fe52e7405295cb2054"
+  },
+  {
+    "id": "generic-tts",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/audio-lines.svg",
+    "sha256": "0e20066b231cb2251939e41d354354c67e6572537bd6d5a170e194641aef2767"
+  },
+  {
+    "id": "generic-stt",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/mic.svg",
+    "sha256": "e19dc7e6e09e800e34fd0f800ad2125194f61488060cbb97e2c68c50b67a26c2"
+  },
+  {
+    "id": "generic-imgGen",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/image.svg",
+    "sha256": "2b945fe7c79f1ae14906ea69fcfadfe7a96e7af6b59042ca933cd1f9a0bc5637"
+  },
+  {
+    "id": "generic-imgEdit",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/image-plus.svg",
+    "sha256": "47b60eb4a68c5616049420b57ba74f01b3db00fbea1e9e30aea62f0c3390066f"
+  },
+  {
+    "id": "generic-vidGen",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/video.svg",
+    "sha256": "d7d9369c5877861ccfc4bbe43f6070b4ce4971817031d2f28382df9e308afd18"
+  },
+  {
+    "id": "generic-unknown",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/cpu.svg",
+    "sha256": "cddf2e9dcdb3d9b47de15d5a47be3bfa1559da880f5afb9612f9229040c27d14"
+  }
+]

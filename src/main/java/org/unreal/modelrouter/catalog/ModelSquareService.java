@@ -133,7 +133,9 @@ public class ModelSquareService {
             summary = labeled.get(0).lines().subList(0, Math.min(2, labeled.get(0).lines().size()));
         } else if (labeled.size() == 1 && !incomplete && labeled.get(0).lines().size() == 1) summary = labeled.get(0).lines();
         var card = new Card(e.service().name(), e.model(), name, description, tags, List.copyOf(vendors),
-                labeled.size(), priceStatus, summary, quota.isEnabled() && quota.isFreeQuotaServiceType(e.service().name()), override != null);
+                labeled.size(), priceStatus, summary, quota.isEnabled() && quota.isFreeQuotaServiceType(e.service().name()), override != null,
+                override != null && ModelIconLibrary.contains(override.getIconId()) ? override.getIconId()
+                        : ModelIconLibrary.resolve(e.service().name(), e.model(), defaultName(e), List.copyOf(vendors)));
         return new Detail(card, List.copyOf(labeled), access(e.service()), List.of(
                 "费用按当前登录账户适用规则展示；真正调用仍需有效 Key、实名认证及可用额度或余额。",
                 "免费额度仅适用于标记的服务；付费单价不代表本次请求一定扣费。企业余额可能为共享余额。",
@@ -170,13 +172,15 @@ public class ModelSquareService {
     }
     private ContentView contentView(Entry e, ModelSquareContentEntity c) {
         return new ContentView(detail(e, UserIdentity.SYSTEM, c).model(), defaultName(e), defaultDescription(e), defaultTags(e),
-                c == null ? null : new Content(c.getServiceType(), c.getModelId(), c.getDisplayName(), c.getDescription(), decodeTags(c.getTags())),
+                c == null ? null : new Content(c.getServiceType(), c.getModelId(), c.getDisplayName(), c.getDescription(), decodeTags(c.getTags()), c.getIconId()),
                 c == null ? null : c.getUpdatedAt(), c == null ? null : c.getUpdatedBy());
     }
     @Transactional
     public ContentView save(Content request, String actor) {
         Entry entry = find(request.serviceType(), request.modelId());
         String name = optional(request.displayName(), 100, "展示名称"), description = optional(request.description(), 2000, "简介");
+        String iconId = optional(request.iconId(), 64, "图标");
+        if (iconId != null && !ModelIconLibrary.contains(iconId)) throw bad("请选择本地图标库中的图标");
         var tags = request.tags() == null ? List.<String>of() : request.tags();
         if (tags.size() > 6) throw bad("标签最多 6 个");
         var normalized = new LinkedHashSet<String>();
@@ -185,6 +189,7 @@ public class ModelSquareService {
         content.setContentKey(key(request.serviceType(), request.modelId()));
         content.setServiceType(request.serviceType()); content.setModelId(request.modelId());
         content.setDisplayName(name); content.setDescription(description);
+        content.setIconId(iconId);
         try { content.setTags(mapper.writeValueAsString(normalized)); }
         catch (Exception ex) { throw new IllegalStateException("标签序列化失败", ex); }
         content.setUpdatedAt(LocalDateTime.now()); content.setUpdatedBy(actor);

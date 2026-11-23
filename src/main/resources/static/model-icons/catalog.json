@@ -1,0 +1,321 @@
+{
+  "version": 1,
+  "deferredModelPattern": "^(?:krx_lm_|ntk_core_|orb2?_base_|vlt_mm_)",
+  "icons": [
+    {
+      "id": "deepseek",
+      "label": "DeepSeek 深度求索",
+      "file": "deepseek.svg",
+      "modelPattern": "^(?:deepseek)",
+      "brandPattern": "deepseek|深度求索",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/deepseek-color.svg"
+    },
+    {
+      "id": "qwen",
+      "label": "Qwen 通义千问",
+      "file": "qwen.svg",
+      "modelPattern": "^(?:qwen|qwq|qvq|text-embedding-v[34]|gte)",
+      "brandPattern": "qwen|通义千问",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/qwen-color.svg"
+    },
+    {
+      "id": "doubao",
+      "label": "Doubao 豆包",
+      "file": "doubao.svg",
+      "modelPattern": "^(?:doubao|seedream|seedance)",
+      "brandPattern": "doubao|豆包",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/doubao-color.svg"
+    },
+    {
+      "id": "kimi",
+      "label": "Kimi 月之暗面",
+      "file": "kimi.svg",
+      "modelPattern": "^(?:kimi|moonshot)",
+      "brandPattern": "kimi|moonshot|月之暗面",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/kimi-color.svg"
+    },
+    {
+      "id": "minimax",
+      "label": "MiniMax",
+      "file": "minimax.svg",
+      "modelPattern": "^(?:minimax|abab|hailuo)",
+      "brandPattern": "minimax|海螺",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/minimax-color.svg"
+    },
+    {
+      "id": "zhipu",
+      "label": "GLM 智谱",
+      "file": "zhipu.svg",
+      "modelPattern": "^(?:glm|chatglm|cogview|cogvideo)",
+      "brandPattern": "glm|智谱",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/zhipu-color.svg"
+    },
+    {
+      "id": "wan",
+      "label": "通义万相 / 阿里巴巴",
+      "file": "wan.svg",
+      "modelPattern": "^(?:wan[0-9]|wanx)",
+      "brandPattern": "通义万相",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/alibaba-color.svg"
+    },
+    {
+      "id": "happyhorse",
+      "label": "HappyHorse",
+      "file": "happyhorse.svg",
+      "modelPattern": "^(?:happyhorse)",
+      "brandPattern": "happyhorse",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/happyhorse.svg"
+    },
+    {
+      "id": "agnes",
+      "label": "Agnes AI",
+      "file": "agnes.svg",
+      "modelPattern": "^(?:agnes)",
+      "brandPattern": "agnes",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/agnesai.svg"
+    },
+    {
+      "id": "openai",
+      "label": "OpenAI",
+      "file": "openai.svg",
+      "modelPattern": "^(?:gpt|chatgpt|o[134](?:$|[-.])|dall-e|text-embedding-(?:ada|3)|whisper|tts-1|sora)",
+      "brandPattern": "openai",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/openai.svg"
+    },
+    {
+      "id": "claude",
+      "label": "Claude / Anthropic",
+      "file": "claude.svg",
+      "modelPattern": "^(?:claude)",
+      "brandPattern": "claude|anthropic",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/claude-color.svg"
+    },
+    {
+      "id": "gemini",
+      "label": "Gemini / Google",
+      "file": "gemini.svg",
+      "modelPattern": "^(?:gemini|gemma|imagen|veo)",
+      "brandPattern": "gemini|google|谷歌",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/gemini-color.svg"
+    },
+    {
+      "id": "grok",
+      "label": "Grok / xAI",
+      "file": "grok.svg",
+      "modelPattern": "^(?:grok)",
+      "brandPattern": "grok|xai",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/grok.svg"
+    },
+    {
+      "id": "hunyuan",
+      "label": "腾讯混元",
+      "file": "hunyuan.svg",
+      "modelPattern": "^(?:hunyuan)",
+      "brandPattern": "hunyuan|混元",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/hunyuan-color.svg"
+    },
+    {
+      "id": "wenxin",
+      "label": "文心 / 百度",
+      "file": "wenxin.svg",
+      "modelPattern": "^(?:ernie|wenxin)",
+      "brandPattern": "wenxin|文心",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/wenxin-color.svg"
+    },
+    {
+      "id": "spark",
+      "label": "讯飞星火",
+      "file": "spark.svg",
+      "modelPattern": "^(?:spark)",
+      "brandPattern": "spark|星火",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/spark-color.svg"
+    },
+    {
+      "id": "baichuan",
+      "label": "百川",
+      "file": "baichuan.svg",
+      "modelPattern": "^(?:baichuan)",
+      "brandPattern": "baichuan|百川",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/baichuan-color.svg"
+    },
+    {
+      "id": "yi",
+      "label": "Yi 零一万物",
+      "file": "yi.svg",
+      "modelPattern": "^(?:yi(?:$|[-0-9]))",
+      "brandPattern": "零一万物",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/yi-color.svg"
+    },
+    {
+      "id": "stepfun",
+      "label": "阶跃星辰",
+      "file": "stepfun.svg",
+      "modelPattern": "^(?:step[0-9]|step-)",
+      "brandPattern": "stepfun|阶跃星辰",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/stepfun-color.svg"
+    },
+    {
+      "id": "internlm",
+      "label": "书生浦语",
+      "file": "internlm.svg",
+      "modelPattern": "^(?:internlm)",
+      "brandPattern": "internlm|书生浦语",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/internlm-color.svg"
+    },
+    {
+      "id": "meta",
+      "label": "Llama / Meta",
+      "file": "meta.svg",
+      "modelPattern": "^(?:llama|meta-llama)",
+      "brandPattern": "llama|meta",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/meta-color.svg"
+    },
+    {
+      "id": "mistral",
+      "label": "Mistral",
+      "file": "mistral.svg",
+      "modelPattern": "^(?:mistral|mixtral|codestral|pixtral|ministral)",
+      "brandPattern": "mistral",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/mistral-color.svg"
+    },
+    {
+      "id": "cohere",
+      "label": "Cohere",
+      "file": "cohere.svg",
+      "modelPattern": "^(?:command|cohere|embed-(?:english|multilingual)|rerank-(?:english|multilingual))",
+      "brandPattern": "cohere",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/cohere-color.svg"
+    },
+    {
+      "id": "jina",
+      "label": "Jina",
+      "file": "jina.svg",
+      "modelPattern": "^(?:jina)",
+      "brandPattern": "jina",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/jina.svg"
+    },
+    {
+      "id": "baai",
+      "label": "BGE / 智源",
+      "file": "baai.svg",
+      "modelPattern": "^(?:bge)",
+      "brandPattern": "baai|智源",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/baai.svg"
+    },
+    {
+      "id": "flux",
+      "label": "FLUX / Black Forest Labs",
+      "file": "flux.svg",
+      "modelPattern": "^(?:flux)",
+      "brandPattern": "black forest|bfl|flux",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/flux.svg"
+    },
+    {
+      "id": "stability",
+      "label": "Stable Diffusion / Stability AI",
+      "file": "stability.svg",
+      "modelPattern": "^(?:stable-diffusion|sdxl|sd3)",
+      "brandPattern": "stability|stable diffusion",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/stability-color.svg"
+    },
+    {
+      "id": "perplexity",
+      "label": "Perplexity",
+      "file": "perplexity.svg",
+      "modelPattern": "^(?:sonar|pplx)",
+      "brandPattern": "perplexity",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/perplexity-color.svg"
+    },
+    {
+      "id": "nvidia",
+      "label": "NVIDIA",
+      "file": "nvidia.svg",
+      "modelPattern": "^(?:nemotron)",
+      "brandPattern": "nvidia",
+      "source": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/nvidia-color.svg"
+    },
+    {
+      "id": "generic-chat",
+      "label": "通用对话",
+      "file": "generic-chat.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/message-circle.svg"
+    },
+    {
+      "id": "generic-embedding",
+      "label": "通用向量",
+      "file": "generic-embedding.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/scan-text.svg"
+    },
+    {
+      "id": "generic-rerank",
+      "label": "通用重排",
+      "file": "generic-rerank.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/list-filter.svg"
+    },
+    {
+      "id": "generic-tts",
+      "label": "通用语音合成",
+      "file": "generic-tts.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/audio-lines.svg"
+    },
+    {
+      "id": "generic-stt",
+      "label": "通用语音识别",
+      "file": "generic-stt.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/mic.svg"
+    },
+    {
+      "id": "generic-imgGen",
+      "label": "通用图像生成",
+      "file": "generic-imgGen.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/image.svg"
+    },
+    {
+      "id": "generic-imgEdit",
+      "label": "通用图像编辑",
+      "file": "generic-imgEdit.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/image-plus.svg"
+    },
+    {
+      "id": "generic-vidGen",
+      "label": "通用视频",
+      "file": "generic-vidGen.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/video.svg"
+    },
+    {
+      "id": "generic-unknown",
+      "label": "通用模型",
+      "file": "generic-unknown.svg",
+      "modelPattern": "",
+      "brandPattern": "",
+      "source": "https://raw.githubusercontent.com/lucide-icons/lucide/0.468.0/icons/cpu.svg"
+    }
+  ],
+  "fallbacks": {
+    "chat": "generic-chat",
+    "embedding": "generic-embedding",
+    "rerank": "generic-rerank",
+    "tts": "generic-tts",
+    "stt": "generic-stt",
+    "imgGen": "generic-imgGen",
+    "imgEdit": "generic-imgEdit",
+    "vidGen": "generic-vidGen",
+    "unknown": "generic-unknown"
+  }
+}
